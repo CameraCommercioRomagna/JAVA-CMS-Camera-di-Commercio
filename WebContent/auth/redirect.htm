@@ -1,0 +1,18 @@
+<%@include file="/common/include/begin.jsp" %>
+<%	String pageFwd="/";
+	if (utenteLoggato){
+		if (root){
+			pageFwd="/amministrazione/index.htm";
+		}else if (operatoreAmministrazione){
+			pageFwd="/amministrazione/index.htm";
+		}else if (membroGiuntaConsiglioRevisori){
+			pageFwd="/area-riservata-amministratori.htm?ID_D=673";
+		}else{
+			pageFwd="/common/htm/non_autorizzato.htm";
+		}
+		response.sendRedirect(pageFwd);
+	}else{%>
+		<jsp:forward page="/auth/login.htm">
+			<jsp:param name="pagefwd" value="/auth/redirect.htm"/>
+		</jsp:forward>
+<%	}%>

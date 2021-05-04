@@ -1,0 +1,57 @@
+<%@include file="/common/include/begin.jsp" %>
+<%@page buffer="512kb" autoFlush="false" %>
+
+<!doctype html>
+<html lang="it">
+<head>
+	<%@include file="/common/struct_template/head.htm" %>
+</head>
+
+<body>
+	<%@include file="/amministrazione/common/struct_template/header.htm" %>
+	
+	<main class="main-content-admin">
+		<div class="row">
+			
+			<div class="col-md-3 col-sm-4 col-xl-2 order-sm-2" style="padding-left:0px !IMPORTANT;">
+			</div>
+			
+			<div class="col-md-9 col-sm-8 col-xl-10 order-first order-sm-2 border-gray">
+			
+				<h1><span class="glyphicon glyphicon-log-in"></span> Autenticazione Area Riservata operatori camerali</h1>
+				<p>
+					Per connetterti al portale inserisci username e password in tuo possesso nei campi sottostanti.<br/>
+				</p>
+				<form id="login" style="margin-top:3rem;" method="post" action="https://<%=request.getServerName() %>/servlet/LoginServletDBPortalCdC" class="form-control-sm">
+					
+					<div class="form-group row">
+						<label for="username" class="col-sm-1 col-form-label"><b>Username</b></label>
+						<div class="col-sm-3">
+							<input type="text" class="form-control" id="username" name="username" placeholder="Username" required value="" /> 
+						</div>
+					</div>
+					<div class="form-group row">
+						<label for="password" class="col-sm-1 col-form-label"><b>Password</b></label>
+						<div class="col-sm-3">
+							<input type="password" class="form-control" id="password" name="password" placeholder="Password" required value="" /> 
+						</div>
+						<div class="col-sm-3">
+							<input class="btn btn-primary" style="margin-left:30px;width:10em;" type="submit" name="Submit" value="Entra" tabindex="3" />
+						</div>
+					</div>
+			<%	Map<String, List<String>> parFWD=urlwrapper.getParameters("pagefwd");
+				if (parFWD.size()>0){
+					for (String param: parFWD.keySet())
+						for (String valore: parFWD.get(param)){%>
+					<p><input type="hidden" name="<%=param %>" value="<%=valore %>" /></p>
+					<%	}
+				}else{%>
+					<p><input type="hidden" name="pagefwd" value="/auth/redirect.htm" /></p>
+			<%	}%>
+					<p><input type="hidden" name="tret" value="sec" /></p>
+				</form>
+			</div>
+		</div>
+	</main>
+
+</body>
