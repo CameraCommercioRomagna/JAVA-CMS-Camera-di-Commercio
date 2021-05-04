@@ -332,13 +332,11 @@ Con questa funzione puoi individuare la posizione di un documento: Questo può r
 <h3>Il mio link</h3>
 Con questa invece ottengo il link diretto al documento che posso divulgare anche all’esterno
 
-
-
 <h2>Ricerca dei documenti</h2>
 La ricerca dei documenti nella sezione di amministrazione può avvenire
     • navigando il suo percorso partendo dalla liste delle "Aree tematiche"
     • cercandolo con gli strumenti di filtro 
-<h3>Filtri<7h3>
+<h3>Filtri</h3>
 I filtri consentono di selezionare solo fra i documenti elencati nel box centrale: se devi cercare documenti indipendentemente dalla loro posizione prima seleziona l'opzione "Ricerca su tutta l'amministrazione" e poi imposta i filtri e premi "Applica filtri".
 I documenti possono essere filtrati in base al loro stato (Validati, Pubblicati, Scaduti), in base al loro numero, al proprietario o ad una parola o frase contenuta nel titolo.
 Percorso: dove mi trovi
