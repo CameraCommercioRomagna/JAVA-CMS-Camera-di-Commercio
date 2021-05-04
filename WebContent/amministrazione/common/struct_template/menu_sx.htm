@@ -1,0 +1,37 @@
+<%	if (visualMenuAdminSx){%>
+	<h3>Contenuti</h3>
+	<ul class="list-unstyled" style="font-size:0.9rem;">
+		<li class="menu-admin"><a href="/amministrazione/ricerca.htm">Ricerca su tutta <br/><span style="margin-left:1.6rem;">l'amministrazione</span></a></li>
+		<%if(operatoreComitatoDiRedazione){%>
+			<li class="menu-admin"><a href="/amministrazione/ricerca.htm?titolo_dweb=&user_dweb=&validati=true&pubblicati=true&scaduti=false&visibilita=1&ricerca=yes">Ricerca in home page</a></li>
+		<%}%>
+		<li class="menu-admin"><a href="/amministrazione/index.htm">Aree tematiche</a></li>
+		<li class="menu-admin"><a href="/amministrazione/index.htm?ID_D=675">Amministrazione trasparente</a></li>
+	
+	<%	if(operatoreCongiuntura){%>	
+		<li class="menu-admin"><a href="/amministrazione/informazione_economico_statistica/congiuntura/">Amministrazione congiuntura</a></li>
+	<%	}%>
+	<%	if(operatore.authorizedFor(16l)){%>	
+		<li class="menu-admin"><a href="/amministrazione/prezzi/">Amministrazione prezzi</a></li>
+	<%	}%>
+	<%	if(operatoreListinoPrezzi){%>	
+		<li class="menu-admin"><a href="/amministrazione/redirect_login_fc.jsp" style="color:orange">VECCHIA amministrazione prezzi FC.CAMCOM (solo per analisi storica)</a></li>
+	<%	}%>
+	<%	if(operatoreContattaCamera){%>	
+		<li class="menu-admin"><a href="/amministrazione/registro_imprese/contatta_cdc/quesiti.jsp">Contatta Camera</a></li>
+	<%	}%>
+	<%	if(operatoreAppuntamentiOnline){%>	
+		<li class="menu-admin"><a href="/amministrazione/appuntamenti-online">Appuntamenti online</a></li>
+	<%	}%>
+	
+		<li class="menu-admin"><a href="/amministrazione/index.htm?ID_D=674">Albo online</a></li>
+	<%	if (operatoreDocumentiRiservatiGiuntaConsiglioRevisori){%>
+		<li class="menu-admin"><a href="/amministrazione/index.htm?ID_D=673">Area riservata amministratori</a></li>
+	<%	}%>
+	<%	if(operatoreNotiziario){%>	
+		<li class="menu-admin"><a href="/amministrazione/newsletter/index.htm?<%=rq_tipo_newsLetter%>=1">Notiziario Quindicinale</a></li>
+	<%	}%>
+		<li class="menu-admin"><a href="/amministrazione/enti.htm?<%=(pagina!=null ? rq_documento+"="+pagina.getId() : "")%>">Enti per eventi</a></li>
+		<li class="menu-admin"><a href="/amministrazione/luoghi.htm?<%=(pagina!=null ? rq_documento+"="+pagina.getId() : "")%>">Luoghi per eventi</a></li>
+	</ul>
+<%	}%>

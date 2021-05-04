@@ -1,0 +1,32 @@
+<header style="height:auto; padding-bottom:1rem;" class="fixed-top header-amministrazione">
+	<div class="sticky-top clearfix">
+		<div class="row clearfix" style="margin-left:0;">
+			<div class="col-3 col-lg-3 col-md-3 col-sm-3 col-xs-3 div-logo" style="padding-right:0;">
+				<a href="/"><img src="/imgs/struct/romagna-marchio-bianco.png" alt="logo camera" class="logo img-fluid"></a>
+			</div>
+			<div class="col-9 col-lg-9 col-md-9 col-sm-9 col-xs-9">
+			<%	if (operatore!=null){%>
+				<div style="float:right; color:#ffffff; padding-top:1rem; margin-right:1rem;">
+					<h3 style="color:#ffffff;"><span class="glyphicon glyphicon-user"></span> <%=operatore.getIdentita() %></h3>
+						<a href="/auth/modifica_password.jsp" class="link-header small"><i class="fa fa-lock"></i> Cambia password</a><br/>
+						 <a href="/servlet/LogoutServlet?pagefwd=/" class="link-header small"><span class="glyphicon glyphicon-off"></span> Logout</a>
+				</div>
+			<%	}%>
+			</div>
+		</div>
+<%	if (operatore!=null){%>
+		<p style="margin:1rem 1rem 0 1rem;border-top:1px solid gray;border-bottom:1px solid gray;text-align:right;" class="d-none d-sm-block">Legenda
+			<span style="font-size:0.75rem;">
+				<button type="button" style="margin-left:0.5rem;" title="Anteprima" class="btn btn-info btn-sm" aria-label="Anteprima"><span class="glyphicon glyphicon-picture" aria-hidden="true"></span></button> <span class="d-none d-lg-inline">Anteprima</span>
+				<button type="button" style="margin-left:0.6rem;" title="Dove mi trovi" class="btn btn-info btn-sm" aria-label="Dove mi trovi"><span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span></button> <span class="d-none d-lg-inline">Dove mi trovi</span>
+				<button type="button" style="margin-left:0.6rem;" title="Modifica" class="btn btn-success btn-sm" aria-label="Modifica"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></button> <span class="d-none d-lg-inline">Modifica</span>
+				<button type="button" style="margin-left:0.6rem;" title="Duplica" class="btn btn-success btn-sm" aria-label="Duplica"><span class="glyphicon glyphicon-duplicate" aria-hidden="true"></span></button> <span class="d-none d-lg-inline">Duplica</span>
+				<button type="button" style="margin-left:0.6rem;" title="Iscritti" class="btn btn-info btn-sm" aria-label="Iscritti"><span class="glyphicon glyphicon-list" aria-hidden="true"></span></button> <span class="d-none d-lg-inline">Iscritti edizione evento</span>
+				<button type="button" style="margin-left:0.6rem;" title="Associa padre" class="btn btn-primary btn-sm" aria-label="Associa padre"><span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></button> <span class="d-none d-lg-inline">Associa padre</span>
+				<button type="button" style="margin-left:0.6rem;" title="Crea mail" class="btn btn-primary btn-sm" aria-label="Crea mail"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span></button> <span class="d-none d-lg-inline">Crea mail</span>
+				<button type="button" style="margin-left:0.6rem;" title="Associa alla newsletter" class="btn btn-primary btn-sm" aria-label="Associa alla newsletter"><span class="glyphicon glyphicon-share" aria-hidden="true"></span></button> <span class="d-none d-lg-inline">Associa alla newsletter</span>
+			</span>
+		</p>
+<%	}%>		
+	</div>
+</header>
