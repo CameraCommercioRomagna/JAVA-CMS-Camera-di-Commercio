@@ -1,0 +1,54 @@
+<%@include file="/common/include/begin.jsp" %>
+
+<%	Appuntamento appuntamento=null;
+	try{
+		appuntamento=Appuntamento.fromCodice(request.getParameter("appc"));
+		if(request.getParameter("blocco")!=null){
+			appuntamento.data_garbage_collection=new Date();
+			appuntamento.update();
+		}%>	
+
+<!doctype html>
+<html>
+<head>
+	<%@include file="/common/struct_template/head.htm" %>
+</head>
+<body class="body-public">
+	<%@include file="/common/struct_template/header.htm" %>
+		<main class="main-content container" style="margin-top:2rem;">
+			
+			<h2>Appuntamenti online</h2>
+		<%	if(request.getParameter("blocco")!=null){
+				if(request.getParameter("blocco").equals("maxPratichaUtente")){%>
+						<p>
+							Gentile utente,<br/>
+							non è possibile effettuare ulteriori prenotazioni in quanto il suo nominativo inserito nel Modulo di prenotazione online risulta già utilizzato in precedenza. <br/>
+							Sarà possibile riutilizzarlo solo dopo che siano trascorsi almeno 15 giorni dalla precedente prenotazione.
+						</p>
+			<%	}
+				if(request.getParameter("blocco").equals("maxPratichaIntermediario")){%>
+						<p>
+							Gentile utente, <br/>
+							non è possibile effettuare ulteriori prenotazioni in quanto risultano già fissati n. 2 appuntamenti per la stessa giornata.
+						</p>
+			<%	}
+				if(request.getParameter("blocco").equals("annulla")){%>
+						<p>
+							Gentile utente, <br/>
+							l'appuntamento è stato annullato.
+						</p>
+			<%	}%>
+
+		<%}%>
+		
+		</main>
+	
+<%@include file="/common/struct_template/feedback.htm" %>
+<%@include file="/common/struct_template/footer.htm" %>
+<%@include file="/common/struct_template/footer_script.htm" %>
+
+  </body>
+</html>
+<%	}catch(Exception e){
+		response.sendRedirect(HOME);
+	}%>
