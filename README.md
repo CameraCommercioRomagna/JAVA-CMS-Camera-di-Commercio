@@ -34,7 +34,7 @@ Di seguito vengono indicati i requisiti di sistema su cui è installato e config
   
   </ul>
 <h3>INSTALLAZIONE DMBS:</h3>
-<p>PostgreSQL 11.2</p>
+<<ul><li>PostgreSQL 11.2</li></ul>
 <h2>Copyright</h2>
 <p>Titolare del software è la <a href="https://www.romagna.camcom.it">Camera di Commercio della Romagna Forlì-Cesena Rimini</a></p>
 <h2>Mantainer</h2>
