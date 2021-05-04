@@ -1,0 +1,780 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE web-app
+    PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+    "http://java.sun.com/dtd/web-app_2_3.dtd">
+
+<web-app>
+    <display-name></display-name>
+    <description>
+      
+    </description>
+
+	<servlet>
+		<servlet-name>ExecuteUpdateServletPostgresCdC</servlet-name>
+		<servlet-class>it.cise.servlet.ExecuteUpdateServletPostgresCdC</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>ExecuteUpdateUploadServletPostgresCdC</servlet-name>
+		<servlet-class>it.cise.servlet.ExecuteUpdateUploadServletPostgresCdC</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>ExecuteMultipleUpdateServletPostgresCdC</servlet-name>
+		<servlet-class>it.cise.servlet.ExecuteMultipleUpdateServletPostgresCdC</servlet-class>
+	</servlet>
+	
+	<servlet>
+		<servlet-name>XLSServlet</servlet-name>
+		<servlet-class>it.cise.servlet.XLSServlet</servlet-class>
+	</servlet>
+	
+	<servlet>
+		<servlet-name>LoginServlet</servlet-name>
+		<servlet-class>it.cise.servlet.LoginServlet</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>LoginServletDBPortalCdC</servlet-name>
+		<servlet-class>it.cise.servlet.LoginServletDBPortalCdC</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>LogoutServlet</servlet-name>
+		<servlet-class>it.cise.servlet.LogoutServlet</servlet-class>
+	</servlet>
+	
+	<servlet>
+		<servlet-name>SendmailTo</servlet-name>
+		<servlet-class>cise.servlets.MailServlet</servlet-class>
+		<init-param>
+			<param-name>SMTP_HOST</param-name>
+			<param-value>mail.xxx.it</param-value>
+		</init-param>
+	</servlet>
+	
+	<servlet>
+		<servlet-name>File</servlet-name>
+		<servlet-class>cise.servlets.FileDispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>class - download</param-name>
+			<param-value>it.cise.portale.cdc.documenti.download.Download</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - avi</param-name>
+			<param-value>video/x-msvideo</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - bmp</param-name>
+			<param-value>image/bmp</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - csv</param-name>
+			<param-value>text/plain</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - doc</param-name>
+			<param-value>application/msword</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - docx</param-name>
+			<param-value>application/vnd.openxmlformats-officedocument.wordprocessingml.document</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - dot</param-name>
+			<param-value>application/msword</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - dtd</param-name>
+			<param-value>text/plain</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - eps</param-name>
+			<param-value>application/postscript</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - gif</param-name>
+			<param-value>image/gif</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - gz</param-name>
+			<param-value>application/x-gzip</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - htm</param-name>
+			<param-value>text/html</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - html</param-name>
+			<param-value>text/html</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - jpe</param-name>
+			<param-value>image/jpeg</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - jpeg</param-name>
+			<param-value>image/jpeg</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - jpg</param-name>
+			<param-value>image/jpeg</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - latex</param-name>
+			<param-value>application/x-latex</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - mid</param-name>
+			<param-value>audio/x-midi</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - midi</param-name>
+			<param-value>audio/x-midi</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - mov</param-name>
+			<param-value>video/quicktime</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - mp1</param-name>
+			<param-value>audio/x-mpeg</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - mp2</param-name>
+			<param-value>audio/x-mpeg</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - mp3</param-name>
+			<param-value>audio/x-mpeg</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - mpeg</param-name>
+			<param-value>video/mpeg</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - mpg</param-name>
+			<param-value>video/mpeg</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - ods</param-name>
+			<param-value>application/vnd.oasis.opendocument.spreadsheet</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - odt</param-name>
+			<param-value>application/vnd.oasis.opendocument.text</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - pdf</param-name>
+			<param-value>application/pdf</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - png</param-name>
+			<param-value>image/png</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - ppt</param-name>
+			<param-value>application/powerpoint</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - pptx</param-name>
+			<param-value>application/vnd.openxmlformats-officedocument.presentationml.presentation</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - pps</param-name>
+			<param-value>application/powerpoint</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - ps</param-name>
+			<param-value>application/postscript</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - qt</param-name>
+			<param-value>video/quicktime</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - qti</param-name>
+			<param-value>image/x-quicktime</param-value>
+		</init-param>
+		<!-- aggiunto dal web-inf di lavoroetico.org -->
+		<init-param>
+			<param-name>extension - rar</param-name>
+			<param-value>application/x-rar-compressed</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - rtf</param-name>
+			<param-value>application/rtf</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - swf</param-name>
+			<param-value>application/x-shockwave-flash</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - tar</param-name>
+			<param-value>application/x-tar</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - tex</param-name>
+			<param-value>application/x-tex</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - tif</param-name>
+			<param-value>image/tiff</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - tiff</param-name>
+			<param-value>image/tiff</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - txt</param-name>
+			<param-value>text/plain</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - xhtml</param-name>
+			<param-value>application/xhtml+xml</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - xml</param-name>
+			<param-value>text/xml</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - xsl</param-name>
+			<param-value>text/xml</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - xls</param-name>
+			<param-value>application/vnd.ms-excel</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - xlsx</param-name>
+			<param-value>application/vnd.openxmlformats-officedocument.spreadsheetml.sheet</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - xlt</param-name>
+			<param-value>application/vnd.ms-excel</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - wav</param-name>
+			<param-value>audio/x-wav</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - svg</param-name>
+			<param-value>image/svg+xml</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - zip</param-name>
+			<param-value>application/zip</param-value>
+		</init-param>
+	</servlet>
+	<servlet>
+		<servlet-name>NewFileServlet</servlet-name>
+		<servlet-class>it.cise.servlet.FileServletDBPortalCdC</servlet-class>
+		<init-param>
+			<param-name>extension - avi</param-name>
+			<param-value>video/x-msvideo</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - bmp</param-name>
+			<param-value>image/bmp</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - csv</param-name>
+			<param-value>text/plain</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - dbf</param-name>
+			<param-value>application/dbase</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - doc</param-name>
+			<param-value>application/msword</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - docx</param-name>
+			<param-value>application/vnd.openxmlformats-officedocument.wordprocessingml.document</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - dot</param-name>
+			<param-value>application/msword</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - dtd</param-name>
+			<param-value>text/plain</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - eps</param-name>
+			<param-value>application/postscript</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - gif</param-name>
+			<param-value>image/gif</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - gz</param-name>
+			<param-value>application/x-gzip</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - htm</param-name>
+			<param-value>text/html</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - html</param-name>
+			<param-value>text/html</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - jpe</param-name>
+			<param-value>image/jpeg</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - jpeg</param-name>
+			<param-value>image/jpeg</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - jpg</param-name>
+			<param-value>image/jpeg</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - latex</param-name>
+			<param-value>application/x-latex</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - mdb</param-name>
+			<param-value>application/x-msaccess</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - mid</param-name>
+			<param-value>audio/x-midi</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - midi</param-name>
+			<param-value>audio/x-midi</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - mov</param-name>
+			<param-value>video/quicktime</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - mp1</param-name>
+			<param-value>audio/x-mpeg</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - mp2</param-name>
+			<param-value>audio/x-mpeg</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - mp3</param-name>
+			<param-value>audio/x-mpeg</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - mpeg</param-name>
+			<param-value>video/mpeg</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - mpg</param-name>
+			<param-value>video/mpeg</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - ods</param-name>
+			<param-value>application/vnd.oasis.opendocument.spreadsheet</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - odt</param-name>
+			<param-value>application/vnd.oasis.opendocument.text</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - pdf</param-name>
+			<param-value>application/pdf</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - png</param-name>
+			<param-value>image/png</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - ppt</param-name>
+			<param-value>application/powerpoint</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - pptx</param-name>
+			<param-value>application/vnd.openxmlformats-officedocument.presentationml.presentation</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - pps</param-name>
+			<param-value>application/powerpoint</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - ps</param-name>
+			<param-value>application/postscript</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - qt</param-name>
+			<param-value>video/quicktime</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - qti</param-name>
+			<param-value>image/x-quicktime</param-value>
+		</init-param>
+		<!-- aggiunto dal web-inf di lavoroetico.org -->
+		<init-param>
+			<param-name>extension - rar</param-name>
+			<param-value>application/x-rar-compressed</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - rtf</param-name>
+			<param-value>application/rtf</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - swf</param-name>
+			<param-value>application/x-shockwave-flash</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - tar</param-name>
+			<param-value>application/x-tar</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - tex</param-name>
+			<param-value>application/x-tex</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - tif</param-name>
+			<param-value>image/tiff</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - tiff</param-name>
+			<param-value>image/tiff</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - txt</param-name>
+			<param-value>text/plain</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - xhtml</param-name>
+			<param-value>application/xhtml+xml</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - xml</param-name>
+			<param-value>text/xml</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - xsl</param-name>
+			<param-value>text/xml</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - xls</param-name>
+			<param-value>application/vnd.ms-excel</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - xlsx</param-name>
+			<param-value>application/vnd.openxmlformats-officedocument.spreadsheetml.sheet</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - xlt</param-name>
+			<param-value>application/vnd.ms-excel</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - wav</param-name>
+			<param-value>audio/x-wav</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - wk1</param-name>
+			<param-value>application/vnd.lotus-1-2-3</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - svg</param-name>
+			<param-value>image/svg+xml</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - zip</param-name>
+			<param-value>application/zip</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - odt</param-name>
+			<param-value>application/vnd.oasis.opendocument.text</param-value>
+		</init-param>
+	</servlet>
+	<servlet>
+		<servlet-name>NewFileOldDBServlet</servlet-name>
+		<servlet-class>it.cise.servlet.FileServletDBPortalCdCOldDB</servlet-class>
+		<init-param>
+			<param-name>extension - avi</param-name>
+			<param-value>video/x-msvideo</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - bmp</param-name>
+			<param-value>image/bmp</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - csv</param-name>
+			<param-value>text/plain</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - dbf</param-name>
+			<param-value>application/dbase</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - doc</param-name>
+			<param-value>application/msword</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - docx</param-name>
+			<param-value>application/vnd.openxmlformats-officedocument.wordprocessingml.document</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - dot</param-name>
+			<param-value>application/msword</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - dtd</param-name>
+			<param-value>text/plain</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - eps</param-name>
+			<param-value>application/postscript</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - gif</param-name>
+			<param-value>image/gif</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - gz</param-name>
+			<param-value>application/x-gzip</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - htm</param-name>
+			<param-value>text/html</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - html</param-name>
+			<param-value>text/html</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - jpe</param-name>
+			<param-value>image/jpeg</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - jpeg</param-name>
+			<param-value>image/jpeg</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - jpg</param-name>
+			<param-value>image/jpeg</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - latex</param-name>
+			<param-value>application/x-latex</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - mdb</param-name>
+			<param-value>application/x-msaccess</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - mid</param-name>
+			<param-value>audio/x-midi</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - midi</param-name>
+			<param-value>audio/x-midi</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - mov</param-name>
+			<param-value>video/quicktime</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - mp1</param-name>
+			<param-value>audio/x-mpeg</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - mp2</param-name>
+			<param-value>audio/x-mpeg</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - mp3</param-name>
+			<param-value>audio/x-mpeg</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - mpeg</param-name>
+			<param-value>video/mpeg</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - mpg</param-name>
+			<param-value>video/mpeg</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - ods</param-name>
+			<param-value>application/vnd.oasis.opendocument.spreadsheet</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - odt</param-name>
+			<param-value>application/vnd.oasis.opendocument.text</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - pdf</param-name>
+			<param-value>application/pdf</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - png</param-name>
+			<param-value>image/png</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - ppt</param-name>
+			<param-value>application/powerpoint</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - pptx</param-name>
+			<param-value>application/vnd.openxmlformats-officedocument.presentationml.presentation</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - pps</param-name>
+			<param-value>application/powerpoint</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - ps</param-name>
+			<param-value>application/postscript</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - qt</param-name>
+			<param-value>video/quicktime</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - qti</param-name>
+			<param-value>image/x-quicktime</param-value>
+		</init-param>
+		<!-- aggiunto dal web-inf di lavoroetico.org -->
+		<init-param>
+			<param-name>extension - rar</param-name>
+			<param-value>application/x-rar-compressed</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - rtf</param-name>
+			<param-value>application/rtf</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - swf</param-name>
+			<param-value>application/x-shockwave-flash</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - tar</param-name>
+			<param-value>application/x-tar</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - tex</param-name>
+			<param-value>application/x-tex</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - tif</param-name>
+			<param-value>image/tiff</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - tiff</param-name>
+			<param-value>image/tiff</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - txt</param-name>
+			<param-value>text/plain</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - xhtml</param-name>
+			<param-value>application/xhtml+xml</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - xml</param-name>
+			<param-value>text/xml</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - xsl</param-name>
+			<param-value>text/xml</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - xls</param-name>
+			<param-value>application/vnd.ms-excel</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - xlsx</param-name>
+			<param-value>application/vnd.openxmlformats-officedocument.spreadsheetml.sheet</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - xlt</param-name>
+			<param-value>application/vnd.ms-excel</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - wav</param-name>
+			<param-value>audio/x-wav</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - wk1</param-name>
+			<param-value>application/vnd.lotus-1-2-3</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - svg</param-name>
+			<param-value>image/svg+xml</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - zip</param-name>
+			<param-value>application/zip</param-value>
+		</init-param>
+		<init-param>
+			<param-name>extension - odt</param-name>
+			<param-value>application/vnd.oasis.opendocument.text</param-value>
+		</init-param>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>ExecuteUpdateServletPostgresCdC</servlet-name>
+		<url-pattern>/servlet/ExecuteUpdateServletPostgresCdC</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>ExecuteUpdateUploadServletPostgresCdC</servlet-name>
+		<url-pattern>/servlet/ExecuteUpdateUploadServletPostgresCdC</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>ExecuteMultipleUpdateServletPostgresCdC</servlet-name>
+		<url-pattern>/servlet/ExecuteMultipleUpdateServletPostgresCdC</url-pattern>
+	</servlet-mapping>
+	
+	<servlet-mapping>
+		<servlet-name>XLSServlet</servlet-name>
+		<url-pattern>/servlet/CreateXLS</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>File</servlet-name>
+		<url-pattern>/servlet/File</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>jsp</servlet-name>
+		<url-pattern>*.htm</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>jsp</servlet-name>
+		<url-pattern>*.jsp</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>LoginServlet</servlet-name>
+		<url-pattern>/servlet/LoginServlet</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>LoginServletDBPortalCdC</servlet-name>
+		<url-pattern>/servlet/LoginServletDBPortalCdC</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>LogoutServlet</servlet-name>
+		<url-pattern>/servlet/LogoutServlet</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>NewFileServlet</servlet-name>
+		<url-pattern>/servlet/NewFileServlet</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>NewFileServlet</servlet-name>
+		<url-pattern>/download/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>NewFileOldDBServlet</servlet-name>
+		<url-pattern>/download_archive/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>SendmailTo</servlet-name>
+		<url-pattern>/servlet/SendmailTo</url-pattern>
+	</servlet-mapping>
+	
+	<error-page>
+		<error-code>404</error-code>
+		<location>/common/htm/notfound.htm</location>
+	</error-page>
+</web-app>
