@@ -1,0 +1,35 @@
+<%	if(programma.size()>0){%>
+				<section id="programma" style="clear: both;">
+						<div class="programma-header">
+							<h3><span class="glyphicon glyphicon-time" aria-hidden="true"></span> Programma</h3>
+						</div>
+						<%	String data_str_curr = "";
+							for (PuntoProgramma pr: programma){%>
+							<%	if (pr.getData()!=null && !pr.getData().equals("") && (data_str_curr==null || !data_str_curr.equals(pr.getData()))){%>
+								<div class="programma-data"><h4><%=pr.getData()%></h4></div>
+							<%	}
+								data_str_curr = pr.getData();
+							%>
+												
+						<div class="container">
+							<div class="row programma-item">
+								<%	if((pr.info_ora_inizio!=null) && (!pr.info_ora_inizio.equals(""))){%>
+										<div class="col-md-2"><%=pr.info_ora_inizio%></div>
+										<div class="col-md-10 corpoPagina">
+								<%	}else{%>
+										<div style="margin-left:1rem;" class="corpoPagina">
+								<%	}%>
+								<%	if (pr.titolo!=null && !pr.getInfoTitolo().equals("")){%><h3 style="font-size:1.2rem;" ><%=pr.titolo%></h3><%}%>
+									<%	if (pr.img_path!=null){%>
+											<img class="img-fluid img-thumbnail" style="max-width:30%; margin:0.3rem 0.3rem 0.3rem 0; float:left;" src="<%=pr.img_path %>" alt="Immagine di <%=pr.titolo %>"  />
+									<%	}%>
+									<%	if (pr.testo!=null){%><%=pr.testo %><%	}%>
+										</div>	
+								
+							</div>
+						</div>
+					<%}%>
+					
+				</section>
+		
+		<%	}%>

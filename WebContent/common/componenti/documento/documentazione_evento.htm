@@ -1,0 +1,20 @@
+
+<%	if(video.size()>0){%>					
+					<%@include file="/common/componenti/gallery/_video.jsp"%>
+				<%	}%>
+			 <%	if(atti.size()>0){
+							List<DocumentoWeb<?>> lista=new ArrayList<DocumentoWeb<?>>(atti);%>
+						<%@include file="/common/componenti/collettori/_list_standard.jsp"%>
+			<%	}%>
+			<%	if(immagini.size()>0){%>					
+					<%@include file="/common/componenti/gallery/_image.jsp"%>
+			<%	}%>
+					
+			<%	if(file_utili.size()>0) {
+					List<DocumentoWeb<?>> lista=file_utili;%>
+					<%@include file="/common/componenti/collettori/_list_standard.jsp"%>
+			<%	}%>
+			<%	if(file_allegati.size()>0) {
+					List<DocumentoWeb<?>> lista=file_allegati;%>
+					<%@include file="/common/componenti/collettori/_list_standard.jsp"%>
+			<%	}%>

@@ -1,0 +1,69 @@
+<%
+	String periodo=edizione.periodoENote();
+	String indicazioneOrario=edizione.getOrario();
+	String luogo="";
+	if(edizione.getLuogo()!=null){
+		luogo=edizione.getLuogo().getNomeeIndirizzo();
+	}
+	int col=0;
+	String iscrizione="";
+	String widthCol1="";
+	String widthCol2="";
+	String widthCol3="";
+	String widthCol4="";
+	
+	try{
+		Date oggi = cise.utils.DateUtils.stringToDate(cise.utils.DateUtils.formatDate(new Date(),"dd/MM/yyyy"));
+		if (!edizione.getDataScadenzaIscrizione().before(oggi)){
+			iscrizione="<a href= '" + edizione.getLinkIscrizione() + "'><span style='font-size:1rem;'><i class='fas fa-edit' aria-hidden='true'></i> Iscriviti</span></a>";
+		}
+	}catch(Exception e){}
+	
+	if(!eventoSmall){
+		if(!luogo.equals("")||(!periodo.equals(""))){
+			if(!periodo.equals("")) {
+				col=col+1;
+				widthCol1="max-width:10rem;";
+			}
+			if((indicazioneOrario!= null) && (!indicazioneOrario.equals(""))){
+				col=col+1;
+				widthCol2="min-width:15rem;";
+			}
+						if(!luogo.equals("")) {
+				col=col+1;
+				widthCol3="min-width:20rem;";
+			}
+			if(!iscrizione.equals("")){
+				col=col+1;
+				widthCol4="max-width:8rem;";
+			}
+		}
+	} else {
+		col=2;
+	} %>
+
+		<div class="row" style="border-bottom:5px solid #071d49; padding:0.5rem;">
+			<%if(!periodo.equals("")){%>
+				<div class="col-md-<%=12/col%> col-sm-6 align-self-center d-flex align-items-center" style="<%=widthCol1%> height:3.5rem;">
+					 <span class="glyphicon glyphicon-calendar" aria-hidden="true"></span> <span style="font-size:1rem;"><%=periodo%></span>
+				</div>
+			<%}%>
+			<%	if((indicazioneOrario!= null) && (!indicazioneOrario.equals(""))){%>
+				<div class="col-md-<%=12/col%> col-sm-6  d-flex align-items-center" style="border-left:1px solid; <%=widthCol2%> height:3.5rem;">
+					<span class="glyphicon glyphicon-time" aria-hidden="true"></span><span style="font-size:1rem;"> <%=indicazioneOrario%></span>
+				</div>
+			<%}%>
+			<%	if(!luogo.equals("")){%>
+				<div class="col-md-<%=12/col%> col-sm-6 align-self-center d-flex align-items-center" style="<%if(!eventoSmall){%>border-left:1px solid; <%=widthCol3%><%}%> height:3.5rem;">
+					<%if(!paginaIscrizione){%><a href="#dove"><%}%> <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span><span style="font-size:1rem;"> <%=luogo%></span> <%if(!paginaIscrizione){%></a><%}%>
+				</div>
+			<%}%>
+			<%if(!paginaIscrizione){%>
+				<%	if(!iscrizione.equals("")){%> 
+					<div class="col-md-<%=12/col%> col-sm-6 align-self-center d-flex align-items-center" style="border-left:1px solid; <%=widthCol4%> height:3.5rem;">
+						<%=iscrizione%>
+					</div>
+				<%	}%>
+			<%}%>
+	
+		</div>

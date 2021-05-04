@@ -1,0 +1,21 @@
+			<div class="row">
+			<%	for(TipoCollaborazione tipoCollaborazione: TipoCollaborazione.values()){
+					List<Organizzatore> collaboratori=edizione.getOrganizzatori(tipoCollaborazione);
+						if (collaboratori.size() > 0){%>
+							<%if(collaboratori.size()<2){%>
+								<div class="col-md-6 row">
+									<h3 style="margin:1rem 0 0 1rem;"><%=tipoCollaborazione.getTitoloSezioneEvento()%></h3>
+							<%}else{%>
+								<h3 style=" margin:1rem 0 0 1rem;;"><%=tipoCollaborazione.getTitoloSezioneEvento()%></h3>
+								<div class="row">
+							<%}%>
+									<%	for (Organizzatore o: collaboratori){%>
+											<%@include file="/common/componenti/gallery/_organizzatori.jsp"%>
+									<%	}%>
+									
+							
+								</div>
+							
+					<%	}
+				}%>	
+				</div>

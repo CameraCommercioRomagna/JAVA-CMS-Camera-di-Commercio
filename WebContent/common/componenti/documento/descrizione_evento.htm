@@ -1,0 +1,13 @@
+<!---Descrizione dell'evento --->
+<%	if(pagina.getImmagine()!=null){
+		try{
+			if (paragrafi.get(0).img_path == null)
+				throw new RuntimeException("Se non c'è immagine nel primo paragrafo => visualizza quella del documento");
+			}catch(Exception eImg){%>
+						<p style="text-align:center; margin-top:1rem; float:left; margin-right:0.8rem;"><img style="max-width:300px;" src="<%=pagina.getImmagine()%>" alt="Icona"/></p>
+		<%	}
+	}%>
+		<p style="margin-top:0.5rem;">
+			<%=edizione.getAbstract() %><br/>
+			<a href="<%=pagina.getPadre().getLink() %>"><span class="glyphicon glyphicon-hand-right" aria-hidden="true"></span> Approfondisci i contenuti</a>
+		</p>
