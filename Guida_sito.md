@@ -214,7 +214,7 @@ Ti diamo poi anche qualche suggerimento su come comportarti in certi casi "consu
 Le pagine del sito sono composte da diversi tipi di documenti, ognuna con le proprie funzioni, caratteristiche, dipendenze.
 
 
-<h2>Paragrafi</h2>
+<h3>Paragrafi</h3>
 Il documento visualizzato sul sito pubblico riporta il titolo e i paragrafi che, a loro volta, possono contenere immagini. Per inserire un paragrafo premi "Inserisci nuovo paragrafo".
 
 <h3>Contiene quattro campi:</h3>
