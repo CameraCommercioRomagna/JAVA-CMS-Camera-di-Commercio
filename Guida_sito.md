@@ -347,7 +347,7 @@ Il numero è visibile dalle maschere di amministrazione.
 Aggiornamento dei contenuti
 Per aiutare i redattori a mantenere i contenuti del sito sufficientemente aggiornati è stata sviluppata una funzione apposita. Un aggiornamento costante è molto importante l'esito di questa attività viene visualizzata nel sito pubblico in fondo ad ogni pagina.
                 
-<h2>Aggiornamento del documento<h2>
+<h2>Aggiornamento del documento</h2>
 Quando per la prima volta si valida un documento si presume che il contenuto sia aggiornato e cioè che: 
     • tutti i campi siano stati controllati
     • tutti i testi siano stati riletti e verificati
