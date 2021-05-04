@@ -1,0 +1,90 @@
+<%@include file="/amministrazione/common/include/begin.jsp" %>
+<%@include file="./_header_auth.jsp" %>
+
+<%	ErogatoreServizi erogatore = null;
+	List<Sportello> sportelli = null;
+	Date data = null;
+	try{
+		%><%@include file="./_parameter_erogatore.jsp" %><%
+		sportelli=(erogatore instanceof Sportello ? Arrays.asList((Sportello)erogatore) : ((Sede)erogatore).getSportelli());
+			
+		data=DateUtils.stringToDate(request.getParameter("data"), "yyyy-M-d");
+				
+		boolean salva = request.getParameter("Aggiungi")!=null && request.getParameter("Aggiungi").equals("Aggiungi");
+		if (salva){
+			try{
+				for (Sportello s: sportelli){
+					Annotazione nuovaNota=new Annotazione();
+					nuovaNota.initialize(connPostgres);
+					nuovaNota.data = data;
+					nuovaNota.cod_sportello = s.name();
+					nuovaNota.chiuso = new Boolean(request.getParameter("chiusura"));
+					if (request.getParameter("note_riservate")!=null && !request.getParameter("note_riservate").equals(""))
+						nuovaNota.note_riservate = request.getParameter("note_riservate");
+					nuovaNota.insert();
+				}
+				response.sendRedirect("/amministrazione/appuntamenti-online/index.htm?erogatore="+erogatore.getSede().name());
+			}catch(Exception eUpdate){}
+		}
+	}catch(Exception eValue){
+		response.sendRedirect(HOME);
+	}
+	Class<? extends ErogatoreServizi> erogatoreType=erogatore.getClass();%>
+	
+<!doctype html>
+
+<html lang="it">
+<head>
+	<%@include file="/amministrazione/common/struct_template/head.htm" %>
+	
+	<script>
+		$(function() {
+			var note=$("#note");
+			note.hide();
+			
+			$("#chiusura[name=chiusura]").change(function(){
+				note.toggle();
+			});
+		});
+	</script>
+</head>
+
+<body>
+	<%@include file="/amministrazione/common/struct_template/header.htm" %>
+	<main class="main-content-admin">
+		
+		<h1 style="text-align:center">Appuntamenti online - <%=erogatoreType.getSimpleName() %> di <%=erogatore %></h1>
+		<h2 style="text-align:center">Inserisci nuova annotazione per il <%=DateUtils.formatDate(data) %></h2>
+		
+		<form>
+		<%	if (sportelli.size() > 1){%>
+			Nota relativa a 
+			<select name="erogatore" id="erogatore">
+				<option value="<%=((Enum)erogatore).name() %>">Tutta la sede</option>
+			<%	for (Sportello s: sportelli){%>
+				<option value="<%=s.name() %>"><%=s.getNome() %></option>
+			<%	}%>
+			</select>
+			<br/>
+		<%	}else{%>
+			<input type="hidden" id="erogatore" name="erogatore" value="<%=request.getParameter("erogatore")%>"></input>
+		<%	}%>
+			Inserire come giorno di chiusura 
+			<input type="radio" id="chiusura" name="chiusura" value="false">No</input>
+			<input type="radio" id="chiusura" name="chiusura" value="true" checked="checked">Sì</input>
+			
+			<br/>
+			<div id="note">
+				Inserire nota riservata
+				<textarea id="note_riservate" name="note_riservate"></textarea>
+			</div>
+			
+			<input type="hidden" id="data" name="data" value="<%=request.getParameter("data")%>"></input>
+			
+			<input type="submit" id="Aggiungi" name="Aggiungi" value="Aggiungi"></input>
+		</form>
+		
+	</main>
+
+</body>
+</html>

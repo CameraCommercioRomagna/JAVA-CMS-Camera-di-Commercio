@@ -1,0 +1,3 @@
+<%	String emailAppuntamentiHeader="";
+	String emailAppuntamentiFooter="";
+%>

@@ -1,0 +1,257 @@
+<%@include file="/amministrazione/common/include/begin.jsp" %>
+<%@include file="./_header_auth.jsp" %>
+
+<%	ErogatoreServizi erogatore = null;
+	Class<? extends ErogatoreServizi> erogatoreType=Sede.class;
+	try{
+		erogatore=Sede.valueOf(request.getParameter("erogatore"));
+	}catch(Exception eValue){
+		try{
+			erogatore=Sportello.valueOf(request.getParameter("erogatore"));
+		}catch(Exception eValue1){
+			//erogatore=Sede.RIMINI;
+		}
+	}
+	if(erogatore!=null){
+		erogatoreType=erogatore.getClass();
+	}%>
+	
+	
+	
+<!doctype html>
+<%@include file="/amministrazione/_load_pagina.jsp" %>
+
+<html lang="it">
+<head>
+	<%@include file="/amministrazione/common/struct_template/head.htm" %>
+	<link href='fullcalendar-4.0.2/core/main.css' rel='stylesheet' />
+    <link href='fullcalendar-4.0.2/daygrid/main.css' rel='stylesheet' />
+	<link href='fullcalendar-4.0.2/timegrid/main.css' rel='stylesheet' />
+	<link href='fullcalendar-4.0.2/list/main.css' rel='stylesheet' />
+	<link href='fullcalendar-4.0.2/custom.css' rel='stylesheet' />
+
+	<script src='fullcalendar-4.0.2/core/main.js'></script>
+    <script src='fullcalendar-4.0.2/daygrid/main.js'></script>
+	<script src='fullcalendar-4.0.2/timegrid/main.js'></script>
+	<script src='fullcalendar-4.0.2/list/main.js'></script>
+	<script src='fullcalendar-4.0.2/google-calendar/main.js'></script>
+	<script src='fullcalendar-4.0.2/interaction/main.js'></script>	
+	<script src='fullcalendar-4.0.2/core/locales/it.js'></script>
+	<style tytpe="text/css">
+		.fc-slats table tbody tr{
+			height: 2.3rem !IMPORTANT;
+		}
+	</style>
+	
+	
+	<%if(erogatore!=null){%>
+	<script>
+	
+	document.addEventListener('DOMContentLoaded', function() {
+		var calendarEl = document.getElementById('calendar');
+
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+			locale: 'it',
+			height: 'auto',
+			plugins: [ 'dayGrid', 'timeGrid', 'interaction', 'list' ],
+			
+			customButtons: {
+				userRefresh: {
+					text: 'Aggiorna',
+					click: function() {
+						calendar.refetchEvents();
+					}
+				}
+			},
+			header: {
+				left: 'prev,next today userRefresh',
+				center: 'title',
+				right: 'listDay, dayGridMonth, timeGridWeek'
+			},
+			defaultView: 'timeGridWeek',
+			navLinks: true,
+			
+			nowIndicator: true,
+			allDaySlot: true,
+			allDayHtml: 'Note e <br/> chiusure',
+			weekends: false,
+			validRange: {
+				start: '<%=DateUtils.formatDate(DateUtils.addDays(new Date(), -30), "yyyy-MM-dd") %>' 
+			},
+			minTime: '08:00',
+			maxTime: '18:00',
+			businessHours: [ // specify an array instead
+				{
+					daysOfWeek: [ 1, 2, 3 ],
+					startTime: '09:00',
+					endTime: '12:30'
+				},
+				{	// Divisi solo per mostrare che si possono differenziare gli orari di apertura
+					daysOfWeek: [ 4, 5 ],
+					startTime: '09:00',
+					endTime: '12:30'
+				}
+			],
+			slotEventOverlap: false,
+			slotDuration: '00:15',
+			slotLabelInterval: '00:30',
+			slotLabelFormat: {
+				hour: 'numeric',
+				minute: '2-digit',
+				omitZeroMinute: false,
+				meridiem: 'short'
+			},
+
+			eventSources: [
+				{
+					url: './eventi.jsp',
+					method: 'GET',
+					extraParams: function(){
+						return {
+							erogatore: '<%=((Enum)erogatore).name() %>'
+						};
+					}
+				}/*,
+				{
+					googleCalendarId: 'it.italian#holiday@group.v.calendar.google.com'
+				}*/
+			],
+			
+			eventOverlap: false,
+			eventRender: function(info) {
+				if (info.view.type == 'listWeek' || info.view.type == 'listDay')
+				{
+					var htmlElement = $.parseHTML(info.el.innerHTML);
+					var aElement=$(htmlElement)[2];
+					aElement.innerHTML = '<a>' + info.event.extendedProps.description + '</a>';
+					
+					info.el.innerHTML = '<tr>' + $(htmlElement)[0].outerHTML + $(htmlElement)[1].outerHTML + $(htmlElement)[2].outerHTML + '</tr>';
+				}else{
+					if (info.event.extendedProps != null){
+						$(info.el).tooltip({
+							html: true,
+							title: info.event.extendedProps.description<%	if (amministratoreAppuntamenti){%> + '<br/><a href=".?erogatore=<%=((Enum)erogatore).name() %>" id="app-' + info.event.id + '">Elimina</a>'<%	}%>,
+							trigger: (info.event.extendedProps.opzionato == "yes" ? '' : 'click')	// Era 'click hover', ma semplificato per fare funzionare il resize
+						});
+					
+						$(info.el).on('shown.bs.tooltip', function () 
+						{
+							$('#app-' + info.event.id).click(function()
+							{
+								if (confirm('Confermi eliminazione?'))
+								{
+									var prefixNote="nota-";
+									var id = (
+										info.event.id.indexOf(prefixNote) == -1 ? 
+										"id_appuntamento="+info.event.id : 
+										"id_annotazione="+info.event.id.substring(prefixNote.length)
+									);
+									$.post("esegui.jsp?op=elimina&" + id, function(data) {
+										if (data.indexOf("ERRORE") != -1){
+											alert("Impossibile eliminare l'appuntamento.");
+											info.revert();
+										}
+									});
+								}else
+									return false;
+							});
+						});
+					}
+				}
+			},
+			
+		<%	if (amministratoreAppuntamenti){%>
+			dateClick: function(info) {
+				
+				if (info.allDay){
+					var data = info.date.getFullYear()+"-"+(info.date.getMonth()+1)+"-"+info.date.getDate();
+					var dataString = info.date.getDate()+"/"+(info.date.getMonth()+1)+"/"+info.date.getFullYear();
+					if (confirm('Vuoi aggiungere una nuova nota in data ' + dataString + '?')){
+						var url="<%=currentServer %>/amministrazione/appuntamenti-online/annotazione.htm?data=" + data + "&erogatore=<%=((Enum)erogatore).name()%>";
+						location.href = url;
+					}
+				}else{
+					// Aggiusta i minuti per impedire di creare appuntamenti che iniziano in orari non ammessi (unici ammissibili sono xx:00 e xx:30)
+					var minuti = (info.date.getMinutes()==15 ? 0 : (info.date.getMinutes()==45 ? 30 : info.date.getMinutes()));
+					var data = info.date.getFullYear()+"-"+(info.date.getMonth()+1)+"-"+info.date.getDate();
+					var dataOra = info.date.getDate()+"/"+(info.date.getMonth()+1)+"/"+info.date.getFullYear()+" "+info.date.getHours()+":"+leftPadding(minuti, 2, '0');
+					if (confirm('Vuoi aggiungere un nuovo appuntamento in data ' + dataOra + '?')){
+						// Prima di revisione logica servizio-sede var url="<%=currentServer %>/appuntamenti-online/?data=" + data + "&orario-<%=((Enum)erogatore).name()%>=" + dataOra;
+						var url="<%=currentServer %>/appuntamenti-online/?data=" + data + "&sede=<%=((Enum)erogatore).name()%>&orari=" + dataOra;
+						window.open(url);
+					}
+				}
+			},
+		<%	}%>
+			
+			editable: true,
+			eventDurationEditable: false,
+			eventDrop: function(info) {
+				var eventoOld = info.oldEvent;
+				var dataOraOriginale = eventoOld.start.getDate()+"/"+(eventoOld.start.getMonth()+1)+"/"+eventoOld.start.getFullYear()+" ["+eventoOld.start.getHours()+":"+eventoOld.start.getMinutes() + " - " +eventoOld.end.getHours()+":"+eventoOld.end.getMinutes()+ "]";
+
+				var eventoNew = info.event;
+				var dataOraFinale = eventoNew.start.getDate()+"/"+(eventoNew.start.getMonth()+1)+"/"+eventoNew.start.getFullYear()+" ["+eventoNew.start.getHours()+":"+eventoNew.start.getMinutes() + " - " +eventoNew.end.getHours()+":"+eventoNew.end.getMinutes()+ "]";
+				
+				var dataOraFinaleInit = eventoNew.start.getDate()+"/"+(eventoNew.start.getMonth()+1)+"/"+eventoNew.start.getFullYear()+" "+eventoNew.start.getHours()+":"+eventoNew.start.getMinutes();
+				var dataOraFinaleEnd = eventoNew.end.getDate()+"/"+(eventoNew.end.getMonth()+1)+"/"+eventoNew.end.getFullYear()+" "+eventoNew.end.getHours()+":"+eventoNew.end.getMinutes();
+
+				if (!confirm("Confermi lo spostamento dell'appuntamento da " + dataOraOriginale + " a " + dataOraFinale + "?")) {
+					info.revert();
+				}else{
+					$.post("esegui.jsp?op=sposta&id_appuntamento="+info.event.id+"&inizio="+dataOraFinaleInit+"&fine="+dataOraFinaleEnd, function(data) {
+						if (data.indexOf("ERRORE") != -1){
+							alert("Impossibile aggiornare l'appuntamento.");
+							info.revert();
+						}
+					});
+				}
+			}
+			
+		});
+		
+		calendar.render();
+	});
+    </script>
+	<%}%>
+	<script>
+	function leftPadding(num, padlen, padchar) {
+		var pad_char = typeof padchar !== 'undefined' ? padchar : '0';
+		var pad = new Array(1 + padlen).join(pad_char);
+		return (pad + num).slice(-pad.length);
+	}
+	</script>
+</head>
+
+<body>
+	<%@include file="/amministrazione/common/struct_template/header.htm" %>
+	<main class="main-content-admin">
+		<div class="row">
+			<div class="col-md-3 col-sm-4 col-xl-2 order-sm-2" style="padding-left:0px !IMPORTANT;">
+				<%@include file="/amministrazione/common/struct_template/menu_sx.htm" %>
+			</div>
+			
+			<div class="col-md-9 col-sm-8 col-xl-10 order-first order-sm-2 border-gray">
+			
+				<h1 style="text-align:center">
+					<form>
+						Appuntamenti online - <%=erogatoreType.getSimpleName() %> di 
+						<select id="erogatore" name="erogatore" onchange="return this.form.submit()">
+							<option value="">Seleziona sede</option>
+					<%	for(ErogatoreServizi e: erogatoreType.getEnumConstants()){%>
+							<option value="<%=((Enum)e).name() %>"<% if (e==erogatore){%> selected<%}%>><%=e %></option>
+							</div>
+					<%	}%>
+						</select>
+					</form>
+				</h1>
+					
+				<div id="calendar"></div>
+		
+			</div>
+		</div>
+		
+	</main>
+
+</body>
+</html>
