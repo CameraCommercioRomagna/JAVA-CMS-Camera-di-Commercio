@@ -1,19 +1,5 @@
 
-
-
-
-
-
-
-
-
-Sito istituzionale
-
-
-
-Guida per i redattori
-
-
+<h1>Guida per i redattori</h1>
 
 Versione 3.0 
 
@@ -91,8 +77,6 @@ Elenco delle funzionalità attive
     • contatta il Registro delle imprese, servizio già realizzato sul sito provvisorio ed eventuale estensione ad altri uffici o aree tematiche. Questo servizio è già predisposto per essere utilizzato anche da altri uffici.
     • appuntamenti, per consentire all'utente di fissare on line appuntamenti con gli uffici che lo prevedono;
 
-
-
 <h2>Aspetti operativi</h2>
 In questa sezione della Guida ti spieghiamo le modalità di inserimento e di amministrazione dei contenuti per iniziare subito a lavorare. E' costruita come una guida passo-passo per affiancarti durante le tue attività di redazione. 
 Browser
@@ -114,7 +98,6 @@ All'accesso ti appare la finestra di amministrazione. E' composta da tre zone:
     • il box di sinistra contiene le funzioni di ricerca e di filtro dei contenuti
     • il box al centro è dedicato alla gestione dei contenuti
 
-
 <h3>Box "Utente"</h3>
 A destra in alto trovi un box con funzioni di utilità per l'utente connesso. 
 Vi sono riportati l'utente connesso e le funzioni per 
@@ -122,7 +105,6 @@ Vi sono riportati l'utente connesso e le funzioni per
     • effettuare il logout e uscire dalla sezione di amministrazione del sito
 Barra "Legenda"
 Si tratta della spiegazione delle rappresentazioni grafiche (icone) utilizzate nella gestione dei contenuti.
-
 
 <h3>Box "Ricerca"</h3>
 Il box di sinistra contiene una raccolta di utilità trasversali
@@ -141,12 +123,8 @@ In questa sezione puoi indicare in quale ambito va effettuata la ricerca o acced
 Il box centrale è dedicato alla gestione dei documenti: inizialmente la visualizzazione è impostata sulle aree tematiche ma mantiene le stesse caratteristiche anche negli ambiti successivi.
 Queste, in breve, le sezioni che trovi:
 1) navigazione: descrive il percorso in cui ti trovi in questo momento. Puoi muoverti nell'albero cliccando sui titoli visualizzati
-
 2) ricerca con indicazione dell'ambito di ricerca e del numero dei documenti trovati
-
-
 3) possibilità di inserimento di un nuovo documento (i redattori non possono inserire nuove aree tematiche)
-
 4) elenco dei risultati; ogni documento estratto è sintetizzato in una singola cornice colorata a seconda dello stato del documento
     • in grigio se il documento non è validato
     • in giallo se il documento è validato e non è pubblicato
@@ -162,12 +140,9 @@ ogni cornice riporta
 
 <h2>Cominciamo a lavorare</h2>
 Come si è detto all'accesso viene proposta la selezione delle aree tematiche. Qualora fosse necessario, puoi creare una nuova area tematica premendo su "inserisci area tematica" (funzione riservata al Comitato); considerato che le aree saranno sostanzialmente stabili, sarà quindi più probabile che ti troverai a lavorare in una area esistente. 
-
 Cliccando sul titolo del documento o premendo il pulsante di modifica si apre una finestra divisa in due sezioni: 
     • Gestisci i contenuti della pagina (in alto)
     • Gestisci i contenuti che derivano da questa pagina (in basso)
-
-
 <h3>Gestisci i contenuti della pagina</h3>
 Questa finestra propone, in base alla tipologia del documento che stai trattando un raccoglitore a linguette (tabs) nelle quali trovi i campi necessari a definire i contenuti e a regolarne la visibilità. Nel caso dell'area tematica i tab sono:
     • tab “Contenuto”:
@@ -214,12 +189,11 @@ Se invece lavori su una competenza puoi inserire o modificare tutte le attività
 Le tipologie di oggetti inseribili è contestuale e dipende dalla tipologia dell'oggetto padre seguendo le regole stabilite in fase di programmazione dell'alberatura del sito; anche i campi disponibili pur essendo sostanzialmente simili dipendono dall'oggetto.
 Le risposte del sistema sono contestuali all'operazione richiesta: se, ad esempio, scegli "inserisci normativa" ti verrà chiesto di inserire un download (scaricamento di un file) o un link (referenza ad un’altra pagina).
 
-Anteprima
+<h3>Anteprima</h3>
 Dove finiscono i contenuti hai caricato? Per consentirti di verificare la correttezza di quanto stai inserendo su ogni oggetto è presente la funzione di anteprima.
 L'anteprima qui descritta rispetta gli standard grafici ed editoriali del sito pubblico; sostanzialmente è distinta in box con scopi omogenei. 
 
-
-Box “Navigazione” 
+<h3>Box “Navigazione”</h3> 
 Contiene il percorso per reperire la pagina, composto dalla serie dei titoli delle pagine; questi titoli sono cliccabili per aprire direttamente la pagina.
 Box “Menu” 
 Riporta i titoli dei documenti che derivano dalla pagina (figli) se si tratta di area tematica o competenza o gruppo attività; nel caso invece si stia visualizzando un'attività saranno elencati i titoli delle altre attività della stessa competenza (fratelli).
@@ -232,230 +206,19 @@ Vi sono raccolte informazioni utili all'utenza, come la normativa riguardante l'
 Box “Comunicazione” 
 In questo box, di taglio prettamente comunicativo, vengono riportate in sequenza le notizie collegate all'oggetto della pagina: comunicati stampa, notizie dalla Camera o dal territorio con la visualizzazione dell'immagine associata.
 
-
-Approfondimenti ed esempi
+<h2>Approfondimenti ed esempi</h2>
 Se hai letto le prime tre parti della Guida sai ciò che ti serve per operare correttamente sul sito.
 In questa ultima parte riprendiamo alcuni argomenti trattati in precedenza cercando di darti qualche dettaglio in più. 
 Ti diamo poi anche qualche suggerimento su come comportarti in certi casi "consueti" o "particolari" facendoti anche alcuni esempi.
 
-Tipologie di documenti 
-Le pagine del sito sono composte da diversi tipi di documenti, ognuna con le proprie funzioni, caratteristiche, dipendenze. La tabella che segue riepiloga le tipologie di documenti previste e le eventuali relazioni con altri oggetti.
+<h3>Tipologie di documenti </h3>
+Le pagine del sito sono composte da diversi tipi di documenti, ognuna con le proprie funzioni, caratteristiche, dipendenze.
 
-home aree tematiche
-rappresenta l’accesso ai contenuti del sito
-    • padre: nessuno
-    • figli: 
-area tematica
-carousel
-area tematica
-rappresenta un raggruppamento di competenze camerali omogenee cioè in base ad argomenti comuni: i redattori non possono creare nuove competenze
-    • padre: home aree tematiche (è raggiungibile dalla home del sito pubblico attraverso il menu dei bisogni)
-    • figli: 
-competenza
-servizio on line
-struttura camerale
-competenza
-è un compito affidato alla Camera di commercio (per legge, per indicazione degli Organi istituzionali o con altri strumenti)
-    • padre: area tematica
-    • figli: attività (tutti i tipi) ma anche:
-normativa
-servizio online
-struttura camerale
-comunicazione: comunicato stampa
-comunicazione: notizia dalla camera
-comunicazione: notizia dal territorio
 
-attivita
-è l'azione che la Camera intraprende per lo svolgimento del compito; 
-questa macro tipologia è stata suddivisa in tipologie più specifiche
-    • padre: competenza
-    • figli: a seconda del tipo di attività (vedi di seguito)
-attivita: 
-procedimento
-descrive un procedimento amministrativo
-    • padre: competenza
-    • figli:
-normativa
-servizio online
-struttura camerale
-edizione evento
-comunicazione: comunicato stampa
-comunicazione: notizia dalla camera
-comunicazione: notizia dal territorio
-guide e moduli: modulistica
-guide e moduli: guida
-guide e moduli: faq
-file utile
-attivita: 
-iniziativa
-descrive un’iniziativa o un progetto avviato dalla Camera
-    • padre: competenza
-    • figli:
-immagine
-video
-normativa
-servizio online
-struttura camerale
-edizione evento
-comunicazione: comunicato stampa
-comunicazione: notizia dalla camera
-comunicazione: notizia dal territorio
-guide e moduli: modulistica
-guide e moduli: guida
-guide e moduli: faq
-file utile
-attivita: 
-finanziamento
-è un'iniziativa di sostegno economico promosso dalla Camera
-    • padre: competenza
-    • figli:
-normativa
-servizio online
-struttura camerale
-edizione evento
-comunicazione: comunicato stampa
-comunicazione: notizia dalla camera
-comunicazione: notizia dal territorio
-guide e moduli: modulistica
-guide e moduli: guida
-guide e moduli: faq
-file utile
-attivita: 
-pubblicazione
-descrive una pubblicazione (monografia o serie) promossa o realizzata dalla Camera
-    • padre: competenza
-    • figli:
-volume
-normativa
-servizio online
-struttura camerale
-edizione evento
-comunicazione: comunicato stampa
-comunicazione: notizia dalla camera
-comunicazione: notizia dal territorio
-guide e moduli: modulistica
-guide e moduli: guida
-guide e moduli: faq
-file utile
-attivita: 
-attività formativa
-è un intervento formativo realizzato o promosso dalla Camera
-    • padre: competenza
-    • figli:
-normativa
-servizio online
-struttura camerale
-edizione evento
-comunicazione: comunicato stampa
-comunicazione: notizia dalla camera
-comunicazione: notizia dal territorio
-guide e moduli: modulistica
-guide e moduli: guida
-guide e moduli: faq
-file utile
-gruppo attività
-è un raccoglitore che permette di raggruppare un insieme omogeneo di attività (riservato al Comitato)
-    • padre: competenza o gruppo attività
-    • figli: attività
-normativa
-servizio online
-struttura camerale
-edizione evento
-comunicazione: comunicato stampa
-comunicazione: notizia dalla camera
-comunicazione: notizia dal territorio
-guide e moduli: modulistica
-guide e moduli: guida
-guide e moduli: faq
-file utile
-normativa
-è l’indicazione di una norma legislativa (possibilmente un link a Normattiva)
-    • padre: competenza o attività
-    • figli: nessuno
-servizio online
-descrive servizio realizzato o promosso dalla Camera accessibile in rete
-    • padre: area tematica, competenza o attività
-    • figli: nessuno
-struttura camerale
-rappresenta una struttura organizzativa (ad esempio un ufficio)
-    • padre: area tematica, competenza o attività
-    • figli: nessuno
-edizione evento
-descrive un evento
-    • padre: attività
-    • figli: 
-atto evento
-immagine
-video
-file utile
-struttura camerale
-comunicazione: 
-comunicato stampa
-è un comunicato stampa diramato dalla Camera
-    • padre: competenza o attività
-    • figli: 
-immagine
-file utile
-comunicazione: 
-notizia dalla camera
-rappresenta una notizia generica diffusa dalla Camera
-    • padre: competenza o attività
-    • figli: file utile
-comunicazione: 
-notizia dal territorio
-rappresenta una notizia proveniente dall'esterno diffusa anche dalla Camera; viene trattata dal sistema con un livello di priorità più basso rispetto alla “notizia dalla camera”
-    • padre: competenza o attività
-    • figli: file utile
-guide e moduli: 
-modulistica
-contiene un modulo correlato ad una attività (tipicamente un pdf compilabile)
-    • padre: competenza o attività
-    • figli: nessuno
-guide e moduli: 
-guida
-rimanda a un documento di istruzioni alle procedure e alla compilazione di moduli e form
-    • padre: competenza o attività
-    • figli: nessuno
-guide e moduli: 
-faq
-raccoglie le domande frequenti a chiarimento dell'argomento trattato
-    • padre: competenza o attività
-    • figli: nessuno
-atto evento
-rappresenta un atto a corredo di un evento come presentazioni e altri documenti 
-    • padre: edizione evento
-    • figli: nessuno
-immagine
-è un'immagine correlata all'argomento trattato; 
-    • padre:
-edizione evento
-comunicazione:comunicato stampa
-    • figli: nessuno
-video
-è un contenuto audio-video correlato all'argomento trattato 
-    • padre:
-edizione evento
-comunicazione:comunicato stampa
-    • figli: nessuno
-file utile
-o file allegato
-è il download di un file qualunque (tipicamente un pdf/a) utile per l'utente. Per le affissioni e la pubblicità legale prende il nome di file allegato
-    • padre: 
-attivita
-edizione evento
-comunicazione
-    • figli: nessuno
-volume
-è il download di un file (tipicamente un pdf/a) e individua un singolo numero di pubblicazione
-    • padre: attivita: pubblicazione
-    • figli: nessuno
-
-Paragrafi
+<h2>Paragrafi</h2>
 Il documento visualizzato sul sito pubblico riporta il titolo e i paragrafi che, a loro volta, possono contenere immagini. Per inserire un paragrafo premi "Inserisci nuovo paragrafo".
 
-Ecco la maschera di inserimento che appare:
-
-Contiene quattro campi:
+<h3>Contiene quattro campi:</h3>
 Per i paragrafi il titolo non è obbligatorio.
 L'inserimento del testo nell'apposita area si effettua utilizzando uno specifico editor. Le funzioni di formattazione ammesse sono poche rispetto ad un editor come Write o Word: si tratta di una precisa scelta per non sporcare la pagina con formattazioni non conformi a quanto previsto dalle regole sull'accessibilità. Anche l'inserimento tramite un semplice "copia e incolla" ripulisce il contenuto dai caratteri non ammessi che possono generare problemi di visualizzazione. 
 Per incompatibilità con le prescrizioni sull'accessibilità delle pagine la possibilità  di generare tabelle è stata disattivata.
@@ -465,17 +228,10 @@ Attraverso il campo Ordine puoi modificare la sequenza dei paragrafi nel documen
 Per confermare premi "Salva"; se premi "Annulla" le modifiche non saranno accolte.
 Se lo ritieni utile, puoi attivare un indice dei paragrafi del documento che verrà visualizzato all'inizio della pagina. 
 
-Ecco un esempio.
-
 Puoi attivare e disattivare l'indice a piacere. 
-Icone, immagini e video
 Nella scelta delle immagini da utilizzare tieni sempre conto di quanto raccomandato nella sezione "scrittura sul web". L’inserimento di immagini attraverso le procedure previste determina anche l’inserimento automatico di un testo alternativo per rispettare i criteri di accessibilità del sito. Esistono vari tipologie di immagini utilizzate per il sito:
-icone – sono piccoli bottoni che individuano certe tipologie di documenti come download, link ecc, e sono predeterminati in fase di progetto grafico del sito; non si possono scegliere e vengono attribuiti automaticamente agli oggetti a seconda degli ambiti in cui appaiono;
-immagine (di documento) – sono immagini più grandi associate ad alcune tipologie di documento (non nelle aree tematiche e nelle competenze) e appaiono in certi contenitori come le news assieme al titolo e all’abstract e nei risultati del motore di ricerca; a queste immagini si può anche associare un link; per uniformità grafica se non viene caricata un’immagine specifica il sistema ne assocerà una generica (formato standard 310 * 210 pixel); immagini più grandi saranno ridimensionate e tagliate mentre formati inferiori non saranno accettati;
-immagine (di paragrafo) – sono immagini associate ad un singolo paragrafo del documento e appaiono assieme al suo testo; a queste immagini si può anche associare un link; i formati previsti sono il *.png o il *,jpg con una definizione di almeno 250 pixel di larghezza e di almeno 150 pixel di altezza; immagini più grandi saranno ridimensionate mentre formati inferiori non saranno accettati.
-immagine (oggetto) – sono vere e proprie immagini (tipicamente fotografie) che possono essere aggregate a certe tipologie di documenti come eventi o comunicati stampa; sono oggetti a sé stanti e vengono raccolti in particolari collettori che li visualizzano in sequenza animata (carousel); i formati previsti sono il *.png o il *,jpg con una definizione di almeno 250 pixel di larghezza e di almeno 150 pixel di altezza; immagini più grandi saranno ridimensionate e tagliate mentre formati inferiori non saranno accettati; il file da inserire va indicato nel campo "File" dell'oggetto Immagine.
-video (oggetto) - sono link a che possono essere aggregati a certe tipologie di documenti come eventi o comunicati stampa; è previsto solo l’inserimento di link, tipicamente a YouTube; sono una tipologia a sé stante e vengono visualizzati in particolari collettori.
-Link
+
+<h2>Link<(h2>
 E' un indirizzo web (URL) che rimanda ad un'altra pagina. In generale, per la preparazione dei link si raccomanda di seguire anche quanto raccomandato nella sezione "scrittura sul web".
 Puoi inserire link in vari modi e per diverse funzioni; eccone alcune:
 Link nel paragrafo
@@ -486,40 +242,8 @@ Gli elementi di questi link sono:
     • Text to display: è il testo che viene visualizzato nella pagina
     • Title: è un breve testo di aiuto che appare quando il mouse scorre sopra il link
     • Target: "None" indica se la nuova pagina deve apparire nella stessa finestra di navigazione (consigliato per le pagine interne al sito) o "New windows" se deve apparire in una nuova finestra (consigliato per i link esterni al sito)
-Link a pagine interne
-Si tratta di collegamenti inseriti manualmente dal redattore nelle pagine del sito ad altri oggetti presenti sul sito stesso. Esprimi la URL associata nella forma semplificata 
-/area-tematica/competenza/attivita.htm?ID_D=nnnn
-la puoi prelevare o dall'anteprima del suo documento senza riportare la prima parte dell’indirizzo 
-https://www.xxxx.camcom.it
-e l’ultima parte
-&preview=yes
-oppure nella card corrispondente in amministrazione al pulsante “Il mio link” sempre senza riportare la prima parte dell’indirizzo
-Link per esterni
-Si tratta di collegamenti ad oggetti presenti sul sito da divulgare agli esterni e possono assumere varie forme:
-    • forma completa (consigliata) come ad esempio:
-https://www.xxx.it/area-tematica/competenza/attivita.htm?ID_D=nnnn
-    • forma sintetica:
-https://www.xxx.it/paginaWeb.htm?ID_D=nnnn
-https://www.xxx.it/download/?DWN=nnnn
-La forma sintetica  va riservata solo a reali necessità di brevità ma è preferibile non utilizzarla perché questi link non consentono di conteggiare correttamente le azioni svolte dai visitatori sul sito e falsano le statistiche.
-Lo puoi prelevare allo stesso modo o dall'anteprima del suo documento senza riportare la prima parte dell’indirizzo 
-https://www.xxx.it
-e l’ultima parte
-&preview=yes
-oppure nella card corrispondente in amministrazione al pulsante “Il mio link” sempre senza riportare la prima parte dell’indirizzo
 
-Link a pagine esterne
-Si tratta di collegamenti ad oggetti esterni al sito. In questo caso la URL associata va espressa nella forma completa:
-http://www.xxx.it/
-
-File utili o allegati (download)
-
-I formati che puoi utilizzare per questi casi sono
-per i testi: *.odt, *.txt, *.rtf, *.doc, *.docx ....
-per i fogli elettronici: *.ods, *.csv, *.xls, *.xlsx ....
-per le presentazioni: *.odp, *.ppt, *.pps, *.pptx, *.ppsx...
-
-Struttura camerale
+<h2>Struttura camerale</h2>
 Rappresenta una struttura organizzativa (ad esempio un ufficio) di riferimento per l’argomento trattato nel documento.
 Quando crei una nuova struttura ti verrà presentato un documento, precompilato secondo una struttura generica oppure, se esiste, ad immagine della struttura specificata per il documento padre, che puoi modificare secondo le esigenze specifiche. Inserisci il nome della struttura, i luoghi di erogazione dei servizi, gli orari, i numeri telefonici e gli indirizzi email (meglio se alias di gruppo). Cerca di inserire riferimenti esatti e presidiati ed evita di indicare i nomi delle persone.
 In fondo alla struttura apparirà anche il link “Sedi e orari della Camera”.
@@ -528,26 +252,26 @@ L’uniformità delle informazioni inserite è molto importante perché i docume
 FAQ: domande frequenti
 E' un documento che raccoglie le domande frequenti.. Possibilmente inserire le domande in merito ad un determinato argomento in un unico documento in cui il titolo del paragrafo contiene la domanda e il testo del paragrafo contiene la risposta e attivando la visualizzazione dell'indice. 
 
-Comunicati e notizie
+<h2>Comunicati e notizie</h2>
 Sono documenti specifici di taglio comunicativo solitamente associati a particolari competenze, attività, eventi eccetera. Ne sono previste tre tipologie:
     • comunicato stampa: sono i comunicati ufficiali diramati dalla Camera di commercio e vengono visualizzati, oltre che negli ambiti a cui sono associati, cioè quelli a cui la notizia si riferisce, anche negli appositi collettori predisposti per l'area della comunicazione;
     • notizia dalla camera: qualunque altra notizia di provenienza interna alla Camera;
     • notizia dal territorio: sono notizie su eventi, iniziative eccetera esterni alla Camera ma a cui si vuole dare comunque risalto; sono trattate come le notizie camerali ma con una priorità inferiore.
 
-Automatismi
-Navigazione
+<h2>Automatismi</h2>
+<h3>Navigazione</h3>
 I documenti possono essere raggiunti dagli utenti in vari modi
 1) Tramite il menù dei bisogni seguendo la sequenza attività tematica -> competenza -> attività. Questa è la navigazione standard; ricordati che se un livello intermedio, inserito per rispettare la gerarchia, non è stato valorizzato (non ha paragrafi e ha un solo figlio validato, pubblicato e non scaduto) non verrà visualizzato e la navigazione passerà all'elemento seguente. Le schede che si comportano in questo modo in amministrazione sono visualizzati col simbolo dell'occhio barrato ma, ricorda è comunque necessario validare anche questa pagine "intermedie".
 2) Dalla home page o tramite i link sui collettori.
 3) Tramite i risultati del motore di ricerca interno o di altri esterni.
 4) Tramite accesso diretto alla pagina  digitando il suo indirizzo (URL) 
-Propagazione automatica contenuti
+<h3>Propagazione automatica contenuti</h3>
 Alcuni contenuti possono essere propagati automaticamente da un documento ad un altro ad esso collegato senza doverlo replicare; la propagazione segue logiche diverse a seconda della sua tipologia.
 In particolare:
     • la struttura camerale, selezionabile a partire da una attività, si propaga a tutti i discendenti fino a quando non ne viene indicata un’altra;
     • una comunicazione (comunicato stampa, notizia dalla camera e notizia dal territorio) si propaga a tutte le pagine superiori fino a quella dell’area tematica;
     • un servizio on line si propaga in alto solo fino al padre e in basso verso tutti i discendenti.
-Visibilità nel sito pubblico
+<h3>Visibilità nel sito pubblico</h3>
 Come si è detto, per essere visibile è indispensabile che un documento sia "validato". Oltre a questa impostazione è possibile determinare gli ambiti e le priorità di apparizione attraverso il settaggio dei campi del tab "Pubblicazione".
 Per ogni documento validato e non scaduto puoi determinare gli ambiti di visibilità nel sito pubblico attraverso le opzioni impostate nel campo "Visibile in" del tab "Pubblicazione". 
 Le opzioni previste sono (nell’ordine dalla visibilità minore alla maggiore):
@@ -560,7 +284,7 @@ Per visualizzare un evento nell’Agenda della home occorre impostare la visuali
 I documenti scaduti non vengono più visualizzati negli ambiti precedentemente descritti ma potrebbero comunque essere visibili ad esempio:
     • l'utente conosce la URL per accedere direttamente;
     • il documento è raccolto in speciali collettori di archivio
-Collettori
+<h2>Collettori</h2>
 Esistono particolari box, in certi casi intere pagine, chiamati collettori che raccolgono, anche in maniera trasversale, vari documenti legati da caratteristiche comuni come la tipologia e il periodo di pubblicazione.
 Di seguito te ne illustriamo i principali.
 Collettore “archivio”
@@ -581,26 +305,21 @@ Motori di ricerca
 Il motore di ricerca consente di reperire direttamente i contenuti in base alle parole indicate dall’utente evitando di cercarli attraverso i percorsi previsti. E’ dimostrato che oggi il maggior numero di pagine è consultato a seguito di una ricerca fatta sui motori di ricerca interni o esterni.
 I motori effettuano periodicamente una scansione del sito (indicizzazione) e raccolgono per ogni pagina il maggior numero possibile di informazioni; tutte le parole contenute nella pagina concorrono all’indicizzazione ma con peso differente a seconda della loro posizione: ad esempio nel documento che presenta la parola nel titolo peserà di più rispetto ad un documento che la contiene nel testo.
 
-Visibilità nei motori di ricerca
+<h3>Visibilità nei motori di ricerca</h3>
 Per fare un buon servizio all'utenza è necessario che i contenuti inseriti nel sito siano fruibili facilmente sia a chi naviga il sito sia a chi effettua la ricerca sui motori. In questo caso è importante che le pagine siano correttamente referenziate per consentire una precisa individuazione dei contenuti e, possibilmente, raggiungere un elevato rating sui principali motori (es. Google).
 A questi fini dovresti dedicare attenzione a quanto inserisci nei campi: titolo, abstract e parole chiave.
-Parole chiave
+<h3>Parole chiave</h3>
 Nel Tab “Contenuti” della sezione “Gestisci i contenuti della pagina” puoi inserire un elenco di parole separate da virgole (parola1, parola2, parola3, …). 
 Si consiglia di inserire da 5 a 20 parole che rafforzino i temi trattati nel documento ed eventuali sinonimi; saranno utilizzate dai motori di ricerca per trovare le pagine più pertinenti alla richiesta effettuata. Indicale con molta cura per avere buoni livelli di presenza. 
 I motori di ricerca selezioneranno i documenti che contengono le parole indicate dando priorità a quelli che ne contengono di più e in campi più significativi (come i titoli e, appunto, le parole chiave); i documenti che riscontrano una prossimità delle parole richieste hanno una ulteriore priorità.
-Funzionalità sulla card del documento
+<h2>Funzionalità sulla card del documento</h2>
 Ogni singolo documento è individuato in amministrazione tramite un box (card) che ne riporta alcune informazioni ma di fornisce anche numerose possibilità operative.
 Di seguito vengono descritte nel dettaglio.
 
 
-
-
-
-
-
-Modifica un documento
+<h3>Modifica un documento</h3>
 Per modificare un documento premi sul suo titolo a sull’apposita icona.
-Duplica un documento
+<h3>Duplica un documento</h3>
 Se desideri creare un nuovo oggetto simile ad uno già esistente puoi farlo premendo il tasto "Duplica". Verrà creato un nuovo oggetto con lo stesso titolo preceduto dalla specifica "Copia di ". 
 
 Il documento creato risulterà svalidato.
@@ -609,18 +328,18 @@ Anteprima di un documento
 Puoi visionare come verrà visualizzato il tuo documento nel sito pubblico prima di validarlo premi sull’apposita icona.
 Ricorda che potrai visualizzare il documento anche se non è validato ma i contenuti correlati saranno visualizzati solo se validati. 
 
-Dove mi trovi
+<h3>Dove mi trovi</h3>
 Con questa funzione puoi individuare la posizione di un documento: Questo può risultare particolarmente utile se ho cercato un documento tramite la funzione di ricerca.
-Il mio link
+<h3>Il mio link</h3>
 Con questa invece ottengo il link diretto al documento che posso divulgare anche all’esterno
 
 
 
-Ricerca dei documenti
+<h2>Ricerca dei documenti</h2>
 La ricerca dei documenti nella sezione di amministrazione può avvenire
     • navigando il suo percorso partendo dalla liste delle "Aree tematiche"
     • cercandolo con gli strumenti di filtro 
-Filtri
+<h3>Filtri<7h3>
 I filtri consentono di selezionare solo fra i documenti elencati nel box centrale: se devi cercare documenti indipendentemente dalla loro posizione prima seleziona l'opzione "Ricerca su tutta l'amministrazione" e poi imposta i filtri e premi "Applica filtri".
 I documenti possono essere filtrati in base al loro stato (Validati, Pubblicati, Scaduti), in base al loro numero, al proprietario o ad una parola o frase contenuta nel titolo.
 Percorso: dove mi trovi
@@ -630,8 +349,8 @@ E' un numero di identificazione che il sistema assegna automaticamente e univoca
 Il numero è visibile dalle maschere di amministrazione.
 Aggiornamento dei contenuti
 Per aiutare i redattori a mantenere i contenuti del sito sufficientemente aggiornati è stata sviluppata una funzione apposita. Un aggiornamento costante è molto importante l'esito di questa attività viene visualizzata nel sito pubblico in fondo ad ogni pagina.
-                ? 
-Aggiornamento del documento
+                
+<h2>Aggiornamento del documento<(h2>
 Quando per la prima volta si valida un documento si presume che il contenuto sia aggiornato e cioè che: 
     • tutti i campi siano stati controllati
     • tutti i testi siano stati riletti e verificati
@@ -643,7 +362,7 @@ Il periodo di riferimento di questo aggiornamento è stato fissato in un anno. D
     • rosso per documenti confermati da 8 a 12 mesi
 Trascorsi i dodici mesi non succede nulla; il documento resta pubblicato e visibile ma si consiglia di verificarlo nuovamente prima possibile.
 L'indicatore è un aiuto immediato per i redattori per individuare i documenti più vecchi. I contenuti non scaduti vanno dunque confermati almeno ogni 12 mesi mentre quelli scaduti no.
-Aggiornare i contenuti
+   <h3>Aggiornare i contenuti</h3>
 L'aggiornamento è una operazione volontaria e non automatica. Per indicare al sistema che vuoi rivedere i contenuti della pagina vai nel tab "Aggiornamento contenuti" e premi su "Conferma aggiornamento contenuti"
 La pagina apparirà per il tuo controllo alla fine del quale puoi decidere se confermarla o no scegliendo fra i due pulsanti in fondo.
 Se hai confermato, l'indicatore temporale riparte dall'inizio e sul sito apparirà la nuova data di aggiornamento.
@@ -651,19 +370,19 @@ Aggiornamento della sezione
 Come avrai notato, gli indicatori sono due. Il primo si riferisce alla pagina particolare su cui siamo mentre il secondo si riferisce alla sezione cioè all'insieme delle pagine e degli oggetti dipendenti dalla pagine e ti aiuta a capire se ci sono altri interventi da fare. Non puoi aggiornare un'intera sezione ma un documento alla volta.
 Ricordati che i documenti scaduti non concorrono più al calcolo dell'indice di aggiornamento e non vanno più confermati.
 
-Creazione email per mailing
+<h2>Creazione email per mailing</h2>
 Partendo da un qualunque documento pubblico (validato e non scaduto) puoi accedere alla funzionalità “Crea Email” per ottenere automaticamente un testo di mail formattato secondo la grafica istituzionale e divulgabile tramite mailing nel CRM.
 
 Puoi scegliere fra due possibilità:
 1. Email proposta dal sistema: genera una email composta in automatico dal sistema secondo criteri standard in dipendenza dalla tipologia di documento. 
 2. Email personalizzata: genera una email che viene creata inizialmente con il contenuto del documento ma che puoi rielaborare a piacere.
 
-Email proposta dal sistema
-Selezionando il caso 1, visualizzerai l’anteprima della proposta e dopo aver scelto opportunamente l’area tematica a cui associare il mailing, otterrai il codice html da incollare nel CRM.
+<h3>Email proposta dal sistema</h3>
+Selezionando il caso 1, visualizzerai l’anteprima della proposta e dopo aver scelto opportunamente l’area tematica a cui associare il mailing, otterrai il codice html.
 Nello specifico, confermata l’area, apparirà in fondo all’anteprima della email il pulsante “Visualizza il codice da copiare per creare la mail”. 
 Cliccando si aprirà una finestra pop-up contenente il codice html e il pulsante “Copia codice” che ne permetterà la copia diretta senza selezione; questa procedura, per quanto possa apparire non ottimizzata, è stata implementata per prevenire errori manuali in cui è facile incorrere copiando da codice sorgente.
 
-Email personalizzata
+<h3>Email personalizzata</h3>
 Selezionando il caso 2, il sistema creerà una email del tutto simile al documento di partenza e ti proporrà la modifica di tutte le sue parti; ricorda però che modificando le caratteristiche della mail quelle del documento di partenza non verranno toccate.
 Sarà così possibile mantenere l’email del tutto simile al documento originale oppure rielaborarla a piacere; ad esempio potrai
 - modificare il titolo;
@@ -676,21 +395,21 @@ La banda blu in coda al testo dell’email, con l’invito “Per saperne di pi�
 
 In qualunque momento potrai visualizzare l’anteprima della email per renderti conto del risultato. 
 
-Una volta composta l’email nel modo desiderato prosegui come descritto nel paragrafo precedente per ottenere il codice html da inserire nel CRM
+Una volta composta l’email nel modo desiderato prosegui come descritto nel paragrafo precedente per ottenere il codice html.
 
 
-Gestioni speciali
+<h2>Gestioni speciali</h2>
 Assieme alla gestione dei contenuti basata sulla suddivisione per area tematica e sull'albero di distribuzione descritto fin qui esistono altre gestioni speciali basate sulla stessa logica operativa ma che utilizzano alberi diversi.
 Queste gestioni sono descritte di seguito.
-Sezione riservata amministratori
+<h3>Sezione riservata amministratori</h3>
 Questa parte del sito è dedicata ai componenti degli organi camerali ed è finalizzata a condividere contenuti riservati e visibili solo a Consiglio, Giunta, Collegio sindacale.
 I contenuti di questa sezione possono essere inseriti solo dai redattori della Segreteria Generale.
-Notiziario quindicinale
+<h3>Notiziario quindicinale</h3>
 Ogni documento, sia esso un evento, una notizia o altro, può essere proposto per la pubblicazione nel notiziario quindicinale.
 I notiziari disponibili sono gestiti dal responsabile della comunicazione che il giorno prima della spedizione controlla le candidature e se lo ritiene opportuno le modifica, le valida e genera il notiziario.
 Una singola notizia di norma non può apparire in più di tre notiziari.
 Questa sezione è gestita da uno specifico servizio.
-Amministrazione trasparente
+<h3>Amministrazione trasparente</h3>
 Amministrazione trasparente è un'area che gli enti pubblici devono obbligatoriamente avere nel proprio sito la cui struttura è rigidamente prestabilita dalla normativa. Sul sito pubblico deve essere raggiungibile direttamente dalla home page tramite un link denominato appunto "Amministrazione trasparente".
 I documenti devono essere inseriti tempestivamente e restare pubblicati per un tempo prestabilito fino alla scadenza. Poi a seconda delle prescrizioni possono transitare in archivio (se il documento è scaduto) o sparire dal sito pubblico (se il documento è svalidato).
 
@@ -713,30 +432,7 @@ Il sistema ti chiederà cosa vuoi inserire. Scegli
 
 
 
-Tipologie di documenti per Amministrazione trasparente
-Le pagine di amministrazione trasparente utilizzano tipologie specifiche ma che sostanzialmente seguono la medesima logica del resto del sito.La tabella che segue riepiloga le tipologie di documenti previste e le eventuali relazioni con altri oggetti.
-home amministrazione trasparente
-rappresenta l’accesso ai contenuti specifici
-    • padre: nessuno
-    • figli: 
-sezione di amministrazione trasparente
-struttura camerale (vedi approfondimenti)
-sezione di amministrazione trasparente
-rappresenta una sezione specifica; queste sezioni sono espressamente richieste dalla normativa, possono essere annidate su più livelli e non vanno mai modificate nel titolo e nella posizione.
-Nuove sezioni vanno inserite solo in accordo col Comitato
-    • padre: 
-home amministrazione trasparente
-sezione di amministrazione trasparente
-    • figli: 
-documento di amministrazione trasparente
-documento di amministrazione trasparente
-rappresenta uno specifico contenuto e può essere espresso in tipologie analoghe a quelle descritte per la gestione generale. La scelta del tipo si effettua al momento della creazione dell’oggetto
-Nuove sezioni vanno inserite solo in accordo col Comitato
-    • padre: 
-sezione di amministrazione trasparente
-    • figli: 
-documento
-download
-link
+<h3>Tipologie di documenti per Amministrazione trasparente</h3>
+Le pagine di amministrazione trasparente utilizzano tipologie specifiche ma che sostanzialmente seguono la medesima logica del resto del sito.L
 
 
