@@ -1,0 +1,305 @@
+<%@include file="/common/include/begin.jsp" %>
+<%
+	Servizio servizio = null;
+	Sede sede= null;
+	Date data=null;
+	try{
+		servizio=Servizio.getServizio(Long.parseLong(request.getParameter("id_servizio")));
+		try{
+			sede=Sede.valueOf(request.getParameter("sede"));
+		}catch(Exception e){
+			String sedeString = request.getParameter("sede");
+			byte[] bytesSedeString = sedeString.getBytes(java.nio.charset.StandardCharsets.ISO_8859_1);
+			sedeString = new String(bytesSedeString, java.nio.charset.StandardCharsets.UTF_8);
+			sede=Sede.valueOf(sedeString);
+		}
+		data=DateUtils.stringToDate(request.getParameter("data"), "yyyy-M-d");
+	}catch(Exception e){}
+	
+	List<Sede> sedi=new ArrayList<Sede>();
+	if(servizio!=null){
+		sedi=servizio.getSedi();
+		if (sede == null && sedi.size()==1)
+			sede=sedi.get(0);
+	}
+								
+	Date primaDataDisponibile=DateUtils.addDays(DateUtils.trunc(new Date()), (servizio!=null ? servizio.getGiorniAnticipoPrenotazione().intValue() : 1));
+	Date ultimaDataDisponibile=DateUtils.changeMonth(primaDataDisponibile, 1);
+	//if (data==null || (!operatoreAppuntamentiOnline && (primaDataDisponibile.after(data) || ultimaDataDisponibile.before(data))))
+	if (!operatoreAppuntamentiOnline && data!=null && (primaDataDisponibile.after(data) || ultimaDataDisponibile.before(data)))
+		data=primaDataDisponibile;
+	
+	//Date primoDelMese=DateUtils.stringToDate("01/"+DateUtils.formatDate(primaDataDisponibile, "MM/yyyy"));
+	//Date ultimoDelMese=DateUtils.addDays(DateUtils.changeMonth(primoDelMese, 1), -1);
+	String disponibilitaServizio="";
+	if(servizio!=null&&sede!=null){
+		Map<Sede, List<Date>> disponibilitaServizioSedi=servizio.accessibile(Sede.class,primaDataDisponibile, ultimaDataDisponibile);
+		String ultimaData="";
+		List<Date> dateValide = disponibilitaServizioSedi.get(sede);
+		if (dateValide!=null){
+			for(Date d: dateValide){
+				String dataCorrente = DateUtils.formatDate(d, "dd.MM.yyyy");
+				if (!ultimaData.equals(dataCorrente)){
+					disponibilitaServizio += (ultimaData.equals("") ? "" : ", ") + "'" + dataCorrente + "'";
+					ultimaData = dataCorrente;
+				}
+			}
+		}else{
+			sede=null;
+			data=null;
+		}
+	}
+%>
+
+
+
+
+<!doctype html>
+<html <%=tagHtmlAttributes%>>
+<head>
+	<%@include file="/common/struct_template/head.htm" %>
+	<link rel="stylesheet" type="text/css" href="./datetimepicker-master/build/jquery.datetimepicker.min.css"/ >
+	<style type="text/css">
+	@media screen and (min-width: 500px) {
+			.xdsoft_datetimepicker .xdsoft_datepicker {
+				width: 25rem;	
+			}
+			.xdsoft_datetimepicker .xdsoft_calendar th, .xdsoft_datetimepicker .xdsoft_calendar td{
+				font-size: 15px;
+				height:3rem
+			}
+			.xdsoft_datetimepicker .xdsoft_label {
+				color:#071d49;
+				cursor: default !IMPORTANT;
+				font-size: 1.3rem;
+			}
+			
+			.xdsoft_datetimepicker .xdsoft_month {
+				width: 160px;
+			}
+		}
+
+		.xdsoft_datetimepicker .xdsoft_calendar td {
+				background: #ffffff;
+				color: #000;
+		}
+		.xdsoft_datetimepicker .xdsoft_calendar th{
+			background: #071d49;
+			color: #fff;
+		}
+		.xdsoft_datetimepicker .xdsoft_label {
+				color:#071d49;
+				cursor: default !IMPORTANT;
+				z-index: 1;
+		}
+		.xdsoft_datetimepicker .xdsoft_label:hover > span {
+				text-decoration: none;
+		}
+		.xdsoft_month > i, .xdsoft_year > i{
+				display:none !IMPORTANT;
+		}
+		.xdsoft_monthselect, .xdsoft_yearselect {
+				display:none !IMPORTANT;
+		}
+	
+	</style>
+<!--	<script src="./datetimepicker-master/jquery.js"></script>-->
+	
+	  <script type="text/javascript">
+		$(function(){
+			var servizio_val=$('select[name=id_servizio]');
+			var serv;
+			var orari=$('#orari');
+			var button=$('#salva_form');
+			var sede_val=$('select[name=sede]');
+			var sede;
+			var calendario=$('#calendario');
+			
+			servizio_val.change(function () {
+				url=location.pathname;
+				serv=servizio_val.val();
+				url = url + '?id_servizio=' + serv;
+			<%	if (operatoreAppuntamentiOnline){%>
+				if (location.search != "")
+					url = url + '&' + location.search.substring(1);
+			<%	}%>
+				location.replace(url);	
+			});
+			
+			button.hide();
+			
+			sede_val.change(function () {
+				url=location.pathname;
+				sede=sede_val.val();
+				url = url + '?id_servizio=' + <%=request.getParameter("id_servizio")%> + '&sede=' + sede;
+				location.replace(url);	
+			});
+
+			orari.change(function () {
+				button.show();
+				var currValue=$(this).val();
+				if ($(this).val()!=''){
+					orari.each(function () {
+						$(this).val('');
+					});
+					$(this).val(currValue);
+				}
+			});
+		});
+		
+		$().ready(
+			function(){
+				var button=$('#salva_form');
+				var orarioSelezionato=$('#orari').val()!="";
+				if (typeof $('#orari').val() !== 'undefined' && $('#orari').val()!=null && orarioSelezionato)
+					button.show();
+			}
+		);
+	</script>
+
+</head>
+
+
+<body class="body-public">
+	<%@include file="/common/struct_template/header.htm" %>
+<%	List<Servizio> servizi=Servizio.getServizi( (operatoreAppuntamentiOnline ? null : true) );
+	//List<Servizio> servizi=Servizio.getServizi(true);
+ 	%>
+	<main class="main-content container" style="margin-top:2rem;" role="main">
+		
+	<h2>Prenotazione appuntamenti online</h2>
+	<%if(request.getParameter("appuntamentoPerso")!=null && request.getParameter("appuntamentoPerso").equals("true")){%>
+		<p>Gentile utente ci dispiace, ma il tempo a tua disposizione per completare la prenotazione dell'appuntamento è scaduto. Ti chiediamo quindi di ricompilare i campi necessari se desideri effettuare una prenotazione ricordandoti che, per completare la richiesta, hai a disposizione 20 minuti, dopodichè la richiesta sarà automaticamente annullata.</p>
+	<%}%>
+	<form id="appuntamento_online" action="opziona.jsp" method="post" style="border:0;" autocomplete="off">
+		<fieldset id="servizio" class="scheduler-border">
+			<legend class="scheduler-border">Servizio richiesto</legend>
+				 <div class="form-group row">
+					<label for="id_servizio" class="col-sm-2 col-form-label">Seleziona il servizi</label>
+					<div class="col-sm-10">
+						<select class="form-control" name="id_servizio" id="id_servizio">
+							<option value=""> - Seleziona il servizio -</option>
+							<%	for(Servizio s : servizi){%>
+								<option value="<%=s.getId()%>" <%=((servizio!=null) && (s.getId()==servizio.getId())? "selected" : "")%>><%=s.getNome()%></option>
+							<%}%>
+						</select>
+						<%if(servizio==Servizio.FIRMA_DIGITALE_REMOTA){%>
+							<p>Per il rilascio della Firma Digitale Remota è necessario essere in possesso di Carta Nazionale dei Servizi rilasciata dalla Camera di Commercio ed in corso di validità; se non si è in possesso di un dispositivo CNS sarà possibile il rilascio allo sportello di un dispositivo di Firma digitale in abbinamento alla Firma Remota al costo di euro 40,10 per la CNS e di euro 10,00 per la Firma Remota.</p>
+						<%}%>
+						
+						<%if(servizio==Servizio.CARTA_TACHIGRAFICA){%>
+							<p><b>Per i soli Rinnovi</b> di carte tachigrafiche si ricorda che è consentito effettuare l’operazione <b>solo negli ultimi 30 giorni di validità</b> della carta in scadenza e non prima, causa blocco informatico del sistema.</p>
+						<%}%>
+						<%if(servizio==Servizio.CNS){%>
+							<p><b>Attenzione</b>: la Carta Nazionale dei Servizi con firma digitale può essere rinnovata una sola volta, entro il giorno antecedente la scadenza (validità massima 6 anni, poi emissione nuova carta).</p>
+						<%}%>
+					</div>
+					
+				</div>
+		</fieldset>
+			<%	if (servizio!=null){%>
+					<fieldset id="luogoOrario" class="scheduler-border">
+						<legend class="scheduler-border">Sede e orario</legend>
+						<p>Seleziona la sede dell'appuntamento</p>
+							<select class="form-control" name="sede" id="sede" style="width:40%; ">
+								<option value="">Seleziona la sede  </option>
+							<%	for(Sede se: sedi){%>
+										<option style="font-size:20px;" value="<%=se.name()%>" <%=(((sede!=null) && (se.name()==sede.name()))? "selected" : "")%>><%=se.getNome()%></option>
+							<%	}%>
+							</select>
+							<br/>
+							<%if(sede!=null){%>
+								<p>Selezionare il giorno sul calendario per visualizzare la disponibilità delle fasce di orario.</p>
+								<div class="row">
+									<div id="col-12 col-md-6 col-sm-12">
+										<input name="datetimepicker" id="datetimepicker" type="text">
+									</div>
+									<div class="col-12 col-md-6 col-sm-12">
+										<%if(request.getParameter("notDisponibile")!=null &&request.getParameter("notDisponibile").equals("yes")){%>
+											<p><b>L'orario da lei selezionato è appena stato prenotato la preghiamo di selezionare un'altra fascia oraria o scegliere un'altro giorno sul calendario.</b></p>
+									<%	}%>
+										<%	if (data!=null){
+												String orario=(request.getParameter("orari")!=null ? request.getParameter("orari") : "");
+												if (orario!=null && orario.length()<16){
+													orario=DateUtils.formatDate(DateUtils.stringToDate(orario, "d/M/yyyy H:m"), "dd/MM/yyyy HH:mm");
+												}%>
+												
+													<span id="label_sede">Sede prescelta: <b><%=sede.getNome() %></b></span><br/>
+													<span id="label_giorno">Giorno selezionato: <b><%=DateUtils.formatDate(data, "EEEE dd/MM/yyyy") %></b></span>
+													<label id="label_ora">Seleziona l'orario dell'appuntamento:</label><br/>
+													<% List<Date> fasceApertura=sede.fasceApertura(servizio, data);%>
+													<% List<Date> fasceDisponibilita=sede.fasceDisponibilita(servizio, data);%>
+													
+													<select id="orari" name="orari" size="4" style="min-width:7rem;">
+													<%	for(Date d:fasceApertura){
+															String optionValue=DateUtils.formatDate(d, "dd/MM/yyyy HH:mm");
+															boolean disabilitato=!fasceDisponibilita.contains(d);
+															boolean selezionato=optionValue.equals(orario);%>
+															<option value="<%=optionValue%>"<%=(disabilitato ? " disabled" : "")%><%=(!disabilitato && selezionato ? " selected=\"selected\"" : "")%>><%=DateUtils.formatDate(d, "HH.mm")%> <%=(disabilitato ? " - Prenotato da altro utente":"" )%></option>
+													<%	}%>
+													</select>
+												
+										<%	}%>
+									
+								</div>
+								</div>
+							<%}%>
+						</fieldset>
+				<%	}%>
+				
+					
+	
+	<p style="text-align:center;" id="salva_form">
+		<input type="submit" name="annulla" class="btn btn-camera" value="Opziona data e ora per appuntamento" />
+		<a class="btn btn-secondary" href="/index.htm">Annulla appuntamento</a>
+	</p>
+
+</form>
+
+
+	</main>
+	
+
+<%@include file="/common/struct_template/feedback.htm" %>
+<%@include file="/common/struct_template/footer.htm" %>
+<%@include file="/common/struct_template/footer_script.htm" %>
+	<script src="./datetimepicker-master/build/jquery.datetimepicker.full.min.js"></script>
+	<script type="text/javascript">
+	
+        $(document).ready(function(){
+			jQuery('#datetimepicker').datetimepicker({
+				format:'d.m.Y',
+				timepicker:false,
+				defaultSelect:false,
+				todayButton:false,
+				scrollMonth:false,
+				scrollInput:false,
+				dayOfWeekStart: 1,
+				disabledWeekDays: [6, 0],
+				minDate: new Date(Date.parse('<%=DateUtils.formatDate(primaDataDisponibile, "yyyy-MM-dd")%>')),
+				maxDate: new Date(Date.parse('<%=DateUtils.formatDate(ultimaDataDisponibile, "yyyy-MM-dd")%>')),
+			<%	if (!disponibilitaServizio.equals("")){%>
+				allowDates: [<%=disponibilitaServizio %>], 
+			<%	}%>
+				formatDate:'d.m.Y',	// formatDate serve per il formato di allowDates (che altrimenti non viene considerato)
+				inline:true,
+				lang:'it',
+			<%	if(data!=null){%>
+				defaultDate: new Date(Date.parse('<%=DateUtils.formatDate(data, "yyyy-MM-dd")%>')),
+			<%	}%><%-- Consente la visualizzazione a partire dalla prima da disponibile (controindicazione, questa data è selezionata...): else{%>
+				defaultDate: new Date(Date.parse('<%=DateUtils.formatDate(primaDataDisponibile, "yyyy-MM-dd")%>')),
+			<%	}--%>
+				
+				onSelectDate:function(ct,$i){
+					var url=location.pathname;
+                    url= url +'?id_servizio=' + <%if(servizio!=null){%>'<%=servizio.getId()%>'<%}else{%>''<%}%> + '&sede=' +<%if(sede!=null){%>'<%=sede.name()%>'<%}else{%>''<%}%> + '&data=' + (ct.getFullYear()+"-"+(ct.getMonth()+1)+"-"+ct.getDate());
+					location.replace(url);	
+				}
+			});
+			$.datetimepicker.setLocale('it');
+		});
+			
+    </script>
+
+  </body>
+</html>
