@@ -230,7 +230,7 @@ Se lo ritieni utile, puoi attivare un indice dei paragrafi del documento che ver
 Puoi attivare e disattivare l'indice a piacere. 
 Nella scelta delle immagini da utilizzare tieni sempre conto di quanto raccomandato nella sezione "scrittura sul web". L’inserimento di immagini attraverso le procedure previste determina anche l’inserimento automatico di un testo alternativo per rispettare i criteri di accessibilità del sito. Esistono vari tipologie di immagini utilizzate per il sito:
 
-<h2>Link<(h2>
+<h3>Link</h3>
 E' un indirizzo web (URL) che rimanda ad un'altra pagina. In generale, per la preparazione dei link si raccomanda di seguire anche quanto raccomandato nella sezione "scrittura sul web".
 Puoi inserire link in vari modi e per diverse funzioni; eccone alcune:
 Link nel paragrafo
