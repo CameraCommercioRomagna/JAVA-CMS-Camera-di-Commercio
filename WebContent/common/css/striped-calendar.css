@@ -1,0 +1,18 @@
+.row-striped:nth-of-type(odd){
+  background-color: #c0c9dc;
+  border-left: 4px #071d49 solid;
+}
+
+.row-striped:nth-of-type(even){
+  background-color: #ffffff;
+  border-left: 4px #efefef solid;
+}
+
+.row-striped {
+    padding: 15px 0;
+}
+
+.badge-camera {
+    color: #fff;
+    background-color: #071d49;
+}
