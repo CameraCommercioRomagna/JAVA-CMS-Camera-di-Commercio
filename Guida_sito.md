@@ -417,8 +417,6 @@ Il modo di operare è del tutto analogo a quello illustrato per la gestione degl
 Tuttavia puoi operare liberamente sui contenuti. I documenti appartengono ad una sola tipologia chiamata "Documento di amministrazione trasparente". 
 Per per inserirne di nuovi puoi operare come di consueto cliccando su link di inserimento.
 
-
-
 Il sistema ti chiederà cosa vuoi inserire. Scegli 
     • "Documento" se intendi inserire una pagina web;
     • "Download" se vuoi caricare un file;
@@ -426,10 +424,7 @@ Il sistema ti chiederà cosa vuoi inserire. Scegli
 
 
 
-
-
-
 <h3>Tipologie di documenti per Amministrazione trasparente</h3>
-Le pagine di amministrazione trasparente utilizzano tipologie specifiche ma che sostanzialmente seguono la medesima logica del resto del sito.L
+Le pagine di amministrazione trasparente utilizzano tipologie specifiche ma che sostanzialmente seguono la medesima logica del resto del sito.
 
 
