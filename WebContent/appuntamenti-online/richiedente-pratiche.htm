@@ -1,0 +1,366 @@
+<%@include file="/common/include/begin.jsp" %>
+<%	Appuntamento appuntamento=null;
+	try{
+		Long id=Long.parseLong(request.getParameter("id_appuntamento"));
+		appuntamento=new Appuntamento(connPostgres, id);
+	}catch(Exception e){
+		response.sendRedirect(HOME);
+	}
+	Servizio servizio=appuntamento.getServizio();
+	
+
+	Intermediario intermediario=null;
+	try{
+		intermediario=new Intermediario(connPostgres, Long.parseLong(request.getParameter("id_intermediario")));
+	}catch(Exception e){}
+	
+	boolean invalidIntermediario= ((request.getParameter("notIntermediario")!=null)&&(request.getParameter("notIntermediario").equals("true")));
+	
+	%>
+
+<!doctype html>
+<html <%=tagHtmlAttributes%>>
+<head>
+	<%@include file="/common/struct_template/head.htm" %>
+	<link rel="stylesheet" type="text/css" href="/common/calendario/dist/jquery.datetimepicker.css"/>
+    <style type="text/css">
+        #wrapper{
+            width: 780px;
+            margin: auto;
+        }
+        body {
+            font-family: "Helvetica Neue", Helvetica, Tahoma, Arial, "Microsoft YaHei UI","Microsoft YaHei", STXihei, SimSun, sans-serif;
+        }
+        .log-wrapper {
+            float: right;
+        }
+        .log {
+            max-height: 300px;
+            overflow: auto;
+        }
+        .log .log__entry {
+            margin: .1em 0;
+            padding: .1em .2em;
+            border: 1px solid black;
+            white-space: nowrap;
+        }
+
+    </style>
+	  <script type="text/javascript">
+		$(function(){
+				var sel_intermediario=$('input[name=intestatario]');
+				var intestatario=$('#div_intestatario');
+				var intermediario=$('#div_intermediario');
+				var CF_intermediari=$("#CF_intermediario");
+				var serv;
+				var servizio_val=$('select[name=id_servizio_figlio]');
+				var button_intermediario=$('#salva_form');
+				var button_richiedente=$('#salva_form_richiedente');
+				var addPratica=$('#addPratica');
+				var aggiungiPratica=$('#aggiungi_pratica');
+				var inputIntestatario=$('#div_intestatario input')
+				var inputAggiungiPratica=$('#aggiungi_pratica input')
+				var conferma=$('#conferma');
+				
+				
+				aggiungiPratica.hide();
+				inputAggiungiPratica.each(function(){
+					this.required = false;
+				});
+				
+				if(<%=!invalidIntermediario%>){
+					CF_intermediari.hide();
+					button_intermediario.hide();
+				}
+				
+				if(<%=appuntamento.id_intermediario!=null%>){
+					CF_intermediari.show();
+				}
+				button_richiedente.hide();
+				intestatario.hide();
+				if(<%=request.getParameter("id_servizio_figlio")!=null%>){
+					intestatario.show();
+					aggiungiPratica.show();
+					inputAggiungiPratica.each(function(){
+						this.required = true;
+					});
+					conferma.hide();
+				}
+				servizio_val.change(function () {
+					url=location.pathname;
+					serv=servizio_val.val();
+					url = url + '?id_appuntamento=' + <%=appuntamento.id_appuntamento%> + '&id_servizio_figlio=' + serv + '<%=(appuntamento.id_intermediario!=null? "&id_intermediario=" + appuntamento.id_intermediario:"")%>#insert_pratica';
+					location.replace(url);
+				});
+				
+				
+				addPratica.click(function () {
+					aggiungiPratica.show();
+					inputAggiungiPratica.each(function(){
+						this.required = true;
+					});
+					conferma.hide();
+				});
+				
+				if(<%=request.getParameter("notIntermediario")!=null%>){
+					inputIntestatario.each(function(){
+						this.required = false;
+					});
+				}
+				
+				
+				sel_intermediario.change(function () {
+					 if($(this).val()=="true" ) { //// no del check intestatario
+						CF_intermediari.show();
+						intestatario.hide();
+						inputIntestatario.each(function(){
+							this.required = false;
+						});
+						
+						button_intermediario.show();
+					}else{
+						CF_intermediari.hide();   /// sì del check intestatario
+						intestatario.show();
+						inputIntestatario.each(function(){
+							this.required = true;
+						});
+						intermediario.hide();
+						button_intermediario.hide();
+						
+					}
+				});
+			});
+	</script>
+
+</head>
+
+
+<body class="body-public">
+	<%@include file="/common/struct_template/header.htm" %>
+	
+<main class="main-content container" style="margin-top:2rem;">
+	<h2>Prenotazione appuntamenti online</h2>
+	
+	<fieldset id="riepilogo" class="scheduler-border">
+		<legend class="scheduler-border">Appuntamento</legend>
+			 <div class="form-group row">
+				<label for="id_servizio" class="col-sm-2 col-form-label">Servizio richiesto: </label>
+				<div class="col-sm-10">
+					<input type="text" readonly class="form-control-plaintext" id="id_servizio" name="servizio" value="<%=servizio%>">
+				</div>
+			</div>
+			 <div class="form-group row">
+				<label for="data" class="col-sm-2 col-form-label">Data e ora: </label>
+				<div class="col-sm-10">
+					<input type="text" readonly class="form-control-plaintext" id="data" name="data" value="<%=DateUtils.formatDate(appuntamento.getInizio(), "EEEE dd/MM/yyyy H.mm") %>">
+				</div>
+			</div>
+			 <div class="form-group row">
+				<label for="sede" class="col-sm-2 col-form-label">Sede:</label>
+				<div class="col-sm-10">
+					<input type="text" readonly class="form-control-plaintext" id="sede" name="sede" value="<%=appuntamento.getSportello().getSede().getIndirizzo()%>">
+				</div>
+			</div>
+	</fieldset>
+		
+	
+	<form id="informazioni_appuntamento" action="insert_dati_appuntamento.jsp" method="post" style="border:0;" autocomplete="off">
+		<%if(servizio!=Servizio.UFFICIO_IMPEGNATO){%>
+			 <fieldset class="scheduler-border">
+				<legend class="scheduler-border">Informazioni sul richiedente</legend>
+				
+				<p>Per completare la richiesta di appuntamento è necessario inserire i dati del richiedente e della richiesta.<br/>
+					Se tale inserimento non avverrà entro 20 minuti, la richiesta verrà automaticamente annullata.<br/>
+					Al termine della procedura riceverete una mail di conferma con il riepilogo dei dati inseriti.
+				</p>
+
+				<div class="form-group row">
+					<span class="col-sm-3 col-form-label"><b>Sei l'intestatario della richiesta?</b></span>
+					<div class="col-sm-9 form-inline">
+						<div class="form-check" style="padding-right:2rem;">
+							<label class="form-check-label">
+								<input type="radio" class="form-check-input" id="intestatario1" name="intestatario" value="false" <%if((intermediario==null)&&(request.getParameter("id_servizio_figlio")!=null)){%>checked="checked"<%}%> <%if(intermediario!=null){%> disabled<%}%> /> Si
+							</label>
+						</div>
+						<div class="form-check">
+							<label class="form-check-label">
+								<input type="radio" class="form-check-input" id="intestatario2" name="intestatario" value="true" <%if(intermediario!=null||invalidIntermediario){%>checked="checked"<%}%> <%if(intermediario!=null){%>disabled<%}%> /> No, sono un incaricato
+							</label>
+						</div>
+					</div>
+				</div>
+			
+			
+				<%	if(((intermediario==null)||((appuntamento.cognome!=null) && (intermediario.codice_fiscale!=null)))|| invalidIntermediario){%>
+					<div id="CF_intermediario">
+						<div class="form-group row">
+						<label for="CF_intermediatrio" class="col-sm-3 col-form-label">Indicare il codice fiscale della propria organizzazione</label>
+							<div class="col-sm-9">
+							<%	if (operatore!=null && operatoreAppuntamentiOnline){%>
+								<select class="form-control" name="CF_intermediatrio" id="CF_intermediatrio">
+								<%	List<Intermediario> intermediari=Intermediario.loadEntitiesFromQuery("select * from " + Intermediario.NAME_TABLE + " where attivo order by lower(cognome)", connPostgres, Intermediario.class);
+									for (Intermediario i: intermediari){%>
+										<option value="<%=i.codice_fiscale%>"<%if(intermediario!=null && i.codice_fiscale.equals(intermediario.codice_fiscale)){%> selected<%}%>><%=i.getCognomeNome()%></option>
+								<%	}%>
+								</select>
+							<%	}else{%>
+								<input type="text" class="form-control" name="CF_intermediatrio" id="CF_intermediatrio"  value="<%if(intermediario!=null){%><%=intermediario.codice_fiscale%><%}%>" <%if(intermediario!=null){%> disabled<%}%>>
+							<%	}%>
+							</div>
+						</div>
+					<%	if(invalidIntermediario) {%>
+							Il suo codice fiscale non è inserito nei nostri archivi. Per richiedere l'inserimento scrivere a <a href="mailto:abc@xxx.it">abc@xxx.it</a>
+					<%	}%>
+					</div>
+				<%	}%>
+		
+		
+				<% boolean contatti; %>
+				<%	if(intermediario!=null){%>
+
+					<div id="div_intermediario">
+					
+						<div class="form-group row">
+							<label for="denominazione" class="col-sm-2 col-form-label">Denominazione: </label>
+							<div class="col-sm-10">
+								<input type="text" readonly class="form-control-plaintext" id="denominazione" name="denominazione" autocomplete ="organization" value="<%=(appuntamento.cognome!=null?(appuntamento.nome!=null?appuntamento.nome + " " :"")+ appuntamento.cognome:"")%>">
+							</div>
+						</div>
+						<div class="form-group row">
+							<label for="email" class="col-sm-2 col-form-label">Email</label>
+							<div class="col-sm-9">
+								<span><%=(appuntamento.email!=null? "<a href='mailto:" + appuntamento.email+ "'>" +appuntamento.email+"</a>":"")%></span>
+							</div>
+						</div>
+						<div class="form-group row">
+							<label for="telefono" class="col-sm-2 col-form-label">Telefono</label>
+							<div class="col-sm-9">
+								<input type="text" readonly class="form-control-plaintext" name="telefono" id="telefono" value="<%=(appuntamento.telefono!=null?appuntamento.telefono:"")%>" >
+							</div>
+						</div>
+						<p>Nel caso i dati non fossero più aggiornati si prega di inviare una mail a <a href="mailto:abc@xxx.it">abc@xxx.it</a></p>
+					</div>
+					</fieldset>
+			
+				<%if(appuntamento.getPratiche().size()>=0){%>
+					Inserire di seguito i dati relativi alle richieste da presentare: occorre inserire almeno una richiesta prima di poter procedere con la prenotazione. <br/>
+					Si ricorda che il numero di richieste ammissibili per un appuntamento è <%=servizio.getNumeroPraticheIntermediario()%><br/>
+				<%if(appuntamento.getPratiche().size()>0){%>
+					Richieste inserite: <%=appuntamento.getPratiche().size()%>
+						<ul>
+							<%for(Pratica p: appuntamento.getPratiche()){%>
+								<li><%=p.toString()%></li>
+							<%}%>
+						</ul>
+				<%}%>
+					<%if(appuntamento.getPratiche().size()<servizio.getNumeroPraticheIntermediario()){%>
+						<button class="btn btn-camera" type="button" id="addPratica">Aggiungi richiesta<%if(appuntamento.getPratiche().size()>0){%> successiva<%}%></button>
+						<a class="btn btn-secondary" href="blocco_appuntamento.htm?appc=<%=appuntamento.codice%>&blocco=annulla" onclick="return confirm('Sei sicuro di voler annullare l\'appuntamento?')">Annulla appuntamento</a>
+					<%}%>
+				<%}%>
+				<%	if(appuntamento.getPratiche().size()>0){%>
+					
+						<div id="conferma">
+							<fieldset class="scheduler-border" style="margin:2rem 0 1rem 0 !IMPORTANT;">
+								<legend class="scheduler-border">Privacy </legend>
+								Ai sensi e per gli effetti dell'art. 7 e ss. del Regolamento UE 2016/679, i dati personali verranno trattati ai fini dell'erogazione del servizio richiesto, nelle modalità e nei limiti riportati nell'informativa pubblicata nel sito istituzionale della XXX.
+								I dati personali pubblicati in questa sezione sono riutilizzabili solo alle condizioni previste dalla normativa vigente sul riuso dei dati pubblici, in termini compatibili con gli scopi per i quali sono stati raccolti e registrati, e nel rispetto della normativa in materia di protezione dei dati personali.<br/>
+								<div class="form-check form-check-inline">
+									<input class="form-check-input" type="checkbox" id="privacy" name="privacy" value="option1">
+									<label class="form-check-label" for="inlineCheckbox1">Acconsento</label>
+								</div>
+							</fieldset>
+								<input type="hidden" name="id_appuntamento" id="id_appuntamento" value="<%=appuntamento.id_appuntamento%>">
+								<input type="submit" class="btn btn-camera" name="conferma_appuntamento" value="Conferma appuntamento" onclick="if(!$('#privacy').prop('checked')){ alert ('Per proseguire è necessario dare il consenso al trattamento dei dati personali'); return false;}" />
+								<a class="btn btn-secondary" href="blocco_appuntamento.htm?appc=<%=appuntamento.codice%>&blocco=annulla" onclick="return confirm('Sei sicuro di voler annullare l\'appuntamento?')">Annulla appuntamento</a>
+						</div>
+						
+				<%	}%>
+				
+				<div id="aggiungi_pratica" style="margin-top:1rem;">
+					<a id="insert_pratica"></a>
+					
+					<fieldset class="scheduler-border" >
+						<legend class="scheduler-border">Richiesta</legend>
+						<%contatti=false;%>
+						<%@include file="pratica.htm" %>
+						
+						
+					</fieldset>
+					<div style="display:block;">
+						<%if(appuntamento.getPratiche().size()>=0 && appuntamento.getPratiche().size()<=servizio.getNumeroPraticheIntermediario() && ((servizio.getFigli().size()>0 && request.getParameter("id_servizio_figlio")!=null) || servizio.getFigli().size()==0)){%>
+							
+							<input type="hidden" name="id_appuntamento" id="id_appuntamento" value="<%=appuntamento.id_appuntamento%>">
+							<input type="submit" class="btn btn-camera" name="insert_pratica" value="Inserisci richesta" />
+							
+								
+						
+						<%}%>
+							
+								
+					</div>
+				</div>
+
+		<%	}else{%>
+				
+				<div id="div_intestatario">
+					<%contatti=true;%>
+					<%@include file="pratica.htm" %>
+					<%if((servizio.getFigli().size()>0 && request.getParameter("id_servizio_figlio")!=null) || servizio.getFigli().size()==0){%>
+							<legend class="scheduler-border">Privacy </legend>
+							Ai sensi e per gli effetti dell'art. 7 e ss. del Regolamento UE 2016/679, i dati personali verranno trattati ai fini dell'erogazione del servizio richiesto, nelle modalità e nei limiti riportati nell'informativa pubblicata nel sito istituzionale della XXX.
+							I dati personali pubblicati in questa sezione sono riutilizzabili solo alle condizioni previste dalla normativa vigente sul riuso dei dati pubblici, in termini compatibili con gli scopi per i quali sono stati raccolti e registrati, e nel rispetto della normativa in materia di protezione dei dati personali.<br/>
+						<div class="form-check form-check-inline">
+							<input class="form-check-input" type="checkbox" id="privacy" name="privacy" value="option1" required>
+							<label class="form-check-label" for="inlineCheckbox1">Acconsento</label>
+						</div>
+						
+						<%if(operatoreAppuntamentiOnline){%>
+						<legend class="scheduler-border" style="margin-top:1rem;">Annotazioni per appuntamento </legend>
+							 <div class="form-group">
+								<textarea class="form-control" id="note" name="note" rows="3"></textarea>
+							</div>
+						
+						<%}%>
+						
+						<p style="text-align:center;">
+							<input type="hidden" name="id_appuntamento" id="id_appuntamento" value="<%=appuntamento.id_appuntamento%>">
+							<input type="submit" class="btn btn-camera" name="conferma_appuntamento" value="Conferma appuntamento" />
+							<a class="btn btn-secondary" href="blocco_appuntamento.htm?appc=<%=appuntamento.codice%>&blocco=annulla" onclick="return confirm('Sei sicuro di voler annullare l\'appuntamento?')">Annulla appuntamento</a>
+							
+						</p>
+					<%}%>
+				</div>
+				
+			</fieldset>
+		<%	}%>
+		<%}else{%>
+			<legend class="scheduler-border" style="margin-top:1rem;">Annotazioni per appuntamento </legend>
+				<div class="form-group">
+					<textarea class="form-control" id="note" name="note" rows="3"></textarea>
+				</div>
+			<input type="hidden" name="id_appuntamento" id="id_appuntamento" value="<%=appuntamento.id_appuntamento%>">
+			<input type="submit" class="btn btn-camera" name="conferma_appuntamento" value="Conferma appuntamento" />
+			
+		<%}%>
+			<p style="text-align:center;" id="salva_form">
+				<input type="submit" name="verifica_intermediario" class="btn btn-camera" value="Verifica intermediario" />
+				<input type="hidden" name="id_appuntamento" id="id_appuntamento" value="<%=appuntamento.id_appuntamento%>">
+				
+				<a class="btn btn-secondary" href="blocco_appuntamento.htm?appc=<%=appuntamento.codice%>&blocco=annulla" onclick="return confirm('Sei sicuro di voler annullare l\'appuntamento?')" onkeypress="return confirm('Sei sicuro di voler annullare l\'appuntamento?')">Annulla appuntamento</a>
+		
+			</p>	
+	
+		
+	</form>
+
+
+</main>
+	
+
+<%@include file="/common/struct_template/feedback.htm" %>
+<%@include file="/common/struct_template/footer.htm" %>
+<%@include file="/common/struct_template/footer_script.htm" %>
+
+  </body>
+</html>

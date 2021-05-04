@@ -1,0 +1,108 @@
+<%@include file="/common/include/begin.jsp" %>
+<%@include file="/amministrazione/mail/HeaderFooter/_header_email.jsp" %>
+
+<%	Appuntamento appuntamento=null;
+	try{
+		appuntamento=Appuntamento.fromCodice(request.getParameter("appc"));
+		if (request.getParameter("disdici")!=null && request.getParameter("disdici").equals("Disdici appuntamento"))
+			appuntamento.cancella(null);%>	
+	
+<!doctype html>
+<html>
+<head>
+	<%@include file="/common/struct_template/head.htm" %>
+</head>
+
+
+<body class="body-public">
+	<%@include file="/common/struct_template/header.htm" %>
+		<main class="main-content container" style="margin-top:2rem;">
+		<%if((request.getParameter("conf_disdetta")!=null && request.getParameter("conf_disdetta").equals("yes"))||(appuntamento.cancellato())){%>
+			<h2>Appuntamento disdetto</h2>
+			<p>Grazie per la collaborazione</p>
+			<%if(request.getParameter("conf_disdetta")!=null && request.getParameter("conf_disdetta").equals("yes")){
+				MailPending mail = new MailPending();
+				mail.i_from="noreply@xxx.it";
+				//mail.i_to="abc@xxx.it";
+				mail.i_bcc="abc@xxx.it";
+				mail.i_to=appuntamento.email;
+				mail.subject="XXX - Disdetta appuntamento n." + appuntamento.id_appuntamento;
+				mail.contenttype="text/html; charset=utf-8";
+				mail.body=emailHeader + "<br/>Gentile " + appuntamento.getRichiedente().getNomeCognome() + ",<br/> le confermiamo la DISDETTA dell'appuntamento codice  n. "+appuntamento.id_appuntamento+" previsto per il giorno <b>"+ DateUtils.formatDate(appuntamento.getInizio(), "EEEE dd/MM/yyyy") + "</b> alle ore <b>" + DateUtils.formatDate(appuntamento.getInizio(), "HH.mm") + "</b> per "+ appuntamento.getServizio() +".<br/><br/>Questa e-mail è stata generata automaticamente: <b>non rispondere a questa e-mail</b> (la casella noreply@xxx.it non è presidiata).<br/><br/>Cordiali saluti,<br/>XXX<br/>" + emailFooter;
+				mail.page_ins="ISCREV";
+				mail.submit();
+			}%>
+		<%}else{%>
+			<h2>Appuntamento prenotato</h2>
+			<h3>Riepilogo di dati</h3>
+			<fieldset id="riepilogo" class="scheduler-border">
+				<legend class="scheduler-border">Luogo e data</legend>
+				 <div class="form-group row">
+					<label for="data" class="col-sm-2 col-form-label">Data e ora: </label>
+					<div class="col-sm-10">
+						<input type="text" readonly class="form-control-plaintext" id="data" value="<%=DateUtils.formatDate(appuntamento.getInizio(), "dd/MM/yyyy HH:mm") %>">
+					</div>
+				</div>
+				<div class="form-group row">
+					<label for="sede" class="col-sm-2 col-form-label">Sede:</label>
+					<div class="col-sm-10">
+						<input type="text" readonly class="form-control-plaintext" id="sede" value="<%=appuntamento.getSportello().getSede().getIndirizzo() %>">
+					</div>
+				</div>
+			</fieldset>
+
+				<fieldset class="scheduler-border">
+					<legend>Richiedente</legend>
+					<div id="div_intermediario">
+				
+					<div class="form-group row">
+						<label for="denominazione" class="col-sm-2 col-form-label">Denominazione: </label>
+						<div class="col-sm-10">
+							<input type="text" readonly class="form-control-plaintext" id="denominazione" value="<%=(appuntamento.cognome!=null?(appuntamento.nome!=null?appuntamento.nome + " " :"")+ appuntamento.cognome:"")%>">
+						</div>
+					</div>
+					<div class="form-group row">
+						<label for="email" class="col-sm-2 col-form-label">Email</label>
+						<div class="col-sm-9">
+							<span><%=(appuntamento.email!=null? "<a href='mailto:" + appuntamento.email+ "'>" +appuntamento.email+"</a>":"")%></span>
+						</div>
+					</div>
+					<div class="form-group row">
+						<label for="telefono" class="col-sm-2 col-form-label">Telefono</label>
+						<div class="col-sm-9">
+							<input type="text" readonly class="form-control-plaintext" name="telefono" id="telefono" value="<%=(appuntamento.telefono!=null?appuntamento.telefono:"")%>" >
+						</div>
+					</div>
+					
+				</div>
+				</fieldset>
+				
+				<fieldset class="scheduler-border">
+					<legend>Pratiche</legend>
+					<p>Servizio richiesto: <%=appuntamento.getServizio()%></p>
+					<ul>
+						<%for(Pratica p: appuntamento.getPratiche()){%>
+							<li><%=p %></li>
+						<%}%>
+					</ul>
+				</fieldset>
+				
+				<form method="post">
+					<input type="hidden" name="appc" value="<%=request.getParameter("appc")%>" />
+					<input type="hidden" name="conf_disdetta" value="yes" />
+					<input type="Submit" name="disdici" value="Disdici appuntamento" onclick="return confirm('Sei sicuro di voler disdire l\'appuntamento?')" />
+				</form>
+			<%}%>
+		</main>
+	
+
+<%@include file="/common/struct_template/feedback.htm" %>
+<%@include file="/common/struct_template/footer.htm" %>
+<%@include file="/common/struct_template/footer_script.htm" %>
+
+  </body>
+</html>
+
+<%	}catch(Exception e){
+		response.sendRedirect(HOME);
+	}%>

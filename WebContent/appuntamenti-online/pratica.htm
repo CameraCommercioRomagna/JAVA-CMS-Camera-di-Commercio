@@ -1,0 +1,245 @@
+<!-- input richiesti:
+	bollean contatti; ---email e telefono devono comparire solo se non c'è intermediario x servizi su singolo utente
+-->
+
+<%	Servizio servizioFiglio = null;
+	try{
+		servizioFiglio=Servizio.getServizio(Long.parseLong(request.getParameter("id_servizio_figlio")));
+	}catch(Exception e){}%>
+					<%	List<Servizio> serviziFigli=servizio.getFigli();
+						if(serviziFigli.size()>0){%>
+						<div class="form-group row">
+							<label for="id_servizio_figlio" class="col-sm-2 col-form-label">Seleziona il servizio specifico</label>
+							<div class="col-sm-10">
+								<select class="form-control" name="id_servizio_figlio" id="id_servizio_figlio">
+									<option value="">Servizio</option>
+									<%	for(Servizio s : serviziFigli){%>
+										<option value="<%=s.getId()%>" <%=((servizioFiglio!=null) && (s.getId()==servizioFiglio.getId())? "selected" : "")%>><%=s.getNome()%></option>
+									<%	}%>
+								</select>
+							</div>
+						</div>
+					<%	}%>
+					
+					<%
+						String organizzazione="";
+						String organizzazione_cf="";
+						String referente_nome="";
+						String referente_cognome="";
+						String referente_cf="";
+						String nome_intestatario="";
+						String cognome_intestatario="";
+						String cf_intestatario="";
+						String tipo_value1="";
+						String tipo_text1="";
+						String tipo_value2="";
+						String tipo_text2="";
+						String tipo_value3="";
+						String tipo_text3="";
+					%>
+				<%	switch (servizio){
+							case CNS:
+								nome_intestatario="Nome Intestatario";
+								cognome_intestatario="Cognome Intestatario";
+								cf_intestatario="Codice Fiscale";
+								tipo_value1=TipoPratica.RILASCIO_CNS.getNome();
+								tipo_text1="Rilascio Carta Nazionale dei Servizi con firma digitale";
+								tipo_value2=TipoPratica.RINNOVO_CNS.getNome();
+								tipo_text2="Rinnovo Carta Nazionale dei Servizi con firma digitale";
+								break;
+							case FIRMA_DIGITALE_REMOTA:
+							//case SPID:
+								nome_intestatario="Nome Intestatario";
+								cognome_intestatario="Cognome Intestatario";
+								cf_intestatario="Codice Fiscale";
+								tipo_value1=TipoPratica.RILASCIO_FIRMA_DIGITALE_REMOTA.getNome();
+								tipo_text1="Rilascio firma digitale remota";
+								
+							break;
+							case CARTA_TACHIGRAFICA:
+								if(servizioFiglio!=null){
+									switch (servizioFiglio){
+										case CARTA_TACHIGRAFICA_CONDUCENTE:
+											nome_intestatario="Nome Intestatario";
+											cognome_intestatario="Cognome Intestatario";
+											cf_intestatario="Codice Fiscale";
+											tipo_value1=TipoPratica.RILASCIO_CT_COND.getNome();
+											tipo_text1=TipoPratica.RILASCIO_CT_COND.getDescrizione();
+											tipo_value2=TipoPratica.SOSTITUZIONE_CT_COND_MALFUNZIONAMENTO.getNome();
+											tipo_text2=TipoPratica.SOSTITUZIONE_CT_COND_MALFUNZIONAMENTO.getDescrizione();
+											tipo_value3=TipoPratica.SOSTITUZIONE_CT_COND_FURTO.getNome();
+											tipo_text3=TipoPratica.SOSTITUZIONE_CT_COND_FURTO.getDescrizione();
+											break;
+										case CARTA_TACHIGRAFICA_AZIENDA:
+											organizzazione="Ragione sociale impresa";
+											organizzazione_cf="Codice fiscale impresa";
+											referente_nome="Nome del Legale rappresentante";
+											referente_cognome="Cognome del Legale rappresentante";
+											referente_cf="Codice fiscale del legale rappresentante";
+											tipo_value1=TipoPratica.RILASCIO_CT_AZ.getNome();
+											tipo_text1=TipoPratica.RILASCIO_CT_AZ.getDescrizione();
+											tipo_value2=TipoPratica.SOSTITUZIONE_CT_AZ_MALFUNZIONAMENTO.getNome();
+											tipo_text2=TipoPratica.SOSTITUZIONE_CT_AZ_MALFUNZIONAMENTO.getDescrizione();
+											tipo_value3=TipoPratica.SOSTITUZIONE_CT_AZ_FURTO.getNome();
+											tipo_text3=TipoPratica.SOSTITUZIONE_CT_AZ_FURTO.getDescrizione();
+											break;
+										case CARTA_TACHIGRAFICA_OFFICINA:
+											organizzazione="Ragione sociale officina";
+											organizzazione_cf="Codice fiscale officina";
+											referente_nome="Nome del tecnico";
+											referente_cognome="Cognome del tecnico";
+											referente_cf="Codice fiscale del tecnico";
+											tipo_value1=TipoPratica.RILASCIO_CT_OFF.getNome();
+											tipo_text1=TipoPratica.RILASCIO_CT_OFF.getDescrizione();
+											tipo_value2=TipoPratica.SOSTITUZIONE_CT_OFF_MALFUNZIONAMENTO.getNome();
+											tipo_text2=TipoPratica.SOSTITUZIONE_CT_OFF_MALFUNZIONAMENTO.getDescrizione();
+											tipo_value3=TipoPratica.SOSTITUZIONE_CT_OFF_FURTO.getNome();
+											tipo_text3=TipoPratica.SOSTITUZIONE_CT_OFF_FURTO.getDescrizione();
+											break;
+										case CARTA_TACHIGRAFICA_CONTROLLO:
+											organizzazione="Denominazione organismo di controllo";
+											organizzazione_cf="Codice fiscale organismo di controllo";
+											referente_nome="Nome del responsabile";
+											referente_cognome="Cognome del responsabile";
+											referente_cf="Codice fiscale del responsabile";
+											tipo_value1=TipoPratica.RILASCIO_CT_CONTR.getNome();
+											tipo_text1=TipoPratica.RILASCIO_CT_CONTR.getDescrizione();
+											tipo_value2=TipoPratica.SOSTITUZIONE_CT_CONTR_MALFUNZIONAMENTO.getNome();
+											tipo_text2=TipoPratica.SOSTITUZIONE_CT_CONTR_MALFUNZIONAMENTO.getDescrizione();
+											tipo_value3=TipoPratica.SOSTITUZIONE_CT_CONTR_FURTO.getNome();
+											tipo_text3=TipoPratica.SOSTITUZIONE_CT_CONTR_FURTO.getDescrizione();
+											break;
+									}
+							
+								}
+						break;
+					}%>
+					
+					<%	if(servizio==Servizio.CNS){%>
+						<%if(appuntamento.id_intermediario==null){%>
+							<div class="col-sm-12 form-inline" style="margin-bottom:2rem;">
+								<div class="form-check" style="padding-right:2rem;">
+									<label class="form-check-label">
+										<input type="radio" class="form-check-input" checked="checked" name="tipo_pratica" id="tipo_pratica_CNS1" value="<%=tipo_value1%>" required /> <%=tipo_text1%>
+									</label>
+								</div>
+								<div class="form-check">
+									<label class="form-check-label">
+										<input type="radio" class="form-check-input" name="tipo_pratica" id="tipo_pratica_CNS2" value="<%=tipo_value2%>" required /> <%=tipo_text2%>
+									</label>
+								</div>
+							</div>
+						<%}else{%>
+								<input type="hidden" class="form-check-input" name="tipo_pratica" id="tipo_pratica_CNS1" value="<%=tipo_value1%>" required />
+						<%}%>
+					<%	}%>
+					
+					<%	if(servizio==Servizio.FIRMA_DIGITALE_REMOTA){%>
+						<input type="hidden" class="form-check-input" name="tipo_pratica" id="tipo_pratica_firma_remota" value="<%=tipo_value1%>" required />
+					<%}%>
+					
+					<%if(servizio==Servizio.CARTA_TACHIGRAFICA && servizioFiglio!=null){%>
+							<div class="col-sm-12 form-inline" style="margin-bottom:2rem;">
+								<div class="form-check" style="padding-right:2rem;">
+									<label class="form-check-label">
+										<input type="radio" class="form-check-input" name="tipo_pratica" id="tipo_pratica_1" value="<%=tipo_value1%>" required /><%=tipo_text1%>
+									</label>
+								</div>
+								<div class="form-check">
+									<label class="form-check-label">
+										<input type="radio" class="form-check-input" name="tipo_pratica" id="tipo_pratica_2" value="<%=tipo_value2%>" required /> <%=tipo_text2%>
+									</label>
+								</div>
+								
+								<div class="form-check">
+									<label class="form-check-label">
+										<input type="radio" class="form-check-input" name="tipo_pratica" id="tipo_pratica_3" value="<%=tipo_value3%>" required /> <%=tipo_text3%>
+									</label>
+								</div>
+							</div>
+					<%}%>
+						
+					<%	if(/*servizio==Servizio.SPID || */servizio==Servizio.CNS || servizioFiglio==Servizio.CARTA_TACHIGRAFICA_CONDUCENTE || servizio==Servizio.FIRMA_DIGITALE_REMOTA){%>	
+							<div class="form-group row">
+								<label for="intestatario_cognome" class="col-sm-3 col-form-label"><%=cognome_intestatario%></label>
+								<div class="col-sm-9">
+									<input type="text" class="form-control" name="intestatario_cognome" id="intestatario_cognome" value=""  required>
+								</div>
+							</div>
+							<div class="form-group row">
+								<label for="intestatario_nome" class="col-sm-3 col-form-label"><%=nome_intestatario%></label>
+								<div class="col-sm-9">
+									<input type="text" class="form-control" name="intestatario_nome" id="intestatario_nome" value="" required>
+								</div>
+							</div>
+							<div class="form-group row">
+								<label for="intestatario_cf" class="col-sm-3 col-form-label"><%=cf_intestatario%></label>
+								<div class="col-sm-9">
+									<input type="text" class="form-control" name="intestatario_cf" id="intestatario_cf" value="" required>
+								</div>
+							</div>
+							<%if(contatti){%>
+							<div class="form-group row">
+								<label for="email" class="col-sm-3 col-form-label">Email</label>
+								<div class="col-sm-9">
+									<input type="email" class="form-control" id="email" name="email" value="<%=(appuntamento.email!=null?appuntamento.email:"")%>" required>
+								</div>
+							</div>
+							<div class="form-group row">
+								<label for="telefono" class="col-sm-3 col-form-label">Telefono</label>
+								<div class="col-sm-9">
+									<input type="number" class="form-control" name="telefono" id="telefono" value="<%=(appuntamento.telefono!=null?appuntamento.telefono:"")%>" required>
+								</div>
+							</div>
+							<%}%>
+					<%	}%>
+					<%	if(servizio==Servizio.CARTA_TACHIGRAFICA && servizioFiglio!= null && servizioFiglio!=Servizio.CARTA_TACHIGRAFICA_CONDUCENTE){%>
+							<div class="form-group row">
+											<label for="intestatario_ragione_sociale" class="col-sm-3 col-form-label"><%=organizzazione%></label>
+											<div class="col-sm-9">
+												<input type="text" class="form-control" name="intestatario_ragione_sociale" id="intestatario_ragione_sociale" value="" required>
+											</div>
+										</div>
+										<div class="form-group row">
+											<label for="intestatario_cf" class="col-sm-3 col-form-label"><%=organizzazione_cf%></label>
+											<div class="col-sm-9">
+												<input type="text" class="form-control" name="intestatario_cf" id="intestatario_cf" value="" required>
+											</div>
+										</div>
+										<div class="form-group row">
+											<label for="referente_nome" class="col-sm-3 col-form-label"><%=referente_nome%></label>
+											<div class="col-sm-9">
+												<input type="text" class="form-control" name="referente_nome" id="referente_nome" value="" required>
+											</div>
+										</div>
+										<div class="form-group row">
+											<label for="referente_cognome" class="col-sm-3 col-form-label"><%=referente_cognome%></label>
+											<div class="col-sm-9">
+												<input type="text" class="form-control" name="referente_cognome" id="referente_cognome" value="" required>
+											</div>
+										</div>
+										<div class="form-group row">
+											<label for="referente_cf" class="col-sm-3 col-form-label"><%=referente_cf%></label>
+											<div class="col-sm-9">
+												<input type="text" class="form-control" name="referente_cf" id="referente_cf" value="" required>
+											</div>
+										</div>
+										<%if(contatti){%>
+											<div class="form-group row">
+												<label for="email" class="col-sm-3 col-form-label">Email</label>
+												<div class="col-sm-9">
+													<input type="email" class="form-control" id="email" name="email" value="<%=(appuntamento.email!=null?appuntamento.email:"")%>" required>
+												</div>
+											</div>
+											<div class="form-group row">
+												<label for="telefono" class="col-sm-3 col-form-label">Telefono</label>
+												<div class="col-sm-9">
+													<input type="number" class="form-control" name="telefono" id="telefono" value="<%=(appuntamento.telefono!=null?appuntamento.telefono:"")%>" required>
+												</div>
+											</div>
+									<%	}%>
+					<%	}%>
+						
+			
+					
+			
