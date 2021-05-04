@@ -32,7 +32,8 @@ Dall'area riservata per gli utenti redattori è inoltre possibile generare codic
     <li>Apache Solr 7.5.0</li>
   
   </ul>
-</p>
+<h3>INSTALLAZIONE DMBS:</h3>
+<p>PostgreSQL 11.2</p>
 <h2>Copyright</h2>
 <p>Titolare del software è la <a href="https://www.romagna.camcom.it">Camera di Commercio della Romagna Forlì-Cesena Rimini</a></p>
 <h2>Mantainer</h2>
