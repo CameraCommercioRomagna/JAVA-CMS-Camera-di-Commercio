@@ -1,0 +1,366 @@
+<%@include file="/amministrazione/common/include/begin.jsp" %>
+
+<!doctype html>
+
+<%@include file="_load_pagina.jsp" %>
+<%@include file="componenti/_filtri_documenti_init.jsp" %>
+
+<%	
+	List<DocumentoWeb<?>> figliPagina=null;
+	Map<TipoDocumento, List<DocumentoWeb<?>>> mappaFigli = null;
+	List<TipoDocumento> tipiGenerabili=null;
+	
+	if (!inserimento){
+		Map<String, Object> altriParametri=new HashMap<String, Object>();
+		if (titolo_dweb!=null)	altriParametri.put("titolo", titolo_dweb);
+		if (user_dweb!=null)	altriParametri.put("username_proprietario", user_dweb);
+
+		figliPagina = pagina.getFigli(tipo_d, null, validati, pubblicati, scaduti, null, TipoOrdinamentoDocumenti.MANUALE, altriParametri);
+		tipiGenerabili = tipoPagina.getFigli();
+		
+		List<TipoDocumento> tipiAccessibili=new ArrayList<TipoDocumento>();
+		for (TipoDocumento tipo: tipiGenerabili)
+			if (tipo.accessibile(operatore))
+				tipiAccessibili.add(tipo);
+		tipiGenerabili = tipiAccessibili;
+		
+		mappaFigli = TipoDocumento.organizzaDocumenti(figliPagina);
+	}
+%>
+<html lang="it">
+<head>
+	<%@include file="/amministrazione/common/struct_template/head.htm" %>
+	<script type="text/javascript">
+		function saveNewPosition(){
+			var query_strings = [];
+			$('.updated').each(function(){
+				query_strings.push("update portalowner2.rel_documenti_web_documenti set ordine=" + $(this).attr('data-ordine') + " where id_documento_web_figlio=" + $(this).attr('data-id_documento_web') + " and id_documento_web_padre=" + $(this).attr('data-id_padre'));
+				$(this).removeClass('updated');
+			});
+			$.ajax({
+				url:"updateSortableItemServlet.jsp",
+				method:"POST",
+				data:{
+					update:"1",
+					query:query_strings	
+				}
+			});
+		}
+	</script>
+</head>
+
+<body>
+	<%@include file="/amministrazione/common/struct_template/header.htm" %>
+	<main class="main-content-admin">
+		<div class="row">
+			
+			<div class="col-md-3 col-sm-4 col-xl-2 order-sm-2" style="padding-left:0px !IMPORTANT;">
+				<%@include file="componenti/_filtri_documenti.jsp" %>
+				<%@include file="/amministrazione/common/struct_template/menu_sx.htm" %>
+			</div>
+			
+			<div class="col-md-9 col-sm-8 col-xl-10 order-first order-sm-2 border-gray">
+				
+				<%-- barra di navigazione --%>
+				<nav aria-label="breadcrumb">
+					<ol class="breadcrumb">
+						<li class="breadcrumb-item active" aria-current="page">Amministrazione portale</li>
+					<%	for (DocumentoWeb<?> p: ambitiPagina){%>
+						<li class="breadcrumb-item active" ><a href="/amministrazione/?ID_D=<%=p.getId()%>"><%=p.getTitolo()%></a></li>
+					<%	}%>
+					</ol>
+				</nav>
+
+			<%	if (!inserimento && pagina.id_documento_web.equals(HOME_ID_D) && !paginaModificabile){%>
+				<h1>Ricerca aree tematiche</h1>
+				<h3>Risultato della ricerca: <%=figliPagina.size() %> documento/i web</h3>
+			<%	}else{%>
+				<h1>Amministra <span><%=(pagina.getPadre()!=null ? tipoPagina : "")%> <i><%=(pagina.getId()!=null ? pagina.getId() : "")%></i></span>: <%=pagina.getTitolo()%></h1>
+				
+			<%	String stile=(pagina.scaduto() ? "danger" : (pagina.pubblico() ? "success" : (pagina.valido() ? "warning" : "secondary")));
+				String status=(pagina.scaduto() ? "Documento scaduto" : (pagina.pubblico() ? "Documento pubblicato" : (pagina.valido() ? "Documento non pubblicato" : "Documento non validato"))); %>
+				
+				<div class="progress">
+					<div class="progress-bar bg-<%=stile %>" role="progressbar" style="width: 100%;text-align:right;padding-right:3rem;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"><b><i><%=status%></i></b></div>
+				</div>
+				
+				<%-- Amministrazione della pagina corrente --%>
+				<%	if (paginaModificabile){
+						List<String> tabList = Arrays.asList("Contenuto", "Paragrafi", "Programma", "Organizzatori", "Pubblicazione", "Validazione", "Crea Email", "Associa a newsletter", "Aggiornamento contenuti");
+						List<Boolean> tabListAuth = Arrays.asList(true, tipoSistemaPagina == TipoSistema.DOCUMENTO && pagina.isInserted(), tipoSistemaPagina == TipoSistema.EVENTO && pagina.isInserted(), tipoSistemaPagina == TipoSistema.EVENTO && pagina.isInserted(), pagina.isInserted(), pagina.isInserted(), pagina.pubblico() && pagina instanceof PaginaWeb<?>, tipoSistemaPagina != TipoSistema.DOWNLOAD && pagina.isInserted(), pagina.isInserted());
+						String tabAttivo = requestMP.getParameter(rq_documento + "_tab");
+						if (tabAttivo==null || !tabList.contains(tabAttivo))
+							tabAttivo = tabList.get(0);%>
+					<h2 style="margin:0.5rem 0;">Gestisci i contenuti della pagina</h2>
+					
+					
+					<%--Barra aggiornamento contenuti --%>
+					
+					<%	if (pagina.pubblico() && pagina.getUltimaModifica().after(DateUtils.addDays(new Date(), -1))){%>
+							<%	int indiceRitardo=(int)(pagina.indiceRitardoAggiornamento()*100);%>
+							<%if(indiceRitardo>50){%>
+								<div class="alert alert-danger" style="padding-top:0.3rem;padding-bottom:0.3rem;">
+									<div class="row">
+										<div class="col-6">
+											<span class="glyphicon glyphicon-alert" style="font-size:1.8rem;"></span>&nbsp;&nbsp; Indice di aggiornamento della pagina: <%=100-indiceRitardo + "%" %>
+											<%--@include file="componenti/_bar_ritardo.jsp" --%>
+										</div>
+										<div class="col-6">
+											<a href="<%=pagina.getAdminLink()%>&<%=rq_documento %>_tab=Aggiornamento+contenuti" title="Aggiorna contenuti" class="btn btn-primary" aria-label="Aggiorna contenuti"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> Aggiorna contenuti</a>
+
+										</div>
+									</div>
+								</div>
+							<%}%>
+					<%	}%>
+					
+				
+					<div class="card">
+						<div class="card-header">
+							<ul class="nav nav-tabs card-header-tabs">
+						<%	for (int i=0; i<tabList.size(); i++){%>
+							<%	if(tabListAuth.get(i)){
+									String tabName = tabList.get(i);
+									String tabId = tabName.replaceAll(" ", "-");%>
+									<li class="nav-item" id="<%=tabId %>">
+										<a role="tab" class="nav-link<%=(tabName.equals(tabAttivo) ? " active" : "")%>" data-toggle="tab" href="#corpo<%=tabId %>" aria-expanded="false" aria-controls="corpo<%=tabId %>">
+										<%=tabName %>
+										</a>
+									</li>
+							<%	}%>
+						<%	}%>
+							</ul>
+						</div>
+						
+						<div class="tab-content card-body" id="myTabContent">
+					<%	for (int iExt=0; iExt<tabList.size(); iExt++){%>	
+						<%	if(tabListAuth.get(iExt)){
+								String tabName = tabList.get(iExt);
+								String tabId = tabName.replaceAll(" ", "-");%>
+								<div id="corpo<%=tabId %>" class="tab-pane fade<%=(tabName.equals(tabAttivo) ? " show active" : "")%>" aria-labelledby="<%=tabId %>" role="tabpanel">
+							<%	switch (iExt){
+									case 0:{%>
+									<%@include file="/amministrazione/dweb_include/_dweb_contenuto.jsp" %>
+							<%		}break;
+									case 1:{%>
+									<%@include file="/amministrazione/dweb_include/_paragrafi.jsp" %>
+							<%		}break;
+									case 2:{%>
+									<%@include file="/amministrazione/dweb_include/_programma.jsp" %>
+							<%		}break;
+									case 3:{%>
+									<%@include file="/amministrazione/dweb_include/_organizzatori.jsp" %>
+							<%		}break;
+									case 4:{%>
+									<%@include file="/amministrazione/dweb_include/_dweb_pubblicazione.jsp" %>
+							<%		}break;
+									case 5:{%>
+									<%@include file="/amministrazione/dweb_include/_dweb_validazione.jsp" %>
+							<%		}break;
+									case 6:{%>
+									<%@include file="/amministrazione/dweb_include/_crea_email.jsp" %>
+							<%		}break;
+									case 7:{%>
+									<%@include file="/amministrazione/dweb_include/_ass_newsletter.jsp" %>
+							<%		}break;
+									case 8:{%>
+									<%@include file="/amministrazione/dweb_include/_dweb_aggiornamento.jsp" %>
+							<%		}break;
+								}%>
+								</div>
+						<%	}%>
+					<%	}%>
+						</div>
+						<div class="card-footer">
+						<%	if (pagina.isInserted()){%>
+							<%	if(pagina.getTipo().inseribile(operatore)){
+									id_modal = "modalDuplica"+pagina.getId();
+									href_redirect = "esegui.jsp?"+rq_documento+"="+pagina.getId()+"&op=copia";%>
+									<a class="btn btn-<%=stile%>" data-toggle="modal" data-target="#<%=id_modal%>" href=""><span class="glyphicon glyphicon-duplicate" aria-hidden="true"></span> Duplica</a>
+									<%@include file="/amministrazione/componenti/_modal_confirmation.jsp" %>
+						<%		}%>
+								<a role="button" class="btn btn-info" href="<%=pagina.getPreviewLink() %>" target="_blank"><span class="glyphicon glyphicon-picture" aria-hidden="true"></span> Anteprima</a>
+							<%	if(pagina.pubblico()){
+									if (pagina instanceof PaginaWeb<?>){%>
+										<a href="?<%=rq_documento%>=<%=pagina.getId()%>&<%=rq_documento%>_tab=Crea+Email" target="_blank" title="Crea mail" class="btn btn-primary" aria-label="Crea mail"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span> Crea mail</a>
+							<%		}
+								}
+								if(tipoSistemaPagina == TipoSistema.EVENTO){%>
+								<a href="elenco_iscritti.jsp?<%=rq_documento%>=<%=pagina.getId()%>" target="_blank" title="Iscritti" class="btn btn-info" aria-label="Iscritti"><span class="glyphicon glyphicon-list" aria-hidden="true"></span> Iscritti</a>
+							<%	}%>
+
+							<%	String lista_padri = "";
+								String item_padre = "";
+								PaginaWeb<?> padre_curr = pagina.getPadre();
+								if(padre_curr!=null){
+									while(padre_curr!=null){
+										item_padre = (padre_curr.getTipo().getFigli().size()>0 ? padre_curr.getTipo().toString().toUpperCase() + ": " : "");
+										item_padre += padre_curr.getTitolo();
+										item_padre += "/ ";
+										padre_curr = padre_curr.getPadre();
+										lista_padri = item_padre + lista_padri;
+									}%>
+									<button type="button" class="btn btn-info" data-toggle="popover" data-placement="bottom" aria-label="Dove mi trovi" title="Dove mi trovi" data-content="<%=lista_padri%>"><span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> Dove mi trovi</button>
+							<%	}else{
+									if (tipoPagina.getPadri().size()>0){
+										id_modal = "assPadre"+pagina.getId();
+										id_requested = pagina.getId();
+										doc_modal = pagina;%>
+										<a data-toggle="modal" data-target="#<%=id_modal%>" href="" title="Nessun padre associato. Associa padre" class="btn btn-warning" aria-label="Nessun padre associato. Associa padre"><span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Associa padre</a>
+										<%@include file="/amministrazione/componenti/_modal_ass_padre.jsp" %>
+							<%		}else{
+										String chiSono="Sono un documento di tipo " + tipoPagina.toString().toUpperCase();%>
+										<button type="button" class="btn btn-info" data-toggle="popover" data-placement="bottom" aria-label="Dove mi trovi" title="Dove mi trovi" data-content="<%=chiSono%>"><span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> Dove mi trovi</button>
+								<%	}
+								
+								}%>
+								<%	if(pagina.valido() && (!((pagina instanceof PaginaWeb) && (((PaginaWeb<?>)pagina).isForward()) ) || (pagina.getVisibilita() == Visibilita.NON_VISIBILE))){%>
+										<button type="button" class="btn btn-info" data-toggle="popover" data-placement="bottom" aria-label="Il mio Link" title="Il mio Link" data-content="<%=((pagina.getLink().indexOf("www"))>0? "" : "www.xxx.it")%><%=pagina.getLink()%>"><span class="glyphicon glyphicon-globe" aria-hidden="true"></span> Il mio Link</button>
+								<%	}%>
+							
+							<%	if(pagina.getTipo() == TipoDocumento.SERVIZIO_ONLINE){
+									String urlAmministrazione = null;
+									try{
+										urlAmministrazione = (String)((Documento)pagina).getField("url_amministrazione").getValue();
+									}catch(Exception e){
+										urlAmministrazione = (String)((Referenza)pagina).getField("url_amministrazione").getValue();
+									}%>
+									<a href="<%=urlAmministrazione %>" target="_blank" title="Amministra il servizio" class="btn btn-primary" aria-label="Amministra il servizio"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Amministra il servizio</a>
+							<%	}%>
+							
+						<%	}%>	
+						</div>
+					</div>
+				<%	}%>
+			<%	}%>
+
+		<%-- Visualizzazione "organizzata" dei documenti figli: crea un raggruppamento a card solo se i tipi sono più di uno --%>
+	<%	if (!inserimento){%>
+		<%	if ((pagina!=null) && tipiGenerabili.size()>0){%>
+			<%	if (!(!inserimento && pagina.id_documento_web.equals(HOME_ID_D) && !paginaModificabile)){%>
+				<h2 style="margin:2rem 0 0 0;">Gestisci i contenuti che derivano da questa pagina</h2>
+			<%	}%>
+			
+			<%	if(documenti_filtrati){%>
+					<div>
+						<span class="glyphicon glyphicon-info-sign" style="font-size:1.2rem;"></span>  L'ordinamento dei contenuti non è abilitato in presenza di filtri di ricerca.
+					</div>
+			<%	}else{%>
+					<div>
+						<span class="glyphicon glyphicon-info-sign" style="font-size:1.2rem;"></span>  Per ordinare i contenuti cliccare sui box e trascinarli secondo l'ordine desiderato. (Ordinamento Aree Tematiche riservato ADMIN)
+					</div>
+			<%	}%>
+		<%	}%>
+		
+		<%	if (tipiGenerabili.size()>1){%>
+			<div class="card" style="margin:2rem 0;">
+				<div class="card-header">
+					<ul class="nav nav-tabs card-header-tabs">
+					<%	int pos=0;
+						for (TipoDocumento tipo: tipiGenerabili){%>
+						<li class="nav-item" id="sottotipo-<%=tipo.getId()%>">
+							<a role="tab" class="nav-link<%=(pos == 0 ? " active" : "")%>" data-toggle="tab" href="#corpoSottotipo-<%=tipo.getId()%>" aria-expanded="<%=(pos == 0 ? "true" : "false")%>" aria-controls="corpoSottotipo-<%=tipo.getId()%>">
+							<%=tipo%>
+							</a>
+						</li>	
+					<%		pos++;
+						}%>
+					</ul>
+				</div>
+				<div class="tab-content card-body">
+		<%	}%>
+				<%	int pos=0;
+					for (TipoDocumento tipo: tipiGenerabili){%>
+				
+				<%	if (tipiGenerabili.size()>1){%>
+					<div id="corpoSottotipo-<%=tipo.getId()%>" class="tab-pane fade<%=(pos == 0 ? " show active" : "")%>" aria-labelledby="sottotipo-<%=tipo.getId()%>" role="tabpanel">
+				<%	}%>
+						<ul class="nav">
+					<%	List<TipoDocumento> estensioniTipo=tipo.getEstensioni();
+						List<TipoDocumento> tipiInseribili=(estensioniTipo!=null && estensioniTipo.size() > 0 ? estensioniTipo : Arrays.asList(tipo));
+						for (TipoDocumento tipoIns: tipiInseribili){
+							if (tipoIns.inseribile(operatore)){%>
+							<%	if(mappa_tipi_sistema_per_tipi_dweb.get(tipoIns)==null){%>	
+								<li class="nav-item"><h4 style="margin:1rem 0 0 0;"><a class="nav-link" style="color:#007bff" href="<% if (pagina!=null){%><%=pagina.getAdminLink()%>&<% }else{ %>?<% } %><%=rq_operazione%>=crea&<%=rq_operazione%>_crea_tipo_d=<%=tipoIns.getId()%>"><span class="glyphicon glyphicon-plus"></span> Inserisci <%=tipoIns%></a></h4></li>
+							<%	}else{%>
+								<li class="nav-item"><h4 style="margin:1rem 0 0 0;"><a class="nav-link" style="color:#007bff" href="" data-toggle="modal" data-target="#modalTipo<%=tipoIns.getId()%>"><span class="glyphicon glyphicon-plus"></span>Inserisci <%=tipoIns%></a></h4></li>
+								<!-- init Modal -->
+								<div class="modal fade" id="modalTipo<%=tipoIns.getId()%>" tabindex="-1" role="dialog" aria-labelledby="modalTitleTipo<%=tipoIns.getId()%>" aria-hidden="true">
+								  <div class="modal-dialog modal-dialog-centered" role="document">
+									<div class="modal-content">
+									  <div class="modal-header">
+										<h3 class="modal-title" id="exampleModalLongTitle"><span class="glyphicon glyphicon-plus"></span> Inserisci <%=tipoIns%></h3>
+										<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+										  <span aria-hidden="true">&times;</span>
+										</button>
+									  </div>
+									  <div class="modal-body">
+										<div class="alert alert-info" role="alert"><span class="glyphicon glyphicon-info-sign" style="font-size:1.5rem;margin-right:1.2rem;"></span> La tipologia "<%=tipoIns%>" può essere inserita in diverse modalità.</div>
+										Cosa vuoi inserire?
+									  </div>
+									  <div class="modal-footer">
+									  <%	for(TipoSistema ts : mappa_tipi_sistema_per_tipi_dweb.get(tipoIns)){%>
+										<a class="btn btn-info" href="<% if (pagina!=null){%><%=pagina.getAdminLink()%>&<% }else{ %>?<% } %><%=rq_operazione%>=crea&<%=rq_operazione%>_crea_tipo_d=<%=tipoIns.getId()%>&<%=rq_operazione%>_crea_tipo_s=<%=ts.getId()%>" onclick="$('#modalTipo<%=tipoIns.getId()%>').modal('hide')"><span style="text-transform:capitalize;"><%=ts.toString().toLowerCase()%></span></a>
+									  <%	}%>	
+										<button type="button" class="btn btn-secondary" data-dismiss="modal">Annulla</button>
+									  </div>
+									</div>
+								  </div>
+								</div>
+								<!-- fine Modal -->
+							<%	}%>
+						<%	}%>
+					<%	}%>	
+						</ul>
+						
+						<div class="row" <%=(documenti_filtrati || !tipo.modificabile(operatore) ? "" : "id=\"sortable_" + tipo.getId() + "\"")%>>
+					<%	List<DocumentoWeb<?>> figliTipo=mappaFigli.get(tipo);
+						if (figliTipo != null){
+							List<DocumentoWeb<?>> documentiPaginare=figliTipo;
+							int pageSize=60;
+							String paginationParameter="childrenPage";%>
+						
+							<%@include file="/common/componenti/paginazione/_paginate.jsp" %>
+							
+						<%	for (DocumentoWeb<?> f: paginaDocumenti){%>
+								<%@include file="componenti/_card_documento_web.jsp" %>
+						<%	}%>
+						
+							<%@include file="/common/componenti/paginazione/_paginate_pages.jsp" %>
+					<%	}%>
+						</div>
+						
+					<%	if(tipo.getId().compareTo(TipoDocumento.AREA_TEMATICA.getId())!=0 || root){%>
+						<script>
+							$(document).ready(function(){
+								$( "#sortable_<%=tipo.getId()%>" ).sortable({
+									update : function(event, ui){
+										$(this).children().each(function(index){
+											if($(this).attr('data-ordine')!=(index+1) && $(this).attr('data-id_padre')!='null'){
+												//alert("ordineA " + $(this).attr('data-ordine'));
+												$(this).attr('data-ordine', index+1).addClass('updated');
+												//alert("ordineB " + $(this).attr('data-ordine'));
+											}
+										});
+										saveNewPosition();
+									}
+								});
+							});
+					  </script>
+					<%	}%>
+				<%	if (tipiGenerabili.size()>1){%>
+					</div>
+				<%	}%>
+				
+				<%		pos++;
+					}%>
+		<%	if (tipiGenerabili.size()>1){%>
+				</div>
+			</div>
+		<%	}%>
+		</div>
+	<%	}%>
+	</main>
+  
+</body>
+</html>

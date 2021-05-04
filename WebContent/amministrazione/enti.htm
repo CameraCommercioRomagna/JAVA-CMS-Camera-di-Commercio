@@ -1,0 +1,116 @@
+<%@include file="/amministrazione/common/include/begin.jsp" %>
+
+<!doctype html>
+
+<%@include file="_load_pagina.jsp" %>
+<%@include file="_load_ente.jsp" %>
+<%	List<Ente> enti=null;
+	String nome_ente=null;
+	
+	if (!inserimento){
+		// Carica i filtri
+		if (request.getParameter("nome_ente")!=null && !request.getParameter("nome_ente").equals(""))
+			nome_ente=request.getParameter("nome_ente");
+		
+		// Carica gli enti
+		enti = Ente.loadEntitiesFromQuery("select * from " + Ente.NAME_TABLE + " where 1=1 " + (nome_ente!=null ? " and nome ilike '%" + nome_ente + "%'" : "") + " order by nome, id_ente" ,connPostgres, Ente.class);	
+	}
+%>
+<html lang="it">
+<head>
+	<%@include file="/amministrazione/common/struct_template/head.htm" %>
+
+</head>
+
+<body>
+	<%@include file="/amministrazione/common/struct_template/header.htm" %>
+	<main class="main-content-admin">
+		<div class="row">
+			
+			<div class="col-md-3 col-sm-4 col-xl-2 order-sm-2" style="padding-left:0px !IMPORTANT;">
+				<div class="w-100" style="position: fixed;top: 100;">
+				<%@include file="componenti/_filtri_enti.jsp" %>
+				<%@include file="/amministrazione/common/struct_template/menu_sx.htm" %>
+				</div>
+			</div>
+			
+			<div class="col-md-9 col-sm-8 col-xl-10 order-first order-sm-2 border-gray">
+				
+				<%-- barra di navigazione --%>
+				<nav aria-label="breadcrumb">
+					<ol class="breadcrumb">
+						<li class="breadcrumb-item active" aria-current="page">Amministrazione portale - <a href="/amministrazione">Home aree tematiche</a></li>
+					<%	for (DocumentoWeb<?> p: ambitiPagina){%>
+						<li class="breadcrumb-item active" ><a href="/amministrazione/?ID_D=<%=p.getId()%>"><%=p.getTitolo()%></a></li>
+					<%	}%>
+						<li class="breadcrumb-item active" aria-current="page"><a href="/amministrazione/enti.htm">Enti per eventi</a></li>
+					</ol>
+				</nav>
+				
+			<%	if(ente==null){%>
+				<h1>Elenco enti</h1>
+			<%	}else{%>
+				<h1>Amministra ente: <%=(ente.isInserted() ? ente.nome : "Nuovo ente") %></h1>
+				
+				<h2 style="margin:2rem 0;">Modifica i dati</h4>
+				
+				<div class="card">
+					<div class="card-header">
+						<ul class="nav nav-tabs card-header-tabs">
+							<li class="nav-item" id="funzione1">
+								<a role="tab" class="nav-link active" data-toggle="tab" href="#corpoFunzione1" aria-expanded="true" aria-controls="corpoFunzione1">
+								Dati
+								</a>
+							</li>
+						</ul>
+					</div>
+					
+					<div class="tab-content card-body" id="myTabContent">
+						<div id="corpoFunzione1" class="tab-pane fade show active" aria-labelledby="funzione1" role="tabpanel">
+							<%@include file="/amministrazione/dweb_include/_ente_contenuto.jsp" %>
+						</div>
+					</div>
+					<div class="card-footer">
+						<a role="button" class="btn btn-info" href="/amministrazione/enti.htm<%=(pagina!=null ? "?"+rq_documento+"="+pagina.getId() : "")%>">Ricerca enti</a>
+					<%	if(pagina!=null){%>	
+						<a role="button" class="btn btn-info" href="/amministrazione/index.htm?<%=rq_documento%>=<%=pagina.getId()%>">Torna a <%=pagina.getTitolo()%></a>
+					<%	}%>
+					</div>
+				</div>
+			<%	}%>
+
+	<%	if (!inserimento_ente){%>
+
+			<ul class="nav">
+				<li class="nav-item"><h4 style="margin:1rem 0 0 0;"><a class="nav-link" href="?op=crea_ente"><span class="glyphicon glyphicon-plus"></span> Inserisci nuovo ente</a></h4></li>
+			</ul>
+
+					
+			<div class="row">
+		<%	for (Ente e: enti){%>
+				<div class="col-xl-4 col-lg-6 col-md-12" style="margin-top:2rem;">
+					<div class="card h-100 border-info" style="margin-left:0.5rem;padding:0;flex-grow:0!important;">
+						<div class="card-header bg-info text-white"><%=e.nome %></div>
+						<div class="card-body">
+							<%	if(e.img_path!=null){%>	
+								<p style="text-align:center;"><img class="card-img" style="width:50%;" src="<%=e.img_path%>" alt="Card image cap"></p>
+							<%	}%>	
+							<p class="card-text"><%=e.note!=null ? e.note : "" %></p>
+						</div>
+						<div class="card-footer">
+							<div class="row">
+								<div class="col-6">
+									<a href="?<%=rq_ente%>=<%=e.id_ente%><%=(pagina!=null ? "&"+rq_documento+"="+pagina.getId() : "")%>" class="card-link">Modifica</a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+		<%	}%>
+			</div>
+					
+	<%	}%>
+	</main>
+
+</body>
+</html>

@@ -1,0 +1,173 @@
+<%@include file="/amministrazione/common/include/begin.jsp" %>
+<%@include file="/amministrazione/_load_pagina.jsp" %>
+
+<%	String query="select id_utente, nome, cognome, email, to_char(data_inserimento, 'dd-MM-yyyy HH24:MI:SS') as data_inserimento, to_char(data_attivazione, 'dd-MM-yyyy hh24:mi:ss') as data_attivazione, organizzazione, telefono, key, password";
+	String from = " from " + UtenteNl.NAME_TABLE;
+	String where = " where 1=1";
+	String order_by="";
+	
+	String filter_cognome=request.getParameter("cognome");
+	String filter_email=request.getParameter("email");
+	String filter_attivo=request.getParameter("attivo");
+	String order=request.getParameter("order_result");
+	
+	
+	if(filter_cognome!=null && !filter_cognome.equals("")){
+		String nome_completo=filter_cognome.replaceAll("'","''");
+		where +=" and ((cognome||' '||nome ilike '%"+ nome_completo + "%') or (nome||' '||cognome ilike '%"+ nome_completo + "%'))";
+	}
+	
+	if(filter_email!=null && !filter_email.equals("")){
+		where +=" and email ilike '%"+ filter_email.toUpperCase() + "%' "; 
+	}
+	
+	if(filter_attivo!=null && !filter_attivo.equals("")){
+		if(filter_attivo.equals("1"))
+			where +=" and data_attivazione is not NULL";
+		else if (filter_attivo.equals("0"))
+			where+= " and data_attivazione is NULL";	
+	}
+	
+	if((order!=null)&&(order.equals("0"))){
+		order_by=" order by cognome ASC";
+	}
+	if((order!=null)&&(order.equals("1"))){
+		order_by=" order by email ASC";
+	}
+	if((order!=null)&&(order.equals("2"))){
+		order_by=" order by to_date(to_char(data_inserimento, 'dd-MM-yyyy HH24:MI:SS'), 'dd-MM-yyyy HH24:MI:SS') DESC";
+	}
+	
+	query += from + where + order_by;
+	QueryPager ricerca = new QueryPager(connPostgres);
+	ricerca.set(query);
+	//out.print(query);
+%>
+	
+<%@include file="/common/jsp/datadioggi.jsp" %>
+
+<html lang="it">
+
+<head>
+<%@include file="/amministrazione/common/struct_template/head.htm" %>
+</head>
+
+<body>
+<%@include file="/amministrazione/common/struct_template/header.htm" %>
+	<main class="main-content-admin">
+		<div class="row">
+			
+			<div class="col-md-3 col-sm-4 col-xl-2 order-sm-2" style="padding-left:0px !IMPORTANT;">
+				<%@include file="/amministrazione/common/struct_template/menu_sx.htm" %>
+			</div>
+			
+			<div class="col-md-9 col-sm-8 col-xl-10 order-first order-sm-2 border-gray">
+
+				<h1> <span class="glyphicon glyphicon-search" aria-hidden="true" style="margin-right:10px;"></span> Utenti iscritti ai servizi online </h1>
+				<h4>Imposta i criteri di selezione</h4><br/>
+
+				<form name="ricerca" action="<%=request.getServletPath() %>" method="get" class="form-control-cciaa-sm">
+					<div class="form-group row">
+						<label for="cognome" class="col-sm-2 col-form-label"><b>Cognome</b></label>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" style="width:400px;" id="cognome" name="cognome" placeholder="Cognome" value="<%=filter_cognome!=null?filter_cognome:""%>" /> 
+						</div>
+					</div>
+					<div class="form-group row">
+						<label for="email" class="col-sm-2 col-form-label"><b>Email</b></label>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" style="width:400px;" id="email" name="email" placeholder="Email" value="<%=filter_email!=null?filter_email:""%>" /> 
+						</div>
+					</div>
+					<div class="form-group row">
+						<label for="attivo" class="col-sm-2 col-form-label"><b>Attivo</b></label>
+						<div class="col-sm-10">
+							<input type="radio" name="attivo" value="1" style="margin-left:68px;" <%if(filter_attivo!=null&&filter_attivo.equals("1")){%>checked="checked"<%}%>/>Sì
+							<input type="radio" name="attivo" value="0" <%if(filter_attivo!=null&&filter_attivo.equals("0")){%>checked="checked"<%}%> />No
+							<input type="radio" name="attivo" value="" <%if(filter_attivo==null||(filter_attivo!=null&&filter_attivo.equals(""))){%>checked="checked"<%}%>/>Tutti
+						</div>
+					</div>
+					<div class="form-group row">
+						<label for="order_result" class="col-sm-2 col-form-label"><b>Ordina per</b></label>
+						<div class="col-sm-10">
+							<input type="radio" name="order_result" value="0" <% if(order!=null && order.equals("0")){%> checked="checked" <%}%>/>Cognome
+							<input type="radio" name="order_result" value="1" <% if(order!=null && order.equals("1")){%> checked="checked" <%}%>/>Email
+							<input type="radio" name="order_result" value="2" <% if((order==null)||(order!=null && order.equals("2"))){%> checked="checked" <%}%>/>Data inserimento
+						</div>
+					</div>
+					
+					<p style="margin-left:5rem;">
+						<input style="width:200px;margin-right:3em;" type="submit" class="btn btn-primary" name="cerca" value="Cerca">
+					</p>
+				</form>
+				<br/>
+			<%	if(ricerca.getNumberRecords()>0){%>
+
+				<%	ricerca.setPageSize(500);
+					int numPagina=1;
+					try{
+						numPagina = Integer.parseInt(request.getParameter("page"));
+						if (numPagina > ricerca.getNumberPages()){
+							numPagina=1;
+							throw new IllegalArgumentException("Forzata una pagina inesistente");
+						}
+					}catch(Exception e){}%>
+				<h3>
+					<span class="glyphicon glyphicon-th-list" aria-hidden="true" style="margin-right:10px;"></span>
+					Risultato della ricerca : <%=ricerca.getNumberRecords() %>
+				<%	if (ricerca.getNumberPages() > 1){%>
+					- Pagina <%=numPagina %> di <%=ricerca.getNumberPages() %>
+				<%	}%>
+				</h3>
+
+				<div class="table-responsive">
+					<table class="table table-striped table-hover" style="font-size:0.9rem;">
+						<tr>
+							<th></th>
+							<th>Cognome Nome</th>
+							<th>Email</th>
+							<th>Password</th>
+							<th>Telefono</th>
+							<th>Data inserimento</th>
+							<th>Data attivazione</th>
+						</tr>
+				<%	for(Row<String> utente:ricerca.getPage(numPagina)){%>
+						<tr style="border:1px;">
+							<td>
+								<img src="/amministrazione/imgs/<%=((!utente.getField("data_attivazione").equals("")) && (utente.getField("data_attivazione")!=null))?"":"non_"%>attivo.png" />
+							</td>
+							<td><%if((operatore!=null)&&(((Long)operatore.id_utente==4217))){%><%=utente.getField("id_utente")%>  - <%}%>  <%=utente.getField("cognome")%> <%=utente.getField("nome")%></td>
+							<td style="font-size:11px;"><a href="mailto:<%=utente.getField("email")%>"><%=utente.getField("email")%></a></td>
+							<td><%=utente.getField("password")%></td>
+							<td><%=utente.getField("telefono")%></td>
+							<td><%=utente.getField("data_inserimento")%></td>
+							<td>
+								<%if((!utente.getField("data_attivazione").equals("")) && (utente.getField("data_attivazione")!=null)){%>
+									<%=utente.getField("data_attivazione")%>
+								<%}else{%>
+									<a href="mail_attivazione.jsp?email= '<%=utente.getField("email")%>'&password='<%=utente.getField("password")%>'&key='<%=utente.getField("key")%>'"   onclick="return confirm('Invia la mail per l'attivazione dell'utente?')">Reinvia mail attivazione</a>
+								<%}%>
+							</td>
+						</tr>
+				<%	}%>
+					</table>
+				</div>
+				<%	if (ricerca.getNumberPages() > 1){
+						CdCURLWrapper urlwrapperPage = new CdCURLWrapper(urlwrapper);%>
+				<h5>
+					<span class="glyphicon glyphicon-stop" aria-hidden="true" style="margin-right:10px;"></span>
+					Vai alla pagina
+					<%	for (int p=1; p<=ricerca.getNumberPages(); p++){ 
+							urlwrapperPage.modifyParameter("page",String.valueOf(p));%> 
+							<%=(p==numPagina ? ""+p : "<a href=\"" + urlwrapperPage + "\">" + p + "</a>" ) %>
+					<%	}%>
+				</h5>
+				<%	}
+				}%>
+
+			</div>
+		</div>
+	</main>
+  
+</body>
+</html>

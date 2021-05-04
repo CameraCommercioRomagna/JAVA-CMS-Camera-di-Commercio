@@ -1,0 +1,121 @@
+<%@include file="/amministrazione/common/include/begin.jsp" %>
+
+<!doctype html>
+
+<%@include file="/amministrazione/_load_pagina.jsp" %>
+<%@include file="_load_email.jsp" %>
+
+<html lang="it">
+<head>
+	<%@include file="/amministrazione/common/struct_template/head.htm" %>
+</head>
+
+<body>
+	<%@include file="/amministrazione/common/struct_template/header.htm" %>
+	<main class="main-content-admin">
+		<div class="row">
+			
+			<div class="col-md-3 col-sm-4 col-xl-2 order-sm-2" style="padding-left:0px !IMPORTANT;">
+				<%@include file="/amministrazione/common/struct_template/menu_sx.htm" %>
+			</div>
+			
+			<div class="col-md-9 col-sm-8 col-xl-10 order-first order-sm-2 border-gray">
+				
+				<%-- barra di navigazione --%>
+				<nav aria-label="breadcrumb">
+					<ol class="breadcrumb">
+						<li class="breadcrumb-item active" aria-current="page">Amministrazione portale</li>
+					<%	for (DocumentoWeb<?> p: ambitiPagina){%>
+						<li class="breadcrumb-item active" ><a href="/amministrazione/?ID_D=<%=p.getId()%>"><%=p.getTitolo()%></a></li>
+					<%	}%>
+					</ol>
+				</nav>
+
+				<h1>Amministra <span><%=(pagina.getPadre()!=null ? tipoPagina : "")%> <i><%=(pagina.getId()!=null ? pagina.getId() : "")%></i></span>: <%=pagina.getTitolo()%></h1>
+				
+			<%	String stile=(pagina.scaduto() ? "danger" : (pagina.pubblico() ? "success" : (pagina.valido() ? "warning" : "secondary")));
+				String status=(pagina.scaduto() ? "Documento scaduto" : (pagina.pubblico() ? "Documento pubblicato" : (pagina.valido() ? "Documento non pubblicato" : "Documento non validato"))); %>
+				
+				<div class="progress">
+					<div class="progress-bar bg-<%=stile %>" role="progressbar" style="width: 100%;text-align:right;padding-right:3rem;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"><b><i><%=status%></i></b></div>
+				</div>
+				
+				<%-- Amministrazione della pagina corrente --%>
+				<%	if (paginaModificabile){
+						List<String> tabList = Arrays.asList("Contenuto", "Punti");
+						List<Boolean> tabListAuth = Arrays.asList(true, true);
+						String tabAttivo = requestMP.getParameter(rq_email + "_tab");
+						if (tabAttivo==null || !tabList.contains(tabAttivo))
+							tabAttivo = tabList.get(0);%>
+					<h2 style="margin:0.5rem 0;">Crea email personalizzata</h2>
+					
+					
+					<%--Barra aggiornamento contenuti --%>
+					
+					<%	if (pagina.pubblico() && pagina.getUltimaModifica().after(DateUtils.addDays(new Date(), -1))){%>
+							<%	int indiceRitardo=(int)(pagina.indiceRitardoAggiornamento()*100);%>
+							<%if(indiceRitardo>50){%>
+								<div class="alert alert-danger" style="padding-top:0.3rem;padding-bottom:0.3rem;">
+									<div class="row">
+										<div class="col-6">
+											<span class="glyphicon glyphicon-alert" style="font-size:1.8rem;"></span>&nbsp;&nbsp; Indice di aggiornamento della pagina: <%=100-indiceRitardo + "%" %>
+											<%--@include file="componenti/_bar_ritardo.jsp" --%>
+										</div>
+										<div class="col-6">
+											<a href="<%=pagina.getAdminLink()%>&<%=rq_documento %>_tab=Aggiornamento+contenuti" title="Aggiorna contenuti" class="btn btn-primary" aria-label="Aggiorna contenuti"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> Aggiorna contenuti</a>
+
+										</div>
+									</div>
+								</div>
+							<%}%>
+					<%	}%>
+					
+				
+					<div class="card">
+						<div class="card-header">
+							<ul class="nav nav-tabs card-header-tabs">
+						<%	for (int i=0; i<tabList.size(); i++){%>
+							<%	if(tabListAuth.get(i)){
+									String tabName = tabList.get(i);
+									String tabId = tabName.replaceAll(" ", "-");%>
+									<li class="nav-item" id="<%=tabId %>">
+										<a role="tab" class="nav-link<%=(tabName.equals(tabAttivo) ? " active" : "")%>" data-toggle="tab" href="#corpo<%=tabId %>" aria-expanded="false" aria-controls="corpo<%=tabId %>">
+										<%=tabName %>
+										</a>
+									</li>
+							<%	}%>
+						<%	}%>
+							</ul>
+						</div>
+						
+						<div class="tab-content card-body" id="myTabContent">
+					<%	for (int iExt=0; iExt<tabList.size(); iExt++){%>	
+						<%	if(tabListAuth.get(iExt)){
+								String tabName = tabList.get(iExt);
+								String tabId = tabName.replaceAll(" ", "-");%>
+								<div id="corpo<%=tabId %>" class="tab-pane fade<%=(tabName.equals(tabAttivo) ? " show active" : "")%>" aria-labelledby="<%=tabId %>" role="tabpanel">
+							<%	switch (iExt){
+									case 0:{%>
+									<%@include file="/amministrazione/mail/_email_contenuto.jsp" %>
+							<%		}break;
+									case 1:{%>
+									<%@include file="/amministrazione/mail/_punti.jsp" %>
+							<%		}break;
+								}%>
+								</div>
+						<%	}%>
+					<%	}%>
+						</div>
+						<div class="card-footer">
+						<%	if (email.isInserted()){%>
+								<a role="button" class="btn btn-info" href="/amministrazione/mail/crea_email2.jsp?<%=rq_email%>=<%=email.getId()%>&<%=rq_documento%>=<%=pagina.getId()%>" target="_blank"><span class="glyphicon glyphicon-picture" aria-hidden="true"></span> Anteprima</a>
+						<%	}%>	
+						</div>
+					</div>
+				</div>
+			<%	}%>	
+		</div>
+	</main>
+  
+</body>
+</html>

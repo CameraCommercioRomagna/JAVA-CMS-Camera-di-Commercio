@@ -1,0 +1,73 @@
+<%@include file="/amministrazione/common/include/begin.jsp" %>
+
+<!doctype html>
+
+<%@include file="_load_pagina.jsp" %>
+<%@include file="componenti/_filtri_documenti_init.jsp" %>
+
+<%	boolean ricerca = requestMP.getParameter("ricerca")!=null && requestMP.getParameter("ricerca").equals("yes");
+	List<DocumentoWeb<?>> risultati_ricerca=null;
+	if (ricerca){
+		Map<String, Object> altriParametri=new HashMap<String, Object>();
+		if (titolo_dweb!=null)	altriParametri.put("titolo", titolo_dweb);
+		if (user_dweb!=null)	altriParametri.put("username_proprietario", user_dweb);
+		if (priorita!=null)		altriParametri.put("priorita", priorita);
+		
+		risultati_ricerca = DocumentFactory.loadAll(connPostgres, tipo_d, null, validati, pubblicati, scaduti, visibilita, altriParametri);
+	}%>
+
+<html lang="it">
+<head>
+	<%@include file="/amministrazione/common/struct_template/head.htm" %>
+</head>
+
+<body>
+
+
+
+
+	<%@include file="/amministrazione/common/struct_template/header.htm" %>
+	<main class="main-content-admin">
+	
+		<div class="row">
+			
+			<div class="col-md-3 col-sm-4 col-xl-2 order-sm-2" style="padding-left:0px !IMPORTANT;">
+				<%@include file="componenti/_filtri_documenti.jsp" %>
+				<%@include file="/amministrazione/common/struct_template/menu_sx.htm" %>
+			</div>
+			
+			<div class="col-md-9 col-sm-8 col-xl-10 order-first order-sm-2 border-gray">
+				
+				<%-- barra di navigazione --%>
+				<nav aria-label="breadcrumb">
+					<ol class="breadcrumb">
+						<li class="breadcrumb-item active" aria-current="page">Amministrazione portale - <a href="/amministrazione/ricerca.htm">Ricerca nell'amministrazione</a></li>
+					</ol>
+				</nav>
+				
+				<h1>Ricerca su tutta l'amministrazione</h1>
+		<%	if(!ricerca){%>
+				<div class="alert alert-info" role="alert"><span class="glyphicon glyphicon-info-sign" style="font-size:1.5rem;margin-right:1.2rem;"></span> Per eseguire una ricerca impostare i criteri nell'area a sinistra "Filtra la ricerca" e clicca su "Applica filtri".</div>
+		<%	}else{
+				if(risultati_ricerca!=null && risultati_ricerca.size()>0 && risultati_ricerca.size()<150){%>
+				<h3>Risultato della ricerca: <%=risultati_ricerca.size() %> documento/i web</h3>
+				<div class="row">
+				<%	for (DocumentoWeb<?> f: risultati_ricerca){
+						if(f.accessibile(operatore)){%>
+						<%@include file="componenti/_card_documento_web.jsp" %>
+				<%		}
+					}%>
+				</div>
+			<%	}else if(risultati_ricerca!=null && risultati_ricerca.size()>0 && risultati_ricerca.size()>=150){%>
+					<div class="alert alert-info" role="alert"><span class="glyphicon glyphicon-info-sign" style="font-size:1.5rem;margin-right:1.2rem;"></span> Troppi risultati da visualizzare (<%=risultati_ricerca.size()%>). Filtrare maggiormente la ricerca.</div>
+			<%	}else{%>
+					<div class="alert alert-info" role="alert"><span class="glyphicon glyphicon-info-sign" style="font-size:1.5rem;margin-right:1.2rem;"></span> Nessun documento corrisponde ai criteri ricercati.</div>
+			<%	}%>
+		<%	}%>	
+			</div>
+		</div>		
+	
+	</main>
+
+</body>
+</html>

@@ -1,0 +1,3 @@
+<%	PreviewQuery risposte=new PreviewQuery(connPostgres);
+	risposte.setPreview("select id_risposta, id_quesito, testo_risposta, testo_risposta_1, to_char(data_inserimento, 'DD-MM-YYYY HH24:MI:SS') as data_inserimento, to_char(data_invio, 'DD-MM-YYYY HH24:MI:SS') as data_invio, allegato_f0, allegato_f1, allegato_f2, to_char(data_chiusura_op, 'DD-MM-YYYY') as data_chiusura_op, ultima, id_operatore from " + AbstractDocumentoWeb.NAME_SCHEMA + ".cc_risposte where id_quesito=" + id_quesito + " order by id_risposta ASC");
+	%>
