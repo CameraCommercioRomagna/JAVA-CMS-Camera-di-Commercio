@@ -347,7 +347,7 @@ Il numero è visibile dalle maschere di amministrazione.
 Aggiornamento dei contenuti
 Per aiutare i redattori a mantenere i contenuti del sito sufficientemente aggiornati è stata sviluppata una funzione apposita. Un aggiornamento costante è molto importante l'esito di questa attività viene visualizzata nel sito pubblico in fondo ad ogni pagina.
                 
-<h2>Aggiornamento del documento<(h2>
+<h2>Aggiornamento del documento<h2>
 Quando per la prima volta si valida un documento si presume che il contenuto sia aggiornato e cioè che: 
     • tutti i campi siano stati controllati
     • tutti i testi siano stati riletti e verificati
@@ -359,7 +359,7 @@ Il periodo di riferimento di questo aggiornamento è stato fissato in un anno. D
     • rosso per documenti confermati da 8 a 12 mesi
 Trascorsi i dodici mesi non succede nulla; il documento resta pubblicato e visibile ma si consiglia di verificarlo nuovamente prima possibile.
 L'indicatore è un aiuto immediato per i redattori per individuare i documenti più vecchi. I contenuti non scaduti vanno dunque confermati almeno ogni 12 mesi mentre quelli scaduti no.
-   <h3>Aggiornare i contenuti</h3>
+<h3>Aggiornare i contenuti</h3>
 L'aggiornamento è una operazione volontaria e non automatica. Per indicare al sistema che vuoi rivedere i contenuti della pagina vai nel tab "Aggiornamento contenuti" e premi su "Conferma aggiornamento contenuti"
 La pagina apparirà per il tuo controllo alla fine del quale puoi decidere se confermarla o no scegliendo fra i due pulsanti in fondo.
 Se hai confermato, l'indicatore temporale riparte dall'inizio e sul sito apparirà la nuova data di aggiornamento.
