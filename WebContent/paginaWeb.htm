@@ -1,0 +1,248 @@
+<%@include file="/common/include/begin.jsp" %>
+<%@include file="/common/include/_load_pagina.jsp" %>
+
+<%@include file="/common/componenti/collettori/_agenda-import.jsp"%>
+<%@include file="/common/componenti/collettori/_tab_anni-import.jsp"%>
+
+<%	
+/*init controllo obbligato in caso di id passato non esistente -- load_pagina.jsp entra in eccezione ma la pagina da errore prima di riuscire a fare il sendRedirect del catch*/
+if(pagina!=null){
+	
+	// Aggiornamento metatag pagina
+	head_title += (!search_engine ? " - " : "") + pagina.getTitolo();
+	meta_keywords += (pagina.parole_chiave!=null ? (!search_engine ? ", " : "") + pagina.parole_chiave.replaceAll("\"", "").toLowerCase() : "");
+	meta_description = pagina.getAbstract();
+		
+	//StrutturaCamerale struttura=pagina.getStrutturaCamerale();
+	
+	//boolean visualizzaIndiceParagrafi=false;
+	List<Paragrafo> paragrafi=new ArrayList<Paragrafo>();
+	//List<Competenza> competenze=new ArrayList<Competenza>();
+	//List<DocumentoWeb<?>> normativa=new ArrayList<DocumentoWeb<?>>();
+	//List<DocumentoWeb<?>> modulistica=new ArrayList<DocumentoWeb<?>>();
+	//List<DocumentoWeb<?>> serviziOnline=new ArrayList<DocumentoWeb<?>>();
+	List<DocumentoWeb<?>> comunicazioni=new ArrayList<DocumentoWeb<?>>();
+	//List<Edizione> edizioni=new ArrayList<Edizione>();
+	//List<Edizione> edizioniPassate=new ArrayList<Edizione>();
+	//List<Download> volumi=new ArrayList<Download>();
+	//List<DocumentoWeb<?>> file_utili=file_utili=pagina.getFileUtili();
+	//List<DocumentoWeb<?>> file_allegati=pagina.getFigli(TipoDocumento.FILE_ALLEGATO);
+	//List<Immagine> immagini=pagina.getImmagini();
+	//List<DocumentoWeb<?>> video=pagina.getFigli(TipoDocumento.VIDEO);
+
+	if (pagina instanceof Documento){
+		Documento documento=(Documento)pagina;
+		paragrafi=documento.getParagrafi();
+		//visualizzaIndiceParagrafi = documento.visualizza_indice;
+	}
+	
+	if (pagina instanceof AreaTematica){
+		AreaTematica areaTematica=(AreaTematica)pagina;
+		//competenze=areaTematica.getCompetenze();
+		//serviziOnline=areaTematica.getServiziOnline();
+		comunicazioni=areaTematica.getNotizie();
+	}
+	if (pagina instanceof Competenza){
+		Competenza competenza=(Competenza)pagina;
+		//normativa=competenza.getNormativa();
+		//serviziOnline=competenza.getServiziOnline();
+		comunicazioni=competenza.getNotizie();
+	}
+	if (pagina instanceof Attivita){
+		Attivita attivita=(Attivita)pagina;
+		//normativa=attivita.getNormativa();
+		//modulistica=attivita.getModulistica();
+		//serviziOnline=attivita.getServiziOnline();
+		comunicazioni=attivita.getNotizie();
+		//edizioni=attivita.getEdizioni(true, true, false);
+		//edizioniPassate=attivita.getEdizioni(true, true, true);
+	}
+	/*if (pagina instanceof EdizioneInterna){
+		serviziOnline=pagina_padre.getServiziOnline();
+	}
+	if (pagina instanceof Pubblicazione){
+		Pubblicazione pubblicazione=(Pubblicazione)pagina;
+		volumi=pubblicazione.volumi();
+	}*/
+	/**/
+	/*List<DocumentoWeb<?>> sezioniContenuto=new ArrayList<DocumentoWeb<?>>();
+	if (pagina.getTipo() == TipoDocumento.AMMINISTRAZIONE_TRASPARENTE || pagina.getTipo() == TipoDocumento.SEZIONE_AMMINISTRAZIONE_TRASPARENTE)
+		sezioniContenuto = pagina.getFigli(TipoDocumento.DOCUMENTO_AMMINISTRAZIONE_TRASPARENTE, null, true, true, null, Visibilita.VISIBILE_DOVE_COLLOCATO, TipoOrdinamentoDocumenti.MANUALE);
+	else if (pagina.getTipo() == TipoDocumento.GRUPPO_GIUNTE_CAMERALI){
+		sezioniContenuto = pagina.getFigli(TipoDocumento.GIUNTA_CAMERALE, null, true, true, null, Visibilita.VISIBILE_DOVE_COLLOCATO, TipoOrdinamentoDocumenti.MANUALE);
+		//--old--sezioniContenuto.addAll(pagina.getFigli(TipoDocumento.DOCUMENTO_RISERVATO_REVISORI, null, true, true, false, Visibilita.VISIBILE_DOVE_COLLOCATO, TipoOrdinamentoDocumenti.MANUALE));
+	}else if (pagina.getTipo() == TipoDocumento.GRUPPO_CONSIGLI_CAMERALI){
+		sezioniContenuto = pagina.getFigli(TipoDocumento.CONSIGLIO_CAMERALE, null, true, true, null, Visibilita.VISIBILE_DOVE_COLLOCATO, TipoOrdinamentoDocumenti.MANUALE);
+		//--old--sezioniContenuto.addAll(pagina.getFigli(TipoDocumento.DOCUMENTO_RISERVATO_REVISORI, null, true, truepubblicati, false, Visibilita.VISIBILE_DOVE_COLLOCATO, TipoOrdinamentoDocumenti.MANUALE));
+	}else if (pagina.getTipo() == TipoDocumento.GIUNTA_CAMERALE){
+		sezioniContenuto = pagina.getFigli(TipoDocumento.DOCUMENTO_RISERVATO_GIUNTA, null, true, true, false, Visibilita.VISIBILE_DOVE_COLLOCATO, TipoOrdinamentoDocumenti.MANUALE);
+		sezioniContenuto.addAll(pagina.getFigli(TipoDocumento.DOCUMENTO_RISERVATO_REVISORI, null, true, true, false, Visibilita.VISIBILE_DOVE_COLLOCATO, TipoOrdinamentoDocumenti.MANUALE));
+	}else if (pagina.getTipo() == TipoDocumento.CONSIGLIO_CAMERALE){
+		sezioniContenuto = pagina.getFigli(TipoDocumento.DOCUMENTO_RISERVATO_CONSIGLIO, null, true, true, false, Visibilita.VISIBILE_DOVE_COLLOCATO, TipoOrdinamentoDocumenti.MANUALE);
+		sezioniContenuto.addAll(pagina.getFigli(TipoDocumento.DOCUMENTO_RISERVATO_REVISORI, null, true, true, false, Visibilita.VISIBILE_DOVE_COLLOCATO, TipoOrdinamentoDocumenti.MANUALE));
+	}*/
+	/**/%>
+	
+	<%
+		TipoDocumento tipo = null;
+		
+		Boolean visualAbstract=null;
+		TipoDocumento tipoBlocco=null;
+		Boolean eventoSmall=false;
+		Boolean paginaIscrizione=false;
+	%>
+		
+<!doctype html>
+<html <%=tagHtmlAttributes%>>
+<head>
+	<%@include file="eventi_google.jsp" %>
+	<%@include file="/common/struct_template/head.htm" %>
+	<link href="/common/bootstrap/css/customized_bootstrap_carousel.css" rel="stylesheet" media='all' />
+	
+<%	String img_src = pagina.getImmagine();
+	if(img_src==null){
+		try{
+			img_src=paragrafi.get(0).img_path;
+		}catch(Exception ef){}
+	}%>
+	<!-- Twitter -->
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:title" content="<%=pagina.getTitolo() %>" />
+	<meta name="twitter:description" content="<%=meta_description %>" />
+	<meta name="twitter:image" content="http://www.xxx.it<%=img_src%>" />
+	<!-- Twitter - Article -->
+	<!-- Open Graph general (Facebook, Pinterest & Google+) -->
+	<meta property="og:title" content="<%=pagina.getTitolo() %>" />
+	<meta property="og:description" content="<%=meta_description %>" />
+	<meta property="og:articleBody" content="<%=meta_description %>" />
+	<meta property="og:image" content="http://www.xxx.it<%=img_src%>" />
+	<meta property="og:image:width" content="300" />
+	<meta property="og:image:height" content="300" />
+	<meta property="og:image:url" content="http://www.xxx.it<%=img_src%>" />
+	<meta property="og:url" content="http://www.xxx.it/paginaWeb.htm?ID_D=<%=pagina.getId()%>" />
+	<meta property="og:site_name" content="Portale della XXX" />
+	<meta property="og:locale" content="it_IT" />
+	<meta property="og:type" content="article" />
+	<!-- Open Graph - Article -->
+	<meta property="article:published_time" content="<%=pagina.data_pubblicazione %>" />
+	<meta property="article:tag" content="article" />
+	
+	<script src="/common/js/carousel-notizie.js"></script>
+	<link href="/common/css/carousel-notizie.css" rel="stylesheet" media='all'>
+	<link href="/common/css/modal-image.css" rel="stylesheet" media='all'>
+	
+	<style>
+		.paragrafi_img ul{
+			list-style-position:inside;
+		}
+	</style>
+</head>
+
+
+<body class="body-public">
+
+	<jsp:include page="/common/struct_template/header_standalone.jsp"></jsp:include>
+	
+	<%@include file="/common/struct_template/barra_navigazione.htm" %>
+	
+	<main class="main-content">
+		
+	<%	if (previewConfermaContenuti){%>
+		<div class="alert alert-info" role="alert">
+			<h1>Conferma validità dei contenuti della pagina</h1>
+			<p>Per validare la pagina occorre:
+				<ul>
+					<li>controllarne i contenuti scorrendola nella sua interezza;</li>
+					<li>premere il pulsante "Conferma aggiornamento contenuti" a fine pagina.</li>
+				</ul>
+			</p>
+		</div>
+	<%	}%>
+		
+		
+		<div class="row">
+			
+			<%@include file="/common/struct_template/menu_sx.htm" %>
+			
+			<!--CENTRO PAGINA-->
+			<%if (!(pagina instanceof EdizioneInterna)){%>
+					<jsp:include page="template_documento.htm"/>
+			<%}%>
+			<%	if (pagina instanceof EdizioneInterna){%>
+					<jsp:include page="template_evento.htm"/>  
+			<%	}%>
+			<br/>
+
+			<!-- FINE CENTRO PAGINA-->
+
+		</div>
+		
+		<%	if(comunicazioni.size()>0){%>
+				
+				<div class="container-fluid" style="background-color:#d8e7ed; padding-bottom:1rem; padding-top:1rem;">
+					<h3 style="font-size:2rem;"><span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span> In primo piano</h3>
+					  <div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="false">
+						<div class="carousel-inner row w-100 mx-auto flex-nowrap" style="padding:0.7rem;">
+							<%int count=0;%>
+							<%for (DocumentoWeb<?> c: comunicazioni){%>
+								<div class="carousel-item col-xl-3 col-lg-4 col-md-6 <%=(count==0?"active":"")%>" style="padding-bottom:1rem;">
+								<!--div class="carousel-item col-xl-3 col-lg-4 col-md-6 carousel-item-customcdc <%=(count==0?"active":"")%>" style="padding-bottom:1rem;"-->
+									<div class="card h-100" style="flex-grow:0!important; border:0; box-shadow: 5px 5px 10px 0 #071d49;">
+										<div class="card-img-top" style="text-align:center; ">
+											<div class="carousel-item-customcdc-background-image" style="background-image:url('<%=(c.getIcona()!=null? c.getIcona():c.getTipo().getIcona())%>'); background-size:cover; background-position:50% 50%; height:230px;" > &nbsp;</div>
+										</div>
+										<div class="card-block" style="padding:1rem">
+											<h4 class="card-title"><a href="<%=c.getLink()%>"><%=c.getTitolo()%></a></h4>
+											<p class="card-text" style="font-size:0.9rem;" >
+												<%=c.getAbstract() %><br/>
+												<!--b><%=c.getInfo() %></b><br/-->
+											</p>
+										</div>
+									</div>
+								</div>
+								<%count++;%>
+							<%}%>
+						</div>
+					<%	if(comunicazioni.size()>1){
+							String class_for_carousel_freccia = comunicazioni.size()==4 ? "d-xl-none" : (comunicazioni.size()==3 ? "d-lg-none" : (comunicazioni.size()==2 ? "d-md-none" : ""));%>
+							<a class="carousel-control-prev carousel-freccia <%=class_for_carousel_freccia%>" href="#myCarousel" role="button" data-slide="prev">
+							  <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+							  <span class="sr-only">Previous</span>
+							</a>
+							<a class="carousel-control-next carousel-freccia <%=class_for_carousel_freccia%>" href="#myCarousel" role="button" data-slide="next">
+							  <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+							  <span class="sr-only">Next</span>
+							</a>
+					<%	}%>
+
+					</div>
+				</div>
+				
+		<%	}%>
+		
+		<%	if(!search_engine){%>
+			<%	if(pagina.valido() && tipiDoc_senza_info_aggiornata_al.indexOf(pagina.getTipo())==-1){%>
+				<div style="margin: 1.5rem 0 0 0; text-align:center"><em>I contenuti di questa pagina sono aggiornati al <%=DateUtils.formatDate(pagina.data_ultimo_aggiornamento) %></em></div>
+			<%	}%>
+		<%	}%>
+	
+	<%	if (previewConfermaContenuti){%>
+		<div class="alert alert-info" role="alert" style="margin-top:2rem;text-align:center">
+			<h3>Hai verificato tutti i contenuti della pagina?</h3>
+			<br/>
+			<a href="/amministrazione/esegui.jsp?<%=rq_documento %>=<%=pagina.getId()%>&<%=rq_operazione %>=conferma_aggiornamento" class="btn btn-success" style="margin-right:2rem;">Confermo aggiornamento contenuti</a>
+			<a href="<%=pagina.getAdminLink()%>" class="btn btn-secondary">Rimando la conferma ad un momento successivo</a>
+			<br/>
+		</div>
+	<%	}%>
+	
+	</main>
+<script src="/common/js/modal-image.js"></script>
+<%@include file="/common/struct_template/feedback.htm" %>
+<%@include file="/common/struct_template/footer.htm"%> 
+<%@include file="/common/struct_template/footer_script.htm" %>
+
+  </body>
+</html>
+
+<%	 }%> 

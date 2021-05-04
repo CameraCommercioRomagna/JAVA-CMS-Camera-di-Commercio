@@ -1,0 +1,147 @@
+<%@include file="/common/include/begin.jsp" %>
+<%@include file="include/_load_pagina.jsp" %>
+
+<%	StrutturaCamerale struttura=pagina.getStrutturaCamerale();%>
+
+<!doctype html>
+<head>
+	<%@include file="/common/struct_template/head.htm" %>
+	<script type="text/javascript">
+		function checkInserimento(){
+			var ritorno = true;
+			var prod = window.document.mod;
+			var messaggio = "";
+			
+			if (prod.password1.value != prod.password2.value){
+				ritorno = false;
+				messaggio += "\nNon posso procedere perché bisogna reinserire la password correttamente";
+			}
+			
+			if (messaggio != "")
+				alert(messaggio);
+				
+			return ritorno;
+		}
+		
+		function selectionAll(source){
+			checkboxes = document.getElementsByName('tematica');
+			for(var i=0, n=checkboxes.length; i<n; i++) {
+				checkboxes[i].checked = source.checked;
+			}
+		}
+		
+		function selection(source){
+			checkboxes = document.getElementsByName('tematica');
+			for(var i=1, n=checkboxes.length; i<n; i++) {
+				if (checkboxes[i].checked == false){
+					checkboxes[0].checked = false;
+				}
+			}
+		}
+	</script>
+</head>
+
+<body class="body-public">
+	<%@include file="/common/struct_template/header.htm" %>
+	<%@include file="struct_template/_barra_navigazione.htm" %>
+
+	<main class="main-content">
+		<div class="row">
+			
+			<%@include file="/common/struct_template/menu_sx.htm" %>
+			
+			<!----CENTRO PAGINA---->
+			<div class="col-md-6 order-first order-md-2">
+				
+				<%@include file="/common/struct_template/operatore_nl.htm" %>
+		<%	if (operatore_nl!=null){
+				List<TematicaNl> tematiche = TematicaNl.getTematiche(connPostgres);%>
+						
+				<h2><span class="glyphicon glyphicon-bullhorn" aria-hidden="true" style="margin-right:10px;"></span> Modifica iscrizione al sito della XXX</h2>
+				<p>E' possibile modificare i dati e le preferenze ma non è possibile modificare l'indirizzo email; per modificarlo occorre fare una nuova iscrizione.</p>
+				<br />
+
+				<form class="form-control-cciaa-sm" name="mod" method="post" action="mod_iscrizione.jsp" onsubmit="return checkInserimento()">
+					<div class="form-group row">
+						<label for="nome" class="col-sm-2 col-form-label"><b>E-Mail</b></label>
+						<div class="col-sm-10">
+							<%=operatore_nl.email%>
+						</div>
+					</div>
+					<div class="form-group row">
+						<label for="password" class="col-sm-2 col-form-label"><b>Password</b></label>
+						<div class="col-sm-10">
+							<input type="password" class="form-control" style="width:400px;" id="password1" name="password1" placeholder="Password" maxlength="30" required value="<%=operatore_nl.password%>" /> 
+						</div>
+					</div>
+					<div class="form-group row">
+						<label for="password" class="col-sm-2 col-form-label"><b>Reinserire Password</b></label>
+						<div class="col-sm-10">
+							<input type="password" class="form-control" style="width:400px;" id="password2" name="password2" placeholder="Reinserire Password" maxlength="30" required value="<%=operatore_nl.password%>" /> 
+						</div>
+					</div>
+					<div class="form-group row">
+						<label for="nome" class="col-sm-2 col-form-label"><b>Nome</b></label>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" style="width:400px;" id="nome" name="nome" placeholder="Nome" maxlength="50" required value="<%=operatore_nl.nome==null ? "" : operatore_nl.nome%>" /> 
+						</div>
+					</div>
+					<div class="form-group row">
+						<label for="cognome" class="col-sm-2 col-form-label"><b>Cognome</b></label>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" style="width:400px;" id="cognome" name="cognome" placeholder="Cognome" maxlength="50" required value="<%=operatore_nl.cognome==null ? "" : operatore_nl.cognome%>" /> 
+						</div>
+					</div>
+					<div class="form-group row">
+						<label for="organizzazione" class="col-sm-2 col-form-label"><b>Organizzazione</b></label>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" style="width:400px;" id="organizzazione" name="organizzazione" placeholder="Organizzazione" maxlength="1000" value="<%=operatore_nl.organizzazione==null ? "" : operatore_nl.organizzazione%>" /> 
+						</div>
+					</div>
+
+					<br /><br />
+					
+					<h4><b>Desidero essere informato sui seguenti argomenti:</b></h4>
+					<p>
+						<input type="checkbox" name="tematica" onclick="selectionAll(this)" /><b>Tutti gli argomenti</b>
+						<br />
+					<%	for (int i=0; i<tematiche.size(); i++){%>
+							<input type="checkbox" <%if (operatore_nl.getTematiche().contains(tematiche.get(i))){%> checked="checked" <%}%>name="tematica" value="<%=tematiche.get(i).id_tematica%>" onclick="selection(this)" /> <%=tematiche.get(i).nome%> 
+							<br />
+					<%	}%>
+					</p>
+
+					<p>
+						<b>Autorizzo il trattamento dei miei dati personali ai sensi del Regolamento Europeo UE 2016/679, ai fini di trasmissione di newsletter, comunicazioni istituzionali e informazioni sulle attività della della XXX.</b><br /><b style="color:#970026">Se non ci autorizzi non riceverai le nostre comunicazioni</b>
+					</p>
+					
+					<br /><br />
+					<p><a class="blank" href="http://www.xxx.it/privacy.htm">Leggi l'informativa sulla Privacy</a></p>
+
+					<br /><br />
+					<p style="text-align:center">
+						<input style="width:250px;margin-right:3em;" type="submit" class="btn btn-success" value="Conferma modifiche">
+					</p>
+					<input type="hidden" name="privacy_dati" value="true" checked="checked" />
+					<input type="hidden" name="privacy_mail" value="true" checked="checked" />
+					<input type="hidden" name="id_utente" value="<%=operatore_nl.id_utente %>" />
+				</form>				
+					
+			<%	}else{%>
+					<meta http-equiv="refresh" content="0;URL=<%=currentServer%>/newsletter/login.htm?fwd=/newsletter/modifica.htm">
+			<%	}%>
+
+			</div>
+			<!--- FINE CENTRO PAGINA--->
+			
+			<!-- BARRA LATERALE DESTRA -->
+			<%@include file="struct_template/_componenti_destra.htm" %>
+			<!--FINE BARRA LATERALE DESTRA-->
+		</div>
+	</main>
+<%@include file="/common/struct_template/feedback.htm" %>
+<%@include file="/common/struct_template/footer.htm" %>
+<%@include file="/common/struct_template/footer_script.htm" %>
+
+  </body>
+</html>

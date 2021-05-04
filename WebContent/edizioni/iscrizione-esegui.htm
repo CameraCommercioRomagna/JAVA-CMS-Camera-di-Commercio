@@ -1,0 +1,74 @@
+<%@include file="/common/include/begin.jsp" %>
+<%boolean inserimento=false;%>
+<%@include file="/common/include/_load_pagina.jsp" %>
+<% 	operazione=(requestMP.getParameter(rq_operazione)!=null ? requestMP.getParameter(rq_operazione) : "salva");
+	EdizioneInterna edizione=null;
+	try{
+		edizione=(EdizioneInterna)pagina;
+	}catch(Exception e){
+		response.sendRedirect(HOME);
+	}
+	Iscrizione iscrizione = new Iscrizione(edizione);
+
+	if (edizione==null || operazione.equals("") || iscrizione==null){
+		response.sendRedirect(HOME);
+	}else{
+		CdCURLWrapper paramterWrapper=new CdCURLWrapper(urlwrapper);
+		paramterWrapper.removeParameterTree(rq_operazione+"_");
+		if (operazione.equals("salva")){
+			// op=salva
+			try{
+				MultipartHttpServletRequest requestMPSave = (MultipartHttpServletRequest)requestMP;
+				String path = edizione.getUploadDirectory();
+				Map<String, String> fieldToFile = requestMPSave.saveFiles(path);
+				for (String field: fieldToFile.keySet())	
+					paramterWrapper.addParameter(field, fieldToFile.get(field));
+			}catch(Exception e){
+				// Se la request non è multipart (fallisce il cast) -> tutta la gestione file viene saltata
+			}
+			Set<String> parameters = paramterWrapper.getParameters().keySet();
+			parameters.remove(rq_documento);
+			for (String par: parameters)
+				try{
+					//new:
+					String oldValue="";
+					try{
+						oldValue=(iscrizione.getField(par).getValue()==null ? "" : iscrizione.getField(par).getValue().toString());
+					}catch(it.cise.structures.field.NullValueException nvexc){}
+					
+					String newValue=paramterWrapper.getParameter(par).get(0);
+					if (!oldValue.equals(newValue)){
+						if (newValue.equals(""))
+							newValue = null;
+						
+						iscrizione.setField(par, newValue);
+					}
+					//old: iscrizione.setField(par, paramterWrapper.getParameter(par).get(0));
+				}catch(NoSuchFieldException nsfe){}
+				
+			Boolean inserito=iscrizione.insertOrUpdate(operatore);%>
+			<%@include file="/amministrazione/mail/HeaderFooter/_header_email.jsp" %>
+		<%	if(inserito){
+				String mappa="";
+				if((edizione.getLuogo()!=null)&&(edizione.getLuogo().id_luogo!=1061l)){
+					mappa="(<a href='https://maps.google.it/maps?f=q&hl=it&q=" + eliminaAccenti(edizione.luogoENote()) + "'><img style='width:20px; margin-bottom:-5px; padding-bottom:0;' src='http://www.xxx.it/imgs/icone/localizza_icona.png'> guarda la mappa</a>)";
+				}
+				MailPending mail = new MailPending();
+				mail.i_from="noreply@xxx.it";
+				mail.i_to=iscrizione.email;
+				mail.contenttype="text/html; charset=utf-8";
+				mail.subject="Conferma iscrizione all'evento";
+				mail.body=emailHeader + "<br/>Gentile " + iscrizione.nome + " " + iscrizione.cognome + ",<br />confermiamo l'iscrizione a <h1 style='color:#071d49; margin:10px 0; padding:0;'> "+ edizione.getTitolo()+"</h1> che si terrà il <b>" + edizione.periodoENote() + "</b> a <b>" + edizione.luogoENote() + "</b> "+ mappa+" <br/> Per rivedere le informazioni relative all'evento <a href='http://www.xxx.it/" + edizione.getLink() +  "'><img style='width:20px; margin-bottom:-5px; padding-bottom:0;' src='http://www.xxx.it/imgs/mail_icon/link_icona.png' /> visita la pagina sul nostro sito</a>.<br/><br/>" +emailFooter;
+				mail.page_ins="ISCREV";
+				mail.submit();
+			}
+			backwrapper.addParameter("inserito" , inserito.toString());
+			response.sendRedirect(backwrapper.getPercorsoWeb(false));
+		
+		}else{
+			response.sendRedirect(HOME);
+		}
+		
+			
+	}%>
+

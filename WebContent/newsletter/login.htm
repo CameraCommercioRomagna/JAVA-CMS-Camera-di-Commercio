@@ -1,0 +1,72 @@
+<%@include file="/common/include/begin.jsp" %>
+<%@include file="include/_load_pagina.jsp" %>
+
+<%	StrutturaCamerale struttura=pagina.getStrutturaCamerale();
+	String fwd = request.getParameter("fwd")==null ? "" : request.getParameter("fwd").trim();%>
+
+<!doctype html>
+<head>
+	<%@include file="/common/struct_template/head.htm" %>
+</head>
+
+<body class="body-public" onload="setFocus()">
+<%@include file="/common/struct_template/header.htm" %>
+	<%@include file="struct_template/_barra_navigazione.htm" %>
+
+	<main class="main-content">
+		<div class="row">
+			
+			<%@include file="/common/struct_template/menu_sx.htm" %>
+			
+			<!----CENTRO PAGINA---->
+			<div class="col-md-6 order-first order-md-2">
+				<h1>Autenticazione utente</h1>
+				<p>
+					Per connettersi al Portale della Camera di Commercio della Romagna - Forlì-Cesena e Rimini inserire email e password nei campi sottostanti.<br/>
+					
+					Per registrarsi <a href="/newsletter/iscrizione.htm" title="Nuova registrazione">cliccare qui</a> è gratuito!
+				</p>
+				<div style="margin-left:1rem;">
+					<form id="login" style="margin-top:3rem;" method="post" action="/newsletter/redirect.jsp" class="form-control-cciaa-sm">
+						<fieldset id="Autenticazione">
+							<h4 class="blu-colored"><b>Autenticazione utente</b></h4>
+							<div class="form-group row">
+								<label for="email" class="col-sm-2 col-form-label"><b>Email</b></label>
+								<div class="col-sm-5">
+									<input type="text" class="form-control" id="email" name="email" placeholder="Email" required value="" /> 
+								</div>
+							</div>
+							<div class="form-group row">
+								<label for="password" class="col-sm-2 col-form-label"><b>Password</b></label>
+								<div class="col-sm-5">
+									<input type="password" class="form-control" id="password" name="password" placeholder="Password" required value="" /> 
+								</div>
+								<div class="col-sm-4">
+									<input class="btn btn-primary" style="margin-left:30px;width:10em;" type="submit" name="Submit" value="Entra" tabindex="3" />
+								</div>
+							</div>
+							<input type="hidden" name="login" value="1" />
+							<input type="hidden" name="fwd" value="<%=fwd%>" />
+						</fieldset>
+					</form>
+					<br/>
+					<b>Attenzione sessione temporizzata</b> <br/>
+					Una volta eseguito l'accesso al sistema avrai a disposizione 2 ore di tempo per completare la procedura.
+					<br/><br/>
+					<h3><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true" style="font-size:1.5em;margin-right:10px;"></span> Hai dimenticato username e password?</h3>
+					<p><a href="/newsletter/recupero.htm" title="Richiedi password">Richiedili cliccando qui</a></p>
+				</div>
+			</div>
+			<!--- FINE CENTRO PAGINA--->
+			
+			<!-- BARRA LATERALE DESTRA -->
+			<%@include file="struct_template/_componenti_destra.htm" %>
+			<!--FINE BARRA LATERALE DESTRA-->
+		</div>
+	</main>
+<%@include file="/common/struct_template/feedback.htm" %>
+<%@include file="/common/struct_template/footer.htm" %>
+<%@include file="/common/struct_template/footer_script.htm" %>
+
+  </body>
+</html>

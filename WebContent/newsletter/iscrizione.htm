@@ -1,0 +1,210 @@
+<%@include file="/common/include/begin.jsp" %>
+<%@include file="include/_load_pagina.jsp" %>
+
+<%	StrutturaCamerale struttura=pagina.getStrutturaCamerale();%>
+
+<%	if (backwrapper == null)
+		backwrapper = new CdCURLWrapper(connPostgres, new URL(currentServer + "/newsletter/"));
+		
+	QueryPager pager = new QueryPager(connPostgres);
+	pager.set("select * from " + TematicaNl.NAME_TABLE + " order by nome");
+	String email = request.getParameter("email")==null ? "" : request.getParameter("email").trim();
+	String key = UUID.randomUUID().toString();%>
+	
+<!doctype html>
+<html <%=tagHtmlAttributes%> >
+<head>
+	<%@include file="/common/struct_template/head.htm" %>
+	<script type="text/javascript">
+		function checkInserimento(){
+			var ritorno = true;
+			var prod = window.document.email_nl;
+			var nome = $("#nome").val()
+			var cognome = $("#cognome").val()
+			var messaggio = "";
+			
+			if (nome == ''){
+				ritorno = false;
+				messaggio += "\n- Inserire il Nome";
+			}
+			if (cognome == ''){
+				ritorno = false;
+				messaggio += "\n- Inserire il Cognome";
+			}
+			
+			if (prod.email.value == ""){
+				ritorno = false;
+				messaggio += "\n- Inserire l'indirizzo email";
+			}
+			
+			
+			if (!validateEmail(prod.email.value)){
+				ritorno = false;
+				messaggio += "\n- Indirizzo email sbagliato sintatticamente";
+			}
+			
+			if (prod.password1.value == ''){
+				ritorno = false;
+				messaggio += "\n- Inserire la password";
+			}
+			
+			if (prod.password1.value != prod.password2.value){
+				ritorno = false;
+				messaggio += "\n- Le password inseritte non sono uguali. E' necessario reinserirle correttamente";
+			}
+			
+			/*if (!prod.privacy.checked){
+				ritorno = false;
+				messaggio += "\nPer procedere con l'iscrizione bisogna autorizzare il trattamento dei dati personali";
+			}*/
+			
+			if (messaggio != "")
+				alert(messaggio);
+				
+			return ritorno;
+		}
+		
+		function validateEmail(email) {   
+			var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+			return re.test(email);
+		}
+		
+		function selectionAll(source){
+			checkboxes = document.getElementsByName('tematica');
+			for(var i=0, n=checkboxes.length; i<n; i++) {
+				checkboxes[i].checked = source.checked;
+			}
+		}
+		
+		function selection(source){
+			checkboxes = document.getElementsByName('tematica');
+			for(var i=1, n=checkboxes.length; i<n; i++) {
+				if (checkboxes[i].checked == false){
+					checkboxes[0].checked = false;
+				}
+			}
+		}
+	</script>
+</head>
+
+<body class="body-public">
+	<%@include file="/common/struct_template/header.htm" %>
+	<%@include file="struct_template/_barra_navigazione.htm" %>
+
+<main class="main-content">
+		<div class="row">
+			
+			<%@include file="/common/struct_template/menu_sx.htm" %>
+			
+			<!----CENTRO PAGINA---->
+			<div class="col-md-6 order-first order-md-2">
+				<%@include file="/common/struct_template/operatore_nl.htm" %>
+				<h2><span class="glyphicon glyphicon-bullhorn" aria-hidden="true" style="margin-right:10px;"></span> <% if (email.equals("")){%>Iscrizione ai<%}else{%>Conferma i tuoi dati per<%}%> servizi online della Camera di Commercio della Romagna - Forlì-Cesena e Rimini</h2>
+				<br />
+			<%	if (operatore_nl!=null){%>
+					<h4><span class="glyphicon glyphicon-remove" style="color:red;" aria-hidden="true" style="margin-right:10px;"></span>Sei attualmente loggato al sito web e non è possibile effettuare una nuova registrazione.</h4>
+			<%	}else{%>
+					<p>
+						Per accedere ai servizi online della della Camera di Commercio della Romagna - Forlì-Cesena e Rimini.
+						<br />Per essere sempre informato sulle novità della Camera di Commercio della Romagna - Forlì-Cesena e Rimini, del sistema camerale e dell’economia locale in generale.
+						<br />Per ricevere il nostro Notiziario quindicinale che ti aggiorna sui servizi e le opportunità utili per la tua impresa, gli eventi e le scadenze.
+						<br /><b>L'iscrizione è gratuita.</b>
+						<br /><br />Se hai già un utente registrato <a href="modifica.htm"><b>accedi ai tuoi dati</b></a>.
+					</p>
+					<br />
+					<p>* Campi obbligatori</p>
+					<form  class="form-control-cciaa-sm" name="email_nl" method="post" action="insert_iscrizione.jsp" onsubmit="return checkInserimento()" autocomplete="on">
+						<div class="form-group row">
+							<label for="nome" class="col-sm-2 col-form-label"><b>Nome</b>*</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" style="width:400px;" id="nome" name="nome" placeholder="Nome" maxlength="50" autocomplete="given-name" required value="" /> 
+							</div>
+						</div>
+						<div class="form-group row">
+							<label for="cognome" class="col-sm-2 col-form-label"><b>Cognome</b>*</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" style="width:400px;" id="cognome" name="cognome" placeholder="Cognome" maxlength="50" autocomplete="family-name" required value="" /> 
+							</div>
+						</div>
+						<div class="form-group row">
+							<label for="organizzazione" class="col-sm-2 col-form-label"><b>Organizzazione</b></label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" style="width:400px;" id="organizzazione" name="organizzazione" placeholder="Organizzazione" autocomplete="organization" maxlength="1000" value="" /> 
+							</div>
+						</div>
+						<div class="form-group row">
+							<label for="telefono" class="col-sm-2 col-form-label"><b>Telefono</b></label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" style="width:200px;" id="telefono" name="telefono" placeholder="Telefono" maxlength="100" autocomplete="tel" value="" /> 
+							</div>
+						</div>
+						<div class="form-group row">
+							<label for="email" class="col-sm-2 col-form-label"><b>Email</b>*</label>
+							<div class="col-sm-10">
+							<%	if (!email.equals("")){%>
+								<%=email%>
+								<input type="hidden" name="email" value="<%=email%>" /> &nbsp;&nbsp;&nbsp;&nbsp; <a href="https://www.xxx.it/newsletter/iscrizione.htm">Cambio email</a>
+							<%	}else{%>
+								<input type="text" class="form-control" style="width:400px;" id="email" name="email" placeholder="Email" maxlength="500" autocomplete="email" required value="" /> 
+							<%	}%>
+							</div>
+						</div>
+						<div class="form-group row">
+							<label for="password" class="col-sm-2 col-form-label"><b>Scegli una password</b>*</label>
+							<div class="col-sm-10">
+								<input type="password" class="form-control" style="width:200px;" id="password1" name="password1" placeholder="Scegli una password" autocomplete="new-password" maxlength="30" required value="" /> 
+							</div>
+						</div>
+						<div class="form-group row">
+							<label for="password" class="col-sm-2 col-form-label"><b>Reinserire password</b>*</label>
+							<div class="col-sm-10">
+								<input type="password" class="form-control" style="width:200px;" id="password2" name="password2" placeholder="Reinserire password" autocomplete="new-password" maxlength="30" required value="" /> 
+							</div>
+						</div>
+						<br />
+
+						<h4><b>Desidero essere informato sui seguenti argomenti:</b></h4>
+						<p>
+							<input type="checkbox" name="tematica" checked="checked" onclick="selectionAll(this)" /><b>Tutti gli argomenti</b>
+							<br />
+						<%	for (Row<String> rs : pager){%>
+								<input type="checkbox" name="tematica" value="<%=rs.getField("id_tematica")%>" checked="checked" onclick="selection(this)" /> <%=rs.getField("nome")%>
+								<br />
+						<%	}%>
+						</p>
+						
+						<br />
+						<p>
+							<b>Autorizzo il trattamento dei miei dati personali ai sensi del Regolamento Europeo UE 2016/679, ai fini di trasmissione di newsletter, comunicazioni istituzionali e informazioni sulle attività della della Camera di Commercio della Romagna - Forlì-Cesena e Rimini.</b><br /><b style="color:#970026">Se non ci autorizzi non riceverai le nostre comunicazioni</b>
+						</p>
+						<br />
+						<p><a class="blank" href="/privacy.htm">Leggi l'informativa sulla Privacy</a></p>
+						
+						<br />
+						<p style="margin-left:5rem;">
+							<input type="hidden" name="back" value="<%=backwrapper.getPercorsoWeb() %>">
+							<input type="hidden" name="key" value="<%=key%>" />
+							<input type="hidden" name="privacy_dati" value="true" checked="checked" />
+							<input type="hidden" name="privacy_mail" value="true" checked="checked" />
+							
+							<input style="width:150px;margin-right:3em;" type="submit" name="submit" class="btn btn-success" value="Invio iscrizione">
+							<input style="width:150px;margin-right:3em;" type="button" class="btn btn-secondary" onclick="window.location.href='<%=backwrapper %>'" name="Annulla" value="Annulla"/>
+						</p>
+					</form>
+					
+			<%	}%>
+
+			</div>
+			<!--- FINE CENTRO PAGINA--->
+			
+			<!-- BARRA LATERALE DESTRA -->
+			<%@include file="struct_template/_componenti_destra.htm" %>
+			<!--FINE BARRA LATERALE DESTRA-->
+		</div>
+	</main>
+<%@include file="/common/struct_template/feedback.htm" %>
+<%@include file="/common/struct_template/footer.htm" %>
+<%@include file="/common/struct_template/footer_script.htm" %>
+
+  </body>
+</html>

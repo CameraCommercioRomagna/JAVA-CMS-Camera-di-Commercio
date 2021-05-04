@@ -1,0 +1,70 @@
+<%@include file="/common/include/begin.jsp" %>
+<%@include file="_prevent_xss_var.jsp" %>
+
+<!doctype html>
+<%	String query = request.getParameter("query");
+	if (query!=null){
+		query = query.replaceAll("\"", "");
+		query = query.trim();
+		
+		//tentativi di risolvere il Cross-site scripting (XSS) 
+		for(String s : xss_words_list)
+			query = query.replace(s,s.substring(0,s.length()-1));
+			
+		for(String s : xss_escape_char_list.keySet())
+			query = query.replace(s,xss_escape_char_list.get(s));
+	}
+	if (query==null || query.equals(""))
+		response.sendRedirect(HOME);
+	
+	List<String> keywords=Arrays.asList(query.split("\\s+"));
+	String frase = "";
+	for (String kw: keywords)
+		frase += (frase.equals("") ? "" : " ") + kw;
+	frase = "\"" + frase + "\"~100";	// prossimita tra le parole della frase: 100 parole
+	SearchEngine searchEngine = SearchEngine.get();
+		
+	Map<String, String> queryParamMap = new HashMap<String, String>();
+	queryParamMap.put("q", "title:" + frase  + "^10 || keywords:" + frase  + "^4 || content:" + frase  + "^1");
+	queryParamMap.put("fl", "id, title, url, keywords, description, score");
+	queryParamMap.put("sort", "score desc");
+	//queryParamMap.put("hl", "on");
+	queryParamMap.put("rows", "100");
+	List<DocumentoWeb<?>> risultatoRicerca = searchEngine.query(connPostgres, queryParamMap);%>
+
+<html lang="it">
+<head>
+	<%@include file="/common/struct_template/head.htm" %>
+	<link href="/common/css/striped-calendar.css" rel="stylesheet" media='all'>
+	
+</head>
+
+<body class="body-public">
+	<%@include file="/common/struct_template/header.htm" %>
+	<nav aria-label="breadcrumb">
+			<ol class="breadcrumb">
+				<li class="breadcrumb-item active" aria-current="page"><a href="/"><small><span class="glyphicon glyphicon-home"></span></small> Home</a></li>
+			</ol>
+		</nav>
+		
+	<main class="main-content">
+		<h1><span class="glyphicon glyphicon-search"></span> Ricerca nel sito di: <%=query %></h1>
+				
+	<%	PaginaWeb<?> pagina=null;
+		List<DocumentoWeb<?>> documenti = risultatoRicerca;
+		boolean visualNumerosita=true;
+		boolean visualInfo=true;
+		TipoDocumento tipo=null;
+		%>
+		<%@include file="/common/componenti/collettori/_list.jsp" %>
+		
+		
+	</main>
+	
+			
+	<%@include file="/common/struct_template/feedback.htm" %>
+	<%@include file="/common/struct_template/footer.htm" %>
+	<%@include file="/common/struct_template/footer_script.htm" %>
+
+</body>
+</html>

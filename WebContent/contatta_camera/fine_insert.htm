@@ -1,0 +1,70 @@
+<%@include file="/common/include/begin.jsp" %>
+<%@include file="include/_load_pagina.jsp" %>
+
+<%@include file="/amministrazione/mail/HeaderFooter/_header_email.jsp" %>
+	
+<%	StrutturaCamerale struttura=pagina.getStrutturaCamerale();
+
+	String id_quesito_upload=request.getParameter("id_quesito_upload");
+	PreviewQuery quesito= new PreviewQuery(connPostgres);
+	quesito.setPreview("select id_quesito, to_char(data_inserimento, 'dd-mm-YYYY') as data_inserimento, id_utente, oggetto, testo_quesito from " + AbstractDocumentoWeb.NAME_SCHEMA + ".cc_quesiti where id_quesito_upload=" + id_quesito_upload);
+	PreviewQuery user= new PreviewQuery(connPostgres);
+	user.setPreview("select nome as nome_u, cognome as cognome_u, email as email_u from " + AbstractDocumentoWeb.NAME_SCHEMA + ".utenti_nl where id_utente=" + quesito.getField("ID_UTENTE"));
+	MailPending mail = new MailPending();
+	
+	mail.i_from="noreply@xxx.it";
+	
+	mail.i_to=user.getField("EMAIL_U");
+	
+	mail.subject="XXX - Ticket n." + quesito.getField("id_quesito") + " - Conferma ricezione quesito";
+	mail.contenttype="text/html; charset=utf-8";
+	mail.body=emailHeader + "Gentile " + user.getField("NOME_U") + " " + user.getField("COGNOME_U") + ",<br/><br/>la Camera di Commercio della Romagna - Forlì-Cesena e Rimini conferma la ricezione del seguente quesito inviato tramite il servizio online <i>Contatta il Registro Imprese</i>:<br/><br/><div style=\"margin-left:10px\">Oggetto: <b>" + quesito.getField("OGGETTO")+ "</b><br/>" + quesito.getField("TESTO_QUESITO") + "<br/></div><br/>Al quesito è stato assegnato il <b>ticket n. "+quesito.getField("id_quesito")+"</b>.<br/><br/> La risposta verrà inviata nel più breve tempo possibile all'indirizzo di posta ordianaria " + user.getField("EMAIL_U") + ".<br/><br/>Questa e-mail è stata generata automaticamente: <b>non rispondere a questa e-mail</b> (la casella noreplay@xxx.it non è presidiata).<br/><br/>Cordiali saluti,<br/>Camera di Commercio della Romagna Forlì-Cesena e Rimini<br/>" + emailFooter;
+	mail.page_ins="ISCREV";
+	mail.submit();
+%>
+
+<!doctype html>
+<head>
+	<%@include file="/common/struct_template/head.htm" %>
+</head>
+
+<body class="body-public">
+
+	<%@include file="/common/struct_template/header.htm"%>
+	<%@include file="struct_template/_barra_navigazione.htm"%>
+
+	<main class="main-content">
+		<div class="row">
+			
+			<%@include file="/common/struct_template/menu_sx.htm"%>
+			
+			<!----CENTRO PAGINA-->
+			<div class="col-md-6 order-first order-md-2">
+				<%@include file="/common/struct_template/operatore_nl.htm"%>
+				<h1><span class="glyphicon glyphicon-stop" aria-hidden="true" style="margin-right:10px;"></span> <span class="gray-colored">Contatta il Registro Imprese</span></h1>
+				<h2><span>Quesito online</span></h2>
+
+				<p>
+					<br/>
+					Gentile utente,<br/><br/>
+					Provvederemo il più tempestivamente possibile ad elaborare la tua richiesta.<br/>
+					Riceverai una mail con la risposta all'indirizzo da te indicato.<br/>
+					<br/>
+					Grazie per averci contattato.<br/>
+					<br/><br/>
+					<a href="/registro-imprese/contatta-il-registro-imprese.htm?ID_D=2868" title="Home page del servizio Contatta Registro Imprese">Torna alla home page del servizio Contatta Registro Imprese</a>
+				</p>
+			</div>
+			<!--- FINE CENTRO PAGINA--->
+			
+			<!-- BARRA LATERALE DESTRA -->
+			<%@include file="struct_template/_componenti_destra.htm"%>
+			<!--FINE BARRA LATERALE DESTRA-->
+		</div>
+	</main>
+<%@include file="/common/struct_template/feedback.htm"%>
+<%@include file="/common/struct_template/footer.htm"%>
+<%@include file="/common/struct_template/footer_script.htm"%>
+
+  </body>
+</html>

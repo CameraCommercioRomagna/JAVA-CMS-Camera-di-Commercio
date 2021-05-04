@@ -1,0 +1,336 @@
+<%@include file="/common/include/begin.jsp" %>
+<%@page buffer="512kb" autoFlush="false" %>
+
+<%	// Aggiornamento metatag pagina
+	meta_keywords += "";
+	meta_description = "";
+	
+	List<DocumentoWeb<?>> inPrimoPiano=DocumentFactory.loadAll(connPostgres, null, null, true, true, false, Visibilita.VISIBILE_HOME_PAGE);
+	
+	List<DocumentoWeb<?>> agenda=DocumentFactory.loadAll(connPostgres, TipoDocumento.EDIZIONE_EVENTO, null, true, true, false, Visibilita.VISIBILE_HOME_PAGE);
+	List<DocumentoWeb<?>> laCameraSegnala=DocumentFactory.loadAll(connPostgres, TipoDocumento.NOTIZIA_DAL_TERRITORIO, null, true, true, false, Visibilita.VISIBILE_HOME_PAGE);
+	List<Documento> carousels=DocumentFactory.getAll(DocumentFactory.loadAll(connPostgres, TipoDocumento.CAROUSEL, null, true, true, false), Documento.class);
+%>
+
+<!doctype html>
+<html <%=tagHtmlAttributes%>>
+<head>
+	<%@include file="eventi_google.jsp" %>
+	<%@include file="/common/struct_template/head.htm" %>
+	<style type="text/css">
+		
+		.embed-responsive-21by9::before {
+			padding-top: 28%!important;
+		}
+
+		.testo-carousel, .testo-carousel a {
+			color:#ccc;
+		}
+		
+		.img_div {
+			width: 100%;
+			height: 100%; top: 0; left: 0;
+			background: url('') no-repeat center top; z-index: -1;
+			-webkit-background-size: cover;
+			-moz-background-size: cover;
+			-o-background-size: cover;
+			background-size: cover;
+		}
+		
+		@media screen and (min-width:993px) and (max-width: 1200px) {
+			.embed-responsive-21by9::before {
+				padding-top: 45%!important;
+			}
+		}
+		
+		@media screen and (min-width:769px) and (max-width: 992px) {
+			.testo-carousel, h1.titolo-carousel, .testo-carousel ul{
+				font-size:0.9rem !IMPORTANT;
+				list-style-position: inside;
+			}
+			
+			.embed-responsive-21by9::before {
+				padding-top: 35%!important;
+			}
+		}
+		
+		@media screen and (min-width:481px) and (max-width: 768px) {
+			.testo-carousel, h1.titolo-carousel, .testo-carousel ul{
+				font-size:0.8rem !IMPORTANT;
+				padding-left: 0;
+				list-style: none;
+
+			}
+			
+			.embed-responsive-21by9::before {
+				padding-top: 45%!important;
+			}
+		}
+		
+		@media screen and (max-width:480px)  {
+			.carousel{
+				margin-top:-3.8rem !IMPORTANT;
+			}
+			.carousel-caption {
+				bottom: 5px !IMPORTANT;
+			}
+			.testo-carousel, h1.titolo-carousel, .testo-carousel ul{
+				font-size:0.75rem !IMPORTANT;
+				padding-left: 0;
+				list-style: none;
+			}
+			.body-public { padding-top: 170px; }
+			.embed-responsive-21by9::before {
+				padding-top: 60% !IMPORTANT;
+			}
+		}
+		.btn-customized, .btn-customized.disabled, .btn-prev{
+			padding: .1rem .3rem;
+			font-size: 0.8rem;
+			background-color: #071d49;
+			border-color: #071d49;
+		}
+
+	</style>
+</head>
+
+<body class="body-public">
+	
+	<%@include file="/common/struct_template/header.htm"%> 
+	
+
+	<div id="carouselHomePage" class="carousel slide" data-ride="carousel">
+		<ol class="carousel-indicators" >
+	<%	int numCarousel=0;
+		for (Documento carousel: carousels){%>
+			<li data-target="#carouselHomePage" data-slide-to="<%=numCarousel %>"<% if (numCarousel == 0){%> class="active"<% } %>></li>
+	<%		numCarousel++;
+		}%>
+		</ol>
+		<div class="carousel-inner embed-responsive embed-responsive-21by9">
+		
+	<%	numCarousel=0;
+		for (Documento carousel: carousels){%>
+		<%	try{
+				Paragrafo descrizione=carousel.getParagrafi().get(0);
+				boolean visualTesti=descrizione.testo!=null;%>
+			<div class="carousel-item embed-responsive-item <% if (numCarousel==0){%> active<% } %>" style="z-index:10;">
+				<div style="z-index:11; background-image: url(<%=descrizione.img_path%>)!important;" class="img_div">
+				<%	if(visualTesti){%>
+						<div class="col-lg-4 offset-lg-7 col-xl-3 offset-xl-8 d-none d-lg-flex"  style="height:100%; background-color:rgba(7, 29, 73, 0.5);">	
+							<div class="align-self-center">
+						<%	if (descrizione.img_url != null){%>
+								<h1 style="color:white;" class="titolo-carousel"><a style="color:white;" href="<%=descrizione.img_url %>" arial-label="<%=carousel.titolo %>"><%=carousel.titolo %></a></h1>
+							<%	}else{%>
+								<h1 style="color:white;" class="titolo-carousel"><%=carousel.titolo %></h1>
+							<%	}%>
+								<div class="testo-carousel"><%=descrizione.testo%></div>
+							</div>
+						</div>
+				<%	}%>
+					<div class="carousel-caption d-block d-lg-none"  style="background-color:rgba(7, 29, 73, 0.5);">	
+						<div class="align-self-center">
+					<%	if (descrizione.img_url != null){%>
+							<h1 style="color:white;"><a style="color:white;" href="<%=descrizione.img_url %>" arial-label="<%=carousel.titolo %>"><%=carousel.titolo %></a></h1>
+						<%	}else{%>
+							<h1 style="color:white;"><%=carousel.titolo %></h1>
+							<div class="testo-carousel"><%=descrizione.testo%></div>
+						<%	}%>
+						</div>
+					</div>
+					
+					
+					
+					
+					
+				</div>
+				
+				
+				
+				
+			</div>
+		<%	}catch(Exception eCarousel){}%>
+		<%	numCarousel++;
+		}%>
+		
+		
+		
+		
+		
+		</div>
+		
+		
+	</div>
+	
+					<div class="pause-cycle-buttons" style="text-align:center;">
+						<a href="#carouselHomePage" class="btn btn-primary btn-cciaa btn-prev"  style="z-index:15;" role="button" data-slide="prev" aria-label="Slide precedente">
+							 	<i class="fa fa-step-backward"  aria-hidden="true"></i> Prec
+						</a>
+						<button type="button" class="btn btn-primary btn-cciaa btn-customized btn-cycle disabled" aria-label="Start slider">
+							<i class="fas fa-play" aria-hidden="true"></i> Start
+						</button>
+						<button type="button" class="btn btn-primary btn-cciaa btn-customized btn-pause" aria-label="Stop slider">
+							<i class="fas fa-pause"  aria-hidden="true"></i> Stop
+						</button>
+						<a href="#carouselHomePage" class="btn btn-primary btn-cciaa btn-prev"  style="z-index:15;" role="button" data-slide="next" aria-label="Slide successiva">
+							 	<i class="fa fa-step-forward"  aria-hidden="true"></i> Succ
+						</a>
+					</div>
+	
+	<div class="row" style="background-color:#e6e6e6; margin:0;">
+		<div class="col-md-9">
+			<h1 style="margin:1rem 0 0 2rem;"><span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span> In primo piano</h1>
+			<div class="row" style="margin:1rem;">
+				<%int count=0;%>
+			<%	for(DocumentoWeb<?>  d : inPrimoPiano){%>
+				<%	if(count<com_count){%>
+					<%	if(!d.getTipo().instanceOf(TipoDocumento.EDIZIONE_EVENTO)&& TipoSistema.fromID(((AbstractDocumentoWeb)d).id_tipo_sistema).compareTo(TipoSistema.DOWNLOAD)!=0 && !d.getTipo().instanceOf(TipoDocumento.NOTIZIA_DAL_TERRITORIO)){%>
+						<%	if(d.getVisibilita()==Visibilita.VISIBILE_HOME_PAGE){%>
+								<div class="col-xl-4 col-lg-4 col-md-6" style="margin-bottom:2rem;">
+									<div class="card h-100" style="margin-left:0.5rem; padding:0; flex-grow:0!important; border:0; box-shadow: 5px 5px 10px 0 #071d49;">
+										<div class="card-img-top" style="text-align:center; ">
+											<div style="background-image:url(<%=d.getIcona()%>); background-size:cover; background-position:center top; height:230px;" ></div>
+										</div>
+										<div class="card-block" style="padding:1rem ">
+											<h2 style="font-size:1.2rem;"  class="card-title"><a href="<%=d.getLink()%>" class="color_blu"><%=d.getTitolo()%></a></h2>
+											<p class="card-text" style="font-size:0.9rem" >
+												<%=d.getAbstract()%>
+											</p>
+										</div>
+									</div>
+								</div>
+								<%count=count+1;%>
+						<%	}%>
+					<%	}%>
+				<%	}%>
+				
+			<%	}%>
+			
+			</div>
+			<%if(inPrimoPiano.size()>com_count){%><a style="float:right; margin-right:2rem;" class="cdc" href="/news_home.htm?tipoNews=inPrimoPiano" >Visualizza tutte le novità in primo piano</a><%}%>
+		</div>
+		<div class="col-md-3" style="background-color:#bcb9b9;">
+		
+			<div style="padding:1rem 0;">
+	<%		List<DocumentoWeb<?>> documenti=agenda;
+			int numElementiCollettore=7;
+			String titoloCollettore=TipoDocumento.EDIZIONE_EVENTO.getNomePlurale();
+			boolean visualAnno=false;
+			ModalitaVisualizzazioneData modVisualAgenda=ModalitaVisualizzazioneData.SMALL;
+			boolean visualAgendaDatiCompatti=false;%>
+				<%@include file="/common/componenti/collettori/_agenda-import.jsp"%>
+				<%@include file="/common/componenti/collettori/_agenda.jsp" %>
+		<%	if(agenda.size()>0){%>		
+				<a href="agenda.htm" title="Agenda completa" class="btn btn-camera btn-sm" style="width:100%;">Agenda completa</a>
+		<%	}else{%>
+				<a href="agenda.htm?anno=<%=cise.utils.DateUtils.getYear(new Date())%>&organizza=archivio" title="Agenda completa" class="btn btn-camera btn-sm" style="width:100%;">Archivio storico</a>
+		<%	}%>
+			</div>
+		</div>
+		</div>
+		
+		<div class="row" style="margin:2rem 0 2rem 0;">
+		<%	int num_blocchi=3;%>
+		
+			<div class="col-md-<%=12/num_blocchi%>" style="margin-top:3px;">
+				<div class="card header_bg h-100" style="flex-grow:0!important; clip-path: polygon(calc(100% - 40px) 0,100% 40px,100% 100%,0 100%,0 0);">
+					<div class="card-block" style="padding:1rem;">
+						<h2 style="background-color: #071d49 !IMPORTANT; color:#ffffff"><span class="glyphicon glyphicon-globe" aria-hidden="true"></span> Servizi online</h2>
+						<p class="card-text small" >
+							Punto di accesso ai servizi online della Camera di Commercio<br/><br/>
+							<a href="/servizi-online.htm"><span class="glyphicon glyphicon-link" aria-hidden="true"></span> Accedi ai servizi online</a><br/>
+							<a href="/appuntamenti-carte"><span class="glyphicon glyphicon-time" aria-hidden="true"></span> Appuntamenti Cns / Firme / Carte Cronotachigrafiche</a><br/>
+							<a href="/pubblicazioni.htm"><span class="glyphicon glyphicon-book" aria-hidden="true"></span> Scarica le pubblicazioni</a><br/>
+							<a href="/regolazione-del-mercato/prezzi.htm?ID_D=113"><span class="glyphicon glyphicon-eur" aria-hidden="true"></span> Consulta il listino prezzi</a>
+						</p>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-<%=12/num_blocchi%>" style="margin-top:3px;">
+				<div class="card header_bg h-100" style="flex-grow:0!important; clip-path: polygon(calc(100% - 40px) 0,100% 40px,100% 100%,0 100%,0 0);">
+					<div class="card-block" style="padding:1rem;">
+						<h2 style="background-color: #071d49 !IMPORTANT; color:#ffffff"><span class="glyphicon glyphicon-euro"></span> Finanziamenti</h2>
+						<p class="card-text small" >
+							Nella sezione sono pubblicati i bandi e i finanziamenti per le imprese e il territorio<br/><br/>
+							<a href="/finanziamenti.htm"><span class="glyphicon glyphicon-piggy-bank" aria-hidden="true"></span> Consulta i finanziamenti</a><br/>
+						</p>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-<%=12/num_blocchi%>" style="margin-top:3px;">
+				<div class="card header_bg h-100" style="flex-grow:0!important; clip-path: polygon(calc(100% - 40px) 0,100% 40px,100% 100%,0 100%,0 0);">
+					<div class="card-block" style="padding:1rem;">
+						<h2 style="background-color: #071d49 !IMPORTANT; color:#ffffff"><span class="glyphicon glyphicon-send"></span> Iscriviti alla newsletter</h2>
+						<p class="card-text small" >
+							Iscriviti alla nostra neswletter per rimanere aggiornato sulle ultime novità, eventi, iniziative e ricevere il nostro notiziario<br><br/>
+							<a href="https://www.xxx.it/newsletter/iscrizione.htm"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Iscriviti alla Newsletter</a><br/>
+							<a href="https://www.xxx.it/newsletter/modifica.htm"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Modifica i dati della tua iscrizione</a><br/>
+							<a href="/notiziario.htm"><span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span> Archivio notiziari</a>
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<%	if(laCameraSegnala.size()>0){%>
+			<div class="container-fluid" style="background-color:#bcb9b9; padding-bottom:2rem; padding-top:1rem; border-top:3px #071d49 solid;">
+				<h2><span class="glyphicon glyphicon-tag" aria-hidden="true"></span> La Camera segnala</h2>
+					<div class="row">
+					<%	int num=0;%>
+					<%	for(DocumentoWeb<?>  s : laCameraSegnala){%>
+						<%	if(num<3){%>
+								<div class="col-xl-3 col-lg-4 col-md-6" style="padding-bottom:1rem;">
+									<div class="card h-100" style="flex-grow:0!important; border:0; box-shadow: 1px 1px 3px 0 #071d49;">
+										<div class="card-block" style="padding:0.5rem">
+											<%if(s.getIcona()!=null && !s.getIcona().equals("")){%>
+												<img src="<%=s.getIcona()%>" class="rounded-circle" alt="<%=s.getTitolo()%>" style="width:70px; float:left; margin-right:1rem; margin-bottom:0.4rem; box-shadow: 5px 5px 10px 0 #071d49;" aria-hidden="true">
+											<%}%>
+											<h4 class="card-title" style="font-size:0.9rem; line-height:1rem; margin-bottom:0.3rem;"><a href="<%=s.getLink()%>" class="color_blu"> <%=s.getTitolo()%></a></h4>
+											<p class="card-text" style="font-size:0.8rem; line-height: 1.1rem;" >
+												<%=s.getAbstract()%>
+											</p>
+										</div>
+									</div>
+								</div>
+								<%num=num+1;%>
+						<%	}%>
+					<%	}%>
+					</div>
+					<%if(laCameraSegnala.size()>3){%><a style="float:right; margin-right:2rem;" class="cdc" href="/news_home.htm">Visualizza tutte le novità</a><%}%>
+			</div>
+		<%}%>
+		
+		
+
+
+
+<%@include file="/common/struct_template/feedback.htm" %>
+
+<%@include file="/common/struct_template/footer.htm"%> 
+
+<%@include file="/common/struct_template/footer_script.htm" %>
+<script type="text/javascript">
+
+$('.btn-customized').on('click', function(){
+ 
+    if( ! $(this).hasClass('disabled') ) {
+ 
+        if( $(this).hasClass('btn-pause') ) {
+            $('.carousel').carousel('pause');
+        }
+        else if( $(this).hasClass('btn-cycle') ) {
+            $('.carousel').carousel('cycle');
+        }
+ 
+        $('.btn-pause, .btn-cycle').toggleClass('disabled');
+        $(this).blur();
+ 
+    }
+ 
+});
+   
+ 
+
+</script>
+  </body>
+</html>

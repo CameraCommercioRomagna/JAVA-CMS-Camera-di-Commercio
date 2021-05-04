@@ -1,0 +1,117 @@
+<%@include file="/common/include/begin.jsp" %>
+<%@include file="/common/include/_load_pagina.jsp" %>
+
+<%
+	EdizioneInterna edizione=(EdizioneInterna)pagina;
+	Date dataEv = cise.utils.DateUtils.stringToDate(cise.utils.DateUtils.formatDate(new Date(),"dd/MM/yyyy"));
+	try{
+		if (edizione.getDataScadenzaIscrizione().before(dataEv))
+			throw new RuntimeException("Impossibile iscriversi dopo la data di scadenza iscrizione");
+		
+		StrutturaCamerale struttura=edizione.getStrutturaCamerale();
+
+		String iscrizioneDaCampagna = request.getParameter("pk_campaign")==null ? "" : request.getParameter("pk_campaign");
+		String inserito=requestMP.getParameter("inserito");%>
+
+<!doctype html>
+<html lang="it">
+<head>
+	<%@include file="/common/struct_template/head.htm" %>
+</head>
+
+<body class="body-public">
+<%@include file="/common/struct_template/header.htm" %>
+<%@include file="/common/struct_template/barra_navigazione.htm" %>
+
+<main class="main-content">
+
+	<div class="row">
+		<%@include file="/common/struct_template/menu_sx.htm" %>
+		<!----CENTRO PAGINA---->
+		<div class="col-md-6 order-first order-md-2">
+		
+	<h1><%=edizione.getTitolo()%></h1>
+	
+	<%	Boolean eventoSmall=false;
+		Boolean paginaIscrizione=true;
+		boolean visualCompatta=true;%>
+	<%@include file="/common/componenti/documento/info_evento.htm" %>
+	
+	<br style="clear:both;" />
+	
+	<%	if (inserito.equals("true")){%>
+			<div class="alert alert-success" role="alert">
+				L'iscrizione all'evento è stata completata con successo.<br/>
+				Grazie per la partecipazione.<br/>
+			</div>
+			<div>
+		<%	if (edizione.a_pagamento){%>
+				E' possibile effettuare il pagamento con una delle due modalità di seguito indicate:
+				<ul>
+					<li></li>
+				</ul>
+				<br/>
+		<%	}%>
+		<%	try{
+				if (!edizione.getDataScadenzaIscrizione().before(dataEv)){%>
+					<a href="<%=edizione.getLinkIscrizione() %><%=(!iscrizioneDaCampagna.equals("") ? "&pk_campaign="+iscrizioneDaCampagna : "") %>"><h3 style="margin-top:2rem;margin-bottom:2rem;"><span class="glyphicon glyphicon-pencil"></span> Iscrivi un altro partecipante</h3></a>
+		<%		}
+			}catch(Exception eIsc){}%>
+		</div>
+	<%	}else{%>
+		<div class="alert alert-danger" role="alert">
+			Non è stato possibile completare l'iscrizione all'evento.<br/>
+			Ti invitiamo a contattare direttamente i referenti dell'evento.<br/>
+		</div>
+	<%	}%>
+	
+	</div>
+	<!--- FINE CENTRO PAGINA--->
+	<!-- BARRA LATERALE DESTRA -->
+	<div class="col-md-3 order-2 order-md-2">
+			
+				<%if(struttura!=null){%>
+					<div class="card " style="margin-top:1rem;">
+						<div class="card-title-block-right bg_footer bg_footer_text" style="padding:0.3rem"><span class="glyphicon glyphicon-info-sign"></span> A chi rivolgersi</div>
+						<div class="card-body-block-right">
+							<h4><%=struttura.getTitolo()%></h4>
+							<%	List<Paragrafo> paragrafi_struttura=struttura.getParagrafi();%>
+							<%	for (Paragrafo ps: paragrafi_struttura){%>
+									<span style="font-size:0.9rem">
+								<%	if (ps.titolo!=null && !ps.titolo.equals("")){%>
+										<b><%=ps.titolo %></b><br/>
+								<%	}%>
+								<%	if (ps.img_path!=null){%>
+									<%	if(ps.img_url!=null){%>
+											<a href="<%=ps.img_url%>">
+									<%	}%>
+										<img class="float-left img-fluid img-thumbnail" style="max-width:60%; margin:0.3rem 0.5rem 0.5rem 0" src="<%=ps.img_path %>" alt="Immagine di <%=ps.titolo %>"  />
+									<%	if(ps.img_url!=null){%>
+											</a>
+									<%	}%>
+								<%	}%>
+								<%	if (ps.testo!=null){%>
+										<%=ps.testo %>
+								<%	}%>
+									</span>
+							<%	}%>
+						</div>
+					</div>
+				<%}%>
+			</div>
+			<br/>
+	</div>
+</div>
+</main>
+
+<%@include file="/common/struct_template/feedback.htm" %>
+<%@include file="/common/struct_template/footer.htm" %>
+<%@include file="/common/struct_template/footer_script.htm" %>
+
+
+</body>
+</html>
+
+<%	}catch(Exception e1){
+		response.sendRedirect(edizione.getLink());
+	}%>

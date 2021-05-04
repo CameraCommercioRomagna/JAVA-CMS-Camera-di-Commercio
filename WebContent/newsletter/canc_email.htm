@@ -1,0 +1,59 @@
+<%@include file="/common/include/begin.jsp" %>
+<%@include file="include/_load_pagina.jsp" %>
+
+<%@ page import="java.io.*" %> 
+<%@ page import="java.sql.*" %> 
+
+<%	StrutturaCamerale struttura=pagina.getStrutturaCamerale();%>
+	
+<!doctype html>
+<head>
+	<%@include file="/common/struct_template/head.htm" %>
+</head>
+
+<body class="body-public">
+	<%@include file="/common/struct_template/header.htm" %>
+	<%@include file="struct_template/_barra_navigazione.htm" %>
+
+	<main class="main-content">
+		<div class="row">
+			
+			<%@include file="/common/struct_template/menu_sx.htm" %>
+			
+			<!----CENTRO PAGINA---->
+			<div class="col-md-6 order-first order-md-2">
+				<h2><span class="glyphicon glyphicon-bullhorn" aria-hidden="true" style="margin-right:10px;"></span> Disiscrizione newsletter</h2>
+	
+			<% 	String areaNewsletter=request.getParameter("areaNewsletter");
+				String send=request.getParameter("send");
+				if (areaNewsletter == null) areaNewsletter=""; else  areaNewsletter=areaNewsletter.toLowerCase();
+				if (send == null) send="0";
+				String areaNews=areaNewsletter;
+				String prospectListId="";
+				int nObj=0;
+				int tematica=0;
+				Long id_utente=null;	
+			%>
+				<form method="get" name="cancellazione" action="cancellazione.jsp">
+					Inserire l'indirizzo email da cancellare dalla newsletter: <input type="text" name="email"><br /><br />
+					<input type="hidden" name="areaNewsletter" value="<%=areaNewsletter%>"> 
+					<input type="hidden" name="send" value="0">
+					<p>
+						<input style="width:150px;margin-right:3em;" type="submit" class="btn btn-primary" name="conferma">
+						<input style="width:150px;margin-right:3em;" type="button" class="btn btn-secondary" value="Annulla" name="annulla" onclick="location.href='http://www.xxx.it'">
+					</p>
+				</form>
+			</div>
+			<!--- FINE CENTRO PAGINA--->
+			
+			<!-- BARRA LATERALE DESTRA -->
+			<%@include file="struct_template/_componenti_destra.htm" %>
+			<!--FINE BARRA LATERALE DESTRA-->
+		</div>
+	</main>
+<%@include file="/common/struct_template/feedback.htm" %>
+<%@include file="/common/struct_template/footer.htm" %>
+<%@include file="/common/struct_template/footer_script.htm" %>
+
+  </body>
+</html>

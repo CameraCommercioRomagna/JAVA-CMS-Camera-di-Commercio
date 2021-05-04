@@ -1,0 +1,44 @@
+<%@include file="/common/include/begin.jsp" %>
+<%@include file="include/_load_pagina.jsp" %>
+
+<%	StrutturaCamerale struttura=pagina.getStrutturaCamerale();%>
+
+<!doctype html>
+<head>
+	<%@include file="/common/struct_template/head.htm" %>
+</head>
+
+<body class="body-public">
+	<%@include file="/common/struct_template/header.htm" %>
+	<%@include file="struct_template/_barra_navigazione.htm" %>
+
+	<main class="main-content">
+		<div class="row">
+			
+			<%@include file="/common/struct_template/menu_sx.htm" %>
+			
+			<!----CENTRO PAGINA---->
+			<div class="col-md-6 order-first order-md-2">
+				<%@include file="/common/struct_template/operatore_nl.htm" %>
+				<h2><span class="glyphicon glyphicon-bullhorn" aria-hidden="true" style="margin-right:10px;"></span> Newsletter XXX</h2>
+				
+				<p>La XXX mette a disposizione un servizio informativo attraverso la posta elettronica.</p>
+				
+				<ul class="list-unstyled">
+					<li class="menu_action"><a href="iscrizione.htm">Iscrizione alla newsletter</a></li>
+					<li class="menu_action"><a href="modifica.htm">Accedi ai tuoi dati e Modifica le aree di interesse</a></li>
+				</ul>
+			</div>
+			<!--- FINE CENTRO PAGINA--->
+			
+			<!-- BARRA LATERALE DESTRA -->
+			<%@include file="struct_template/_componenti_destra.htm" %>
+			<!--FINE BARRA LATERALE DESTRA-->
+		</div>
+	</main>
+<%@include file="/common/struct_template/feedback.htm" %>
+<%@include file="/common/struct_template/footer.htm" %>
+<%@include file="/common/struct_template/footer_script.htm" %>
+
+  </body>
+</html>

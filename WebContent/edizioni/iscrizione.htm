@@ -1,0 +1,337 @@
+<%@include file="/common/include/begin.jsp" %>
+<%@include file="/common/include/_load_pagina.jsp" %>
+<%
+	EdizioneInterna edizione=(EdizioneInterna)pagina;
+	try{
+		Date dataEv = cise.utils.DateUtils.stringToDate(cise.utils.DateUtils.formatDate(new Date(),"dd/MM/yyyy"));
+		if (edizione.getDataScadenzaIscrizione().before(dataEv))
+			throw new RuntimeException("Impossibile iscriversi dopo la data di scadenza iscrizione");
+		
+		StrutturaCamerale struttura=edizione.getStrutturaCamerale();
+
+		String iscrizioneDaCampagna = request.getParameter("pk_campaign")==null ? "" : request.getParameter("pk_campaign");
+		
+		
+		%>
+
+
+<!doctype html >
+<html <%=tagHtmlAttributes%> >
+	<head>
+	<%@include file="/common/struct_template/head.htm" %>
+	<style type="text/css">
+	</style>
+</head>
+
+<body class="body-public">
+
+<%@include file="/common/struct_template/header.htm" %>
+<%@include file="/common/struct_template/barra_navigazione.htm" %>
+
+<main class="main-content">
+	<div class="row">
+		<%@include file="/common/struct_template/menu_sx.htm" %>
+		<!----CENTRO PAGINA---->
+		<div class="col-md-6 order-first order-md-2">
+			<h1><%=edizione.getTitolo() %></h1>
+			
+		<%	Boolean eventoSmall=false;
+			Boolean paginaIscrizione=true;
+			boolean visualCompatta=true;%>
+			<%@include file="/common/componenti/documento/info_evento.htm" %>
+
+			<br/>
+			<h2><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Scheda d'iscrizione</h2>
+			<h4>
+				Per iscriverti compila <b>tutti</b> i campi sottostanti e premi il tasto "Iscriviti": ad operazione avvenuta, ti verrà inviata un'email di conferma.<br/>
+			</h4>
+			<p>* Campi Obbligatori</p>
+			<form id="iscrizione" action="iscrizione-evento-esegui.htm" method="post" onsubmit="return checkCampi(this)" autocomplete="on">
+					<h4><span class="glyphicon glyphicon-user" aria-hidden="true"></span> Partecipante</h4>
+					
+					<div class="form-group row">
+						<label for="nome" class="col-sm-3 col-form-label"><b>Nome</b>*</label>
+						<div class="col-sm-9">
+							<input type="text" class="form-control" id="nome" name="nome" placeholder="Nome" autocomplete="given-name" required /> 
+						</div>
+					</div>
+					<div class="form-group row">
+						<label for="cognome" class="col-sm-3 col-form-label"><b>Cognome</b>*</label>
+						<div class="col-sm-9">
+							<input type="text" class="form-control" id="cognome" name="cognome" placeholder="Cognome" autocomplete="family-name" required /> 
+						</div>
+					</div>
+					<div class="form-group row">
+						<label for="rag_sociale" class="col-sm-3 col-form-label"><b>Organizzazione</b>*</label>
+						<div class="col-sm-9">
+							<input type="text" class="form-control" id="rag_sociale" name="rag_sociale" placeholder="Organizzazione" autocomplete="organization" required /> 
+						</div>
+					</div>
+					<div class="form-group row">
+						<label for="attivita_azienda" class="col-sm-3 col-form-label"><b>Attività</b>*</label>
+						<div class="col-sm-9">
+							<textarea id="attivita_azienda" class="form-control" rows="3" cols="60" name="attivita_azienda" ></textarea>
+						</div>
+					</div>
+				
+					<div class="form-group row">
+					<label for="ruolo" class="col-sm-3 col-form-label"><b>Ruolo</b></label>
+					<div class="col-sm-9">
+						<select class="form-control" id="ruolo" name="ruolo">
+							<option value="">Seleziona il ruolo</option>
+								<option value="Altro">Altro</option>
+								<option value="Amministratore">Amministratore</option>
+								<option value="Assessore">Assessore</option>
+								<option value="Collaboratore">Collaboratore</option>
+								<option value="Commercialista">Commercialista</option>
+								<option value="Commissario">Commissario</option>
+								<option value="Consigliere">Consigliere</option>
+								<option value="Consulente">Consulente</option>
+								<option value="Delegato">Delegato</option>
+								<option value="Direttore">Direttore</option>
+								<option value="Dirigente">Dirigente</option>
+								<option value="Docente">Docente</option>
+								<option value="Funzionario">Funzionario</option>
+								<option value="Giornalista">Giornalista</option>
+								<option value="Impiegato">Impiegato</option>
+								<option value="Libero professionista">Libero professionista</option>
+								<option value="Manager">Manager</option>
+								<option value="Notaio">Notaio</option>
+								<option value="Partner">Partner</option>
+								<option value="Politico">Politico</option>
+								<option value="Prefetto">Prefetto</option>
+								<option value="Presidente">Presidente</option>
+								<option value="Privato cittadino">Privato cittadino</option>
+								<option value="Procuratore">Procuratore</option>
+								<option value="Responsabile">Responsabile</option>
+								<option value="Ricercatore">Ricercatore</option>
+								<option value="Segretario">Segretario</option>
+								<option value="Sindaco">Sindaco</option>
+								<option value="Socio">Socio</option>
+								<option value="Titolare">Titolare</option>
+								<option value="Vescovo">Vescovo</option>
+						</select>
+					</div>
+				</div>
+				<!--div class="form-group row">
+					<label for="ruolo_altro" class="col-sm-3 col-form-label"><b>Specificare l'opzione Altro: </b></label>
+					<div class="col-sm-9">
+						<input id="ruolo_altro" type="text" class="form-control" value="" name="ruolo_altro"/>
+					</div>
+				</div-->
+				<div class="form-group row">
+					<label for="email" class="col-sm-3 col-form-label"><b>E-mail</b>*</label>
+					<div class="col-sm-9">
+						<input type="email" class="form-control" id="email" name="email" placeholder="E-mail" autocomplete="email" required /> 
+					</div>
+				</div>
+				<div class="form-group row">
+					<label for="telefono" class="col-sm-3 col-form-label"><b>Tel</b>*</label>
+					<div class="col-sm-9">
+						<input type="text" class="form-control" id="telefono" name="telefono" placeholder="Tel" autocomplete="tel" required /> 
+					</div>
+				</div>
+
+				<%	if (edizione.a_pagamento){%>
+						<div class="form-group row">
+							<label for="p_iva" class="col-sm-3 col-form-label"><b>Partita Iva</b></label>
+							<div class="col-sm-9">
+								<input type="text" class="form-control" id="p_iva" name="p_iva" placeholder="Partita Iva" /> 
+							</div>
+						</div>
+						<div class="form-group row">
+							<label for="c_fiscale" class="col-sm-3 col-form-label"><b>Codice Fiscale</b>*</label>
+							<div class="col-sm-9">
+								<input type="text" class="form-control" id="c_fiscale" name="c_fiscale" placeholder="Codice Fiscale" required /> 
+							</div>
+						</div>
+						
+						<div class="form-group row">
+							<label for="indirizzo" class="col-sm-3 col-form-label"><b>Indirizzo</b>*</label>
+							<div class="col-sm-9">
+								<input type="text" class="form-control" id="indirizzo" name="indirizzo" placeholder="Indirizzo" autocomplete="address-line1"  required /> 
+							</div>
+						</div>
+						<div class="form-group row">
+							<label for="num_civ" class="col-sm-3 col-form-label"><b>N°</b>*</label>
+							<div class="col-sm-9">
+								<input type="text" class="form-control" id="num_civ" name="num_civ" placeholder="N°" autocomplete="address-line2" required /> 
+							</div>
+						</div>
+						<div class="form-group row">
+							<label for="stato" class="col-sm-3 col-form-label"><b>Nazione</b></label>
+								<div class="col-sm-9">
+									<select class="form-control" id="stato" name="stato">
+										<option value="">Seleziona la nazione</option>
+									</select>
+								</div>
+						</div>
+				<%	}%>
+				
+				<div class="form-group row">
+					<label for="provincia" class="col-sm-3 col-form-label"><b>Provincia</b>*</label>
+					<div class="col-sm-9">
+						<select class="form-control" id="provincia" name="provincia">
+							<option value="">Seleziona la provincia</option>
+						</select>
+					</div>
+				</div>
+				<div class="form-group row">
+					<label for="comune" class="col-sm-3 col-form-label"><b>Comune</b>*</label>
+						<div class="col-sm-9">
+							<select id="comune" name="comune" class="form-control">
+								<option value="">Seleziona il comune</option>
+							</select>
+							
+						</div>
+					</div>
+					<%	if (edizione.a_pagamento){%>	
+							<div class="form-group row">
+								<label for="cap" class="col-sm-3 col-form-label"><b>Cap</b>*</label>
+								<div class="col-sm-9">
+									<input type="text" class="form-control" id="cap" name="cap" placeholder="Cap" autocomplete="postal-code" required /> 
+								</div>
+							</div>
+					<%	}%>
+					<%	if (edizione.incontro_relatore){%>
+						<div class="form-group row">
+							<label for="incontro_relatori" class="col-sm-3 col-form-label"><b>Interessato all'incontro col relatore:</b></label>
+							<div class="col-sm-9 form-inline">
+								<div class="form-check" style="padding-right:2rem;">
+									<label class="form-check-label">
+										<input id="incontro_relatori" type="radio" name="incontro_relatori" value="true" /> Si
+									</label>
+								</div>
+								<div class="form-check">
+									<label class="form-check-label">
+										<input id="incontro_relatori" type="radio" name="incontro_relatori" value="false" checked="checked" /> No
+									</label>
+								</div>
+							</div>
+						</div>
+				
+					<div class="row">
+						<div class="col-md-2">
+							<label for="info_relatori">Se sì indicare il nome del relatore: </label>
+						</div>
+						<div class="col-md-10">
+							<input id="info_relatori" name="info_relatori" type="text" class="form-control" value="" size="100px;" />
+						</div>
+					</div>
+				<%	}%>
+				<%	if (edizione.disponibilita_atti){%>
+						<div class="form-group row">
+							<span class="col-sm-3 col-form-label"><b>Interessato agli atti:</b></span>
+							<div class="col-sm-9 form-inline">
+								<div class="form-check" style="padding-right:2rem;">
+									<label class="form-check-label1">
+										<input id="form-check-label1" type="radio" name="interesse_atti" value="true" /> Si
+									</label>
+								</div>
+								<div class="form-check">
+									<label class="form-check-label2">
+										<input id="form-check-label2" type="radio" name="interesse_atti" value="false" checked="checked" /> No
+									</label>
+								</div>
+							</div>
+						</div>
+				<%	}%>
+				<%	if ((edizione.abilita_modalita_mista!=null)&&(edizione.abilita_modalita_mista)){%>
+						<div class="form-group row">
+							<span class="col-sm-3 col-form-label"><b>Modalità di partecipazione:</b></span>
+							<div class="col-sm-9 form-inline">
+								<div class="form-check" style="padding-right:2rem;">
+									<label class="form-check-label1">
+										<input id="form-check-label1" type="radio" name="modalita_di_presenza" value="in_sede" /> In sede
+									</label>
+								</div>
+								<div class="form-check">
+									<label class="form-check-label2">
+										<input id="form-check-label2" type="radio" name="modalita_di_presenza" value="via_web" checked="checked" /> Via web
+									</label>
+								</div>
+							</div>
+						</div>
+				<%	}%>
+				
+				<%	if (edizione.conf_iscr_note!=null && !edizione.conf_iscr_note.equals("")){%>
+					<div class="form-group row">
+						<label for="note" class="col-sm-3 col-form-label"><b><%=edizione.conf_iscr_note%></b></label>
+						<div class="col-sm-9">
+							<textarea id="note" class="form-control" value="" rows="3" cols="60" name="note" ></textarea>
+						</div>
+					</div>
+				<%	}%>	
+				
+					<h4><span class="glyphicon glyphicon-info-sign" aria-hidden="true" style="font-size:1.5em;margin-right:10px;"></span> <b>Informativa</b></h4>
+					
+					<p>
+						
+					</p>
+				
+				<br/>
+				
+				<fieldset id="iscrizione3" style="margin-left:5em;">
+				
+					<input type="submit" name="iscriviti" class="btn btn-camera" value="Iscriviti" />
+
+					<input type="hidden" name="ID_D" value="<%=edizione.getId() %>" />
+				<%	if (!iscrizioneDaCampagna.equals("")){%>
+					<input type="hidden" name="back_pk_campaign" value="" />
+					<input type="hidden" name="back_pk_kwd" value="iscrizione-effettuata" />
+				<%	}%>
+					<input type="hidden" name="back" value="iscrizione-evento-conferma.htm" />
+					<input type="hidden" name="back_ID_D" value="<%=edizione.getId() %>" />
+
+				</fieldset>
+			</form>
+		</div>				
+			<!--- FINE CENTRO PAGINA--->
+		<!-- BARRA LATERALE DESTRA -->
+	<div class="col-md-3 order-2 order-md-2">
+			
+				<%if(struttura!=null){%>
+					<div class="card " style="margin-top:1rem;">
+						<div class="card-title-block-right bg_footer bg_footer_text" style="padding:0.3rem"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> A chi rivolgersi</div>
+						<div class="card-body-block-right">
+							<h4><%=struttura.getTitolo()%></h4>
+							<%	List<Paragrafo> paragrafi_struttura=struttura.getParagrafi();%>
+							<%	for (Paragrafo ps: paragrafi_struttura){%>
+									<div style="font-size:0.9rem">
+								<%	if (ps.titolo!=null && !ps.titolo.equals("")){%>
+										<b><%=ps.titolo %></b><br/>
+								<%	}%>
+								<%	if (ps.img_path!=null){%>
+									<%	if(ps.img_url!=null){%>
+											<a href="<%=ps.img_url%>">
+									<%	}%>
+										<img class="float-left img-fluid img-thumbnail" style="max-width:60%; margin:0.3rem 0.5rem 0.5rem 0" src="<%=ps.img_path %>" alt="Immagine di <%=ps.titolo %>"  />
+									<%	if(ps.img_url!=null){%>
+											</a>
+									<%	}%>
+								<%	}%>
+								<%	if (ps.testo!=null){%>
+										<%=ps.testo %>
+								<%	}%>
+									</div>
+							<%	}%>
+						</div>
+					</div>
+				<%}%>
+	</div>
+	<br/>
+	
+</div>
+</main>
+
+<%@include file="/common/struct_template/feedback.htm" %>
+<%@include file="/common/struct_template/footer.htm" %>
+<%@include file="/common/struct_template/footer_script.htm" %>
+
+</body>
+</html>
+
+<%	}catch(Exception e1){
+		e1.printStackTrace();
+		response.sendRedirect(edizione.getLink());
+	}%>

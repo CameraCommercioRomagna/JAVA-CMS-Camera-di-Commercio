@@ -1,0 +1,139 @@
+<%@include file="/common/include/begin.jsp" %>
+
+<%@include file="/common/componenti/collettori/_tab_anni-import.jsp" %>
+<% 
+	TipoDocumento tipo = null;
+	try{
+		String ID_T=requestMP.getParameter(TipoDocumento.PARAMETER_ID);
+		tipo = TipoDocumento.fromID(new Long(ID_T));
+	}catch(Exception e){
+		tipo = TipoDocumento.fromWebName(requestMP.getParameter(TipoDocumento.PARAMETER_WEB_NAME));
+	}
+	
+	if ((tipo==null) || !tipo.accessibile(operatore)){
+		response.sendRedirect(HOME);
+	}else{
+	
+		boolean visualTitolo=true;
+		boolean visualDatiCompleti=true;
+		boolean visualCompatta=false;
+		ModalitaVisualizzazioneTabAnni modOrganizza = null;
+		try{
+			modOrganizza = ModalitaVisualizzazioneTabAnni.valueOf(requestMP.getParameter("organizza").toUpperCase());
+		}catch(Exception iae){
+			switch (tipo){
+				case SERVIZIO_ONLINE: case EDIZIONE_EVENTO: case PUBBLICAZIONE: case STRUTTURA_CAMERALE:
+					modOrganizza = ModalitaVisualizzazioneTabAnni.INCORSO;
+					break;
+				case NOTIZIARIO: case COMUNICATO_STAMPA:
+					modOrganizza = ModalitaVisualizzazioneTabAnni.ANNI;
+					break;
+				default:
+					modOrganizza = ModalitaVisualizzazioneTabAnni.ARCHIVIO;
+			}
+		}
+		ModalitaVisualizzazioneDocumenti modElenco = null;
+		try{
+			modElenco = ModalitaVisualizzazioneDocumenti.valueOf(requestMP.getParameter("visualizza").toUpperCase());
+		}catch(Exception iae){
+			switch (tipo){
+				case SERVIZIO_ONLINE: case FINANZIAMENTO: case STRUTTURA_CAMERALE:
+					modElenco = ModalitaVisualizzazioneDocumenti.CARD;
+					break;
+				case EDIZIONE_EVENTO:
+					modElenco = ModalitaVisualizzazioneDocumenti.AGENDA;
+					break;
+				default:
+					modElenco = ModalitaVisualizzazioneDocumenti.LISTA;
+			}
+		}
+		
+		// Aggiornamento metatag pagina
+		head_title += (!search_engine ? " - " : "") + tipo.getNomePlurale();
+		meta_keywords += (!search_engine ? ", " : "") + tipo.getNomePlurale().toLowerCase();
+		meta_description = (modOrganizza==ModalitaVisualizzazioneTabAnni.ARCHIVIO ? "Archivio " : "") + tipo.getNomePlurale() + (!search_engine ? " della XXX" : "");
+
+		List<DocumentoWeb<?>> lista = new ArrayList<DocumentoWeb<?>>();
+		Map<DocumentoWeb<?>, List<DocumentoWeb<?>>> mappa_liste_per_areeTematiche = new HashMap<DocumentoWeb<?>, List<DocumentoWeb<?>>>();
+		List<DocumentoWeb<?>> areeTematiche_list = new ArrayList<DocumentoWeb<?>>();
+		
+		if(tipo.getId().compareTo(TipoDocumento.STRUTTURA_CAMERALE.getId())!=0)
+			lista = DocumentFactory.loadAll(connPostgres, tipo, null, true, true, (modOrganizza==ModalitaVisualizzazioneTabAnni.INCORSO ? false : null), Visibilita.VISIBILE_SOLO_COLLETTORI);
+		else{
+			DocumentoWeb<?> area_tematica_fixed = null;
+			try{
+				Long ID_AT = new Long(requestMP.getParameter(rq_documento));
+				area_tematica_fixed = DocumentFactory.load(connPostgres, ID_AT);
+			}catch(Exception e){}
+
+			List<DocumentoWeb<?>> lista_d_appoggio = new ArrayList<DocumentoWeb<?>>();
+			if(area_tematica_fixed!=null){
+				areeTematiche_list.add(area_tematica_fixed);
+				lista_d_appoggio.addAll(((PaginaWeb<?>)area_tematica_fixed).getFigli(TipoDocumento.STRUTTURA_CAMERALE, null, true, true, false, Visibilita.VISIBILE_DOVE_COLLOCATO, TipoOrdinamentoDocumenti.MANUALE));
+				mappa_liste_per_areeTematiche.put(area_tematica_fixed,lista_d_appoggio);
+			}else{
+				PaginaWeb<?> rootPage = (PaginaWeb<?>)DocumentFactory.load(connPostgres, 0l);
+				areeTematiche_list = rootPage.getFigli(TipoDocumento.AREA_TEMATICA, null, true, true, false, Visibilita.VISIBILE_DOVE_COLLOCATO, TipoOrdinamentoDocumenti.MANUALE);
+			
+				List<DocumentoWeb<?>> competenzeXarea_list = new ArrayList<DocumentoWeb<?>>();
+			
+				for(DocumentoWeb<?> at : areeTematiche_list){
+					lista_d_appoggio = new ArrayList<DocumentoWeb<?>>();
+					lista_d_appoggio.addAll(((PaginaWeb<?>)at).getFigli(TipoDocumento.STRUTTURA_CAMERALE, null, true, true, false, Visibilita.VISIBILE_DOVE_COLLOCATO, TipoOrdinamentoDocumenti.MANUALE));
+					competenzeXarea_list = ((PaginaWeb<?>)at).getFigli(TipoDocumento.COMPETENZA, null, true, true, false, Visibilita.VISIBILE_DOVE_COLLOCATO, TipoOrdinamentoDocumenti.MANUALE);
+					for(DocumentoWeb<?> c : competenzeXarea_list){
+						lista_d_appoggio.addAll(((PaginaWeb<?>)c).getFigli(TipoDocumento.STRUTTURA_CAMERALE, null, true, true, false, Visibilita.VISIBILE_DOVE_COLLOCATO, TipoOrdinamentoDocumenti.MANUALE));
+					}
+					mappa_liste_per_areeTematiche.put(at,lista_d_appoggio);
+				}
+			}
+		}
+	%>
+
+<!doctype html>
+<html <%=tagHtmlAttributes%>>
+<head>
+	<%@include file="/common/struct_template/head.htm" %>
+	<link href="/common/css/striped-calendar.css" rel="stylesheet" media='all'>
+	
+</head>
+
+<body class="body-public">
+	<%@include file="/common/struct_template/header.htm" %>
+	
+<%	DocumentoWeb<?> pagina=null;%>
+	<%@include file="/common/struct_template/barra_navigazione.htm" %>
+
+	<main class="main-content">
+	<%	TipoDocumento tipoBlocco=tipo;%>
+	<%@include file="/common/componenti/collettori/_agenda-import.jsp"%>
+	
+	<%	if(tipo.getId().compareTo(TipoDocumento.STRUTTURA_CAMERALE.getId())==0){
+			visualTitolo = false;%>
+			<h1><span class="glyphicon glyphicon-<%=tipoBlocco.getGlyphicon()%>" aria-hidden="true"></span> Contatti</h1>
+	<%	}%>
+	
+	<%	if(mappa_liste_per_areeTematiche.size()==0){%>
+		<%@include file="/common/componenti/collettori/_tab_anni.jsp" %>
+	<%	}else{
+		
+			String sottotitolo = "";
+			for(DocumentoWeb<?> at : areeTematiche_list){
+				lista = mappa_liste_per_areeTematiche.get(at);
+				if(lista.size()>0){
+					sottotitolo = at.getTitolo();%>	
+					<%@include file="/common/componenti/collettori/_card_container.jsp" %>		
+	<%			}
+			}
+		}%>
+	</main>
+	
+			
+	<%@include file="/common/struct_template/feedback.htm" %>
+<%@include file="/common/struct_template/footer.htm"%> 
+<%@include file="/common/struct_template/footer_script.htm" %>
+
+</body>
+</html>
+
+<%	}%>

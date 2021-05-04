@@ -1,0 +1,117 @@
+<%@include file="/common/include/begin.jsp" %>
+<%@page buffer="512kb" autoFlush="false" %>
+
+<%	// Aggiornamento metatag pagina
+	meta_keywords += "";
+	meta_description = "";
+	
+%>
+<%
+Competenza comp=null;
+boolean isCompetenza=false;
+String id_competenza=request.getParameter("ID_D");
+if((id_competenza!=null)&&(!id_competenza.equals(""))){
+	comp=new Competenza(new Long(id_competenza), connPostgres);
+	isCompetenza=true;%>
+<%}%>
+
+
+<!doctype html>
+<html <%=tagHtmlAttributes%>>
+<head>
+	<%@include file="/common/struct_template/head.htm" %>
+	
+</head>
+
+<body class="body-public">
+	<%@include file="/common/struct_template/header.htm" %>
+	
+	<main class="main-content">
+		<h1 style="margin-top:2rem;"><i class="fa fa-sitemap" aria-hidden="true"></i> Mappa del sito <%if(isCompetenza){%><span style="font-size:0.9rem;"><a href="/mappa_sito.htm">Torna alla mappa generale</a></span><%}%></h1>
+	<%	if(!isCompetenza){
+			PaginaWeb<?> rootPage = (PaginaWeb<?>)DocumentFactory.load(connPostgres, 0l);
+			List<DocumentoWeb<?>> areeTematiche_list = rootPage.getFigli(TipoDocumento.AREA_TEMATICA, null, true, true, false, Visibilita.VISIBILE_DOVE_COLLOCATO, TipoOrdinamentoDocumenti.MANUALE);%>
+			<div class="row">
+			<%	String at_link = "";
+				String c_link = "";
+				for(DocumentoWeb<?> at : areeTematiche_list){
+					at_link = at.getLink();%>
+					<div class="col-xl-4 col-lg-4 col-md-12" style="margin-top:1rem; margin-bottom:1rem;">
+						<div class="card" style="margin-left:0.5rem;padding:0;flex-grow:0!important;border:0!important;border-left:3px solid #aaa!important;">
+							<div style="background-color:#e9ecef;">
+									<h3 style="padding:0.5rem 1rem;">
+										<a href="<%=at_link%>"><%=at.getTitolo()%></a>
+									</h3>
+							</div>
+							<%List<DocumentoWeb<?>> competenzeXarea_list= ((PaginaWeb<?>)at).getFigli(TipoDocumento.COMPETENZA, null, true, true, false, Visibilita.VISIBILE_DOVE_COLLOCATO, TipoOrdinamentoDocumenti.MANUALE);%>
+							<div class="card-body" style="padding:0.2rem 1rem;">
+								
+								<%	String query = ""; 
+									SQLTransactionManager sql_man = new SQLTransactionManager(this, connPostgres);
+									it.cise.db.SQLResult rst=null;
+									boolean has_attivita_figlie = false;
+									for(DocumentoWeb<?> c : competenzeXarea_list){
+										c_link = c.getLink();
+										query = "SELECT 		d.* 	FROM 		portalowner2.documenti_web d		INNER JOIN portalowner2.rel_documenti_web_documenti reld ON (d.id_documento_web=reld.id_documento_web_figlio) WHERE reld.id_documento_web_padre=" + c.getId() + " AND d.id_tipo_documento_web in (4, 6, 7, 8, 9, 45) AND d.validato AND d.data_pubblicazione <= current_date AND d.data_scadenza >= current_date	AND d.punteggio between 0 and 1 ORDER BY reld.ordine ASC NULLS FIRST, d.id_documento_web DESC"; 
+										rst=sql_man.executeSelectQuery(query);
+										has_attivita_figlie = rst.size()>0; 
+										//lo visualizzo se l'area tematica non coincide con la competenza o se la competenza ha figli
+										if(!at_link.equals(c_link) || has_attivita_figlie){%>
+										<p style="margin-bottom:1rem;">
+										<%	if(has_attivita_figlie){%>
+											<a href="mappa_sito.htm?ID_D=<%=c.getId()%>" title="Esplora l'argomento" style="margin-right:1.1rem;"><span class="fas fa-plus-square" aria-hidden="true"></span></a>
+										<%	}else{%>
+											<span class="fas fa-square" aria-hidden="true" style="margin-right:1.1rem; color:#0163cc;"></span>
+										<%	}%>
+											<a href="<%=c_link %>" style="color:#444; text-decoration:underline;" title="Visualizza la pagina"><%=c.getTitolo()%></a> 
+										</p>
+									<%	}%>
+								<%	}%>
+								
+							
+							</div>	
+							
+						</div>
+					</div>
+			<%	}%>
+			</div>
+	<%	}else{%>
+			<div class="row">
+				<div class="col-12" style="margin-top:1rem; margin-bottom:1rem;">
+					<div class="card h-100 " style="margin-left:0.5rem;padding:0;flex-grow:0!important;">
+						<div style="background-color:#e9ecef;">
+							<h5 style="padding:0.2rem;">
+								<%=comp.getPadre().getTitolo()%> - <a href="<%=comp.getLink()%>"><%=comp.getTitolo()%></a>
+							</h5>
+						</div>
+						<%List<DocumentoWeb<?>> attivitaXcom_list = comp.getFigli(TipoDocumento.ATTIVITA, null, true, true, false, Visibilita.VISIBILE_DOVE_COLLOCATO, TipoOrdinamentoDocumenti.MANUALE);%>
+						<div class="card-body">
+							
+							<%for(DocumentoWeb<?> a : attivitaXcom_list){%>
+								<p style="margin-bottom:1rem;"> <a href="<%=a.getLink()%>" style="color:#444; text-decoration:underline;" title="Visualizza la pagina"> <%=a.getTitolo()%></a></p>
+							<%}%>
+							
+								
+						</div>	
+							
+					</div>
+				</div>
+			</div>
+	<%	}%>
+		
+		
+	
+
+		
+	
+	</main>
+	
+	<%@include file="/common/struct_template/feedback.htm" %>
+	<%@include file="/common/struct_template/footer.htm" %>
+	<%@include file="/common/struct_template/footer_script.htm" %>
+
+
+	
+  </body>
+</html>
+	

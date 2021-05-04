@@ -1,0 +1,40 @@
+<%@include file="/common/include/begin.jsp" %>
+
+<%	visualLogout = false;
+	meta_description +="Sito ufficiale della Camera di Commercio della Romagna - Forli-Cesena e Rimini, tutti i servizi della camera online";%>
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="it" lang="it">
+<head>
+	<%@include file="/common/struct_template/head.htm" %>
+</head>
+
+<body>
+	<%@include file="/common/struct_template/home_header.htm" %>
+	<%@include file="/common/struct_template/home_init_contenuti.htm" %>
+
+<div class="panel-body">	
+	
+	<h2 class="gray-colored"><span class="glyphicon glyphicon-bullhorn" aria-hidden="true" style="margin-right:10px;"></span> Modifica/Cancellazione newsletter Camera di Commercio della Romagna - Forlì-Cesena e Rimini</h2>
+	
+	<h4 class="blu-colored">Inserire il vostro indirizzo email e la password (inviata all'atto dell'iscrizione) per accedere all'area di modifica 
+	(per cambiare la propria email o le aree tematiche) o all'area di cancellazione per togliere l'indirizzo email.</h4>
+	
+	<form name="email_nl" method="post" action="redirect.jsp">
+		<br />
+		<p>E-Mail: <input class="form-control" type="text" name="email" value="" size="40" maxlength="100" /></p>
+		<p>Password: <input class="form-control" type="password" name="password" value="" size="40" maxlength="100" /></p>
+		<p>
+			<input type="radio" name="modcanc" checked="checked" value="modifica" /> modifica
+			<input type="radio" name="modcanc" value="cancella" /> cancella
+		</p>
+		<input type="hidden" name="login" value="0" />
+		<br/><br/>
+		<p><input style="width:150px;margin-right:3em;" type="submit" class="btn btn-primary" value="Invia"></p>
+	</form>
+	
+</div>	
+	<%@include file="/common/struct_template/fine_contenuti.htm" %>
+	<%@include file="/common/struct_template/footer.htm" %>
+	<%@include file="/common/js/script_google.js" %>
+</body>
+</html>

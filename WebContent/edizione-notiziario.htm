@@ -1,0 +1,131 @@
+<%@include file="/common/include/begin.jsp" %>
+
+<%
+	String ID_N=null;
+	try{
+		ID_N=requestMP.getParameter("ID_NLNUMERO");
+	}catch(Exception e){
+		response.sendRedirect(HOME);
+	}
+	NumeroNewsLetter notiziario= new NumeroNewsLetter(Long.parseLong(ID_N), connPostgres);
+
+	%>
+
+<!doctype html>
+<html <%=tagHtmlAttributes%>>
+	<head>
+	<%@include file="/common/struct_template/head.htm" %>
+	<style type="text/css">
+	</style>
+</head>
+
+<body class="body-public">
+
+<%@include file="/common/struct_template/header.htm" %>
+	<main class="main-content">
+
+		<h1 style="margin-top:2rem;"><%=notiziario.getTitolo()%></h1>
+
+	<%	List<Sezione> sezioni=notiziario.getNewsLetter().getSezioni();%>
+	<%	for(Sezione sezione:sezioni){%>
+		<%	List<PromozioneDocumentoWeb> doc=notiziario.getDocumentiPubblicabili(sezione);%>
+		<%	int doc_size=0;%>
+		<%	for(PromozioneDocumentoWeb docum:doc){%>
+			<%	if((docum.data_validazione!=null)&&(docum.getDocumento().valido())){%>
+				<% 	doc_size=doc_size+1;%>
+			<%	}%>
+		<%	}%>
+		<%	if(doc_size>0){%>
+	<div style="margin : 0 15px 15px 10px; padding : 1em; background-color: #F7F7F7; border-left : 2px dotted #E0E0E0; border-top : 2px dotted #E0E0E0;">
+		<h2 style="margin:0px 0 20px 0; border-bottom: 2px solid silver;"><img style="margin-bottom:5px;" src="<%=sezione.icona%>" alt="icona sezione <%=sezione.nome%>"/> <%=sezione.nome%></h2>
+
+			<%	String text="";%>
+			<%	for(PromozioneDocumentoWeb document:doc){%>
+				<%	if((document.data_validazione!=null)&&(document.getDocumento().valido())){%>
+							<%text="leggi la notizia completa";%>
+					
+
+					<h3><a href="<%=document.getDocumento().getLink()%>"><%=document.getDocumento().getTitolo()%></a></h3>
+					<p>
+					<!--<%if((document.getDocumento().getIcona()!="")&&(document.getDocumento().getIcona()!=null)){%>
+					<img src="/servlet/ImageResizeServlet?path=<%=document.getDocumento().getIcona()%>&amp;width=60" style="margin-right:5px;">
+					<%	}%>-->
+					<%	String citta=null;
+						int giorno_dal=0;
+						int giorno_al=0;
+						int mese_dal=0;
+						int mese_al=0;
+						int anno_dal=0;
+						int anno_al=0;
+					%>
+					<%	if(document.getDocumento() instanceof Edizione){%>
+						<%	Edizione evento=(Edizione) document.getDocumento();%>
+						<%	try{
+								
+								if(evento.getDal()!=null){
+									Calendar dal=Calendar.getInstance();
+									dal.setTime(evento.getDal());
+									Calendar al=Calendar.getInstance();
+
+									giorno_dal=dal.get(dal.DAY_OF_MONTH);
+									mese_dal=dal.get(dal.MONTH);
+									anno_dal=dal.get(dal.YEAR);
+									java.text.SimpleDateFormat mese_format = new java.text.SimpleDateFormat("MMMM", java.util.Locale.ITALIAN);
+									
+									if(evento.getAl()!=null){
+										al.setTime(evento.getAl());%>
+									<%	if(dal.compareTo(al)==0){%>
+										<%=giorno_dal%> <%=mese_format.format(new java.util.Date(dal.getTimeInMillis()))%> <%=anno_dal%>,
+									<%	}else{%>
+										<%	giorno_al=al.get(al.DAY_OF_MONTH);
+											mese_al=al.get(al.MONTH);
+											anno_al=al.get(al.YEAR);
+										%>
+										<%	if((mese_dal==mese_al)&&(anno_dal==anno_al)){%>
+												<%=giorno_dal%>-<%=giorno_al%> <%=mese_format.format(new java.util.Date(dal.getTimeInMillis()))%> <%=anno_dal%>,
+										<%	}else{
+												if((mese_dal!=mese_al)&&(anno_dal==anno_al)){%>
+												dal <%=giorno_dal%> <%=mese_format.format(new java.util.Date(dal.getTimeInMillis()))%> al <%=giorno_al%> <%=mese_format.format(new java.util.Date(al.getTimeInMillis()))%> <%=anno_dal%>,
+											<%	}else{
+													if(anno_dal!=anno_al){%>
+														dal <%=giorno_dal%> <%=mese_format.format(new java.util.Date(dal.getTimeInMillis()))%> <%=anno_dal%> al <%=giorno_al%> <%=mese_format.format(new java.util.Date(al.getTimeInMillis()))%> <%=anno_al%>, 
+												<%	}
+												}
+											}%>
+									<%	}%>
+								<%	}else{%>
+									<%=evento.getDal()%>,
+								<%	}
+								}%>
+								<%if(evento.luogo()!=null && !evento.luogo().equals("")){%>
+									<%=evento.luogo()%> -
+							<%	}%>
+						<%	}catch(Exception e){
+								out.println(e);
+							}%>
+					<%	}%>
+
+						<%=document.getDocumento().getAbstract()%><br/><em><a href="<%=document.getDocumento().getLink()%>"><%=text%></a></em></p>
+
+				<%	}%>
+			<%	}%>
+	</div>
+		<%	}%>
+
+	<%	}%>
+		
+	<p>
+		<a href="https://www.xxx.it/newsletter/iscrizione.htm"><span class="glyphicon glyphicon-pencil"></span> Iscriviti alla nostra newsletter</a> per rimanere aggiornato sulle ultime novità, eventi, iniziative e ricevere il nostro notiziario
+	</p>
+		
+		
+		
+	
+	
+	</main>
+<%@include file="/common/struct_template/feedback.htm" %>
+<%@include file="/common/struct_template/footer.htm" %>
+<%@include file="/common/struct_template/footer_script.htm" %>
+	
+  </body>
+</html>

@@ -1,0 +1,118 @@
+<%@include file="/common/include/begin.jsp" %>
+<%@include file="../include/_load_pagina.jsp" %>
+<%@include file="/common/jsp/datadioggi.jsp" %>
+
+<%@include file="/amministrazione/registro_imprese/contatta_cdc/_header_auth.jsp" %>
+
+<%	StrutturaCamerale struttura=pagina.getStrutturaCamerale();
+	
+	String emailUtenteNLConnesso="";
+	
+	if(operatore_nl==null){
+		if (operatore!=null && operatoreQuesiti){
+			emailUtenteNLConnesso=request.getParameter("email_utente_quesito");
+		}
+	}else{
+		emailUtenteNLConnesso=operatore_nl.email;
+	}
+	
+	if (emailUtenteNLConnesso!=null && !emailUtenteNLConnesso.equals("")){%>
+
+<%@include file="/amministrazione/registro_imprese/contatta_cdc/_query_ricerca_quesiti.jsp" %>
+
+<!doctype html>
+<head>
+	<%@include file="/common/struct_template/head.htm" %>
+</head>
+
+<body class="body-public">
+	<%@include file="/common/struct_template/header.htm" %>
+	<%@include file="../struct_template/_barra_navigazione.htm" %>
+
+	<main class="main-content">
+		<div class="row">
+			
+			<%@include file="/common/struct_template/menu_sx.htm" %>
+			
+			<!----CENTRO PAGINA---->
+			<div class="col-md-6 order-first order-md-2">
+				
+				<h1>Contatta il Registro Imprese</h1>
+				<h4>Elenco dei quesiti inviati da <%=(operatore_nl!=null ? operatore_nl.getIdentita() : emailUtenteNLConnesso) %></h4>
+				<table class="table table-striped table-hover" style="font-size:0.9rem;">
+					<tr>
+						<th style="width:20px;">Quesito n.</th>
+						<th style="width:100px;">Inserito il</th>
+						<th style="width:250px;">Oggetto del quesito</th>
+						<th style="width:80px;">Chiuso il</th>
+						<th style="width:100px;"></th>
+					</tr>
+		<%	if (prevQuesiti.getNumberRecords()>0){
+				for (Row<String> prev: prevQuesiti){
+					String nome_amm="";
+					String cognome_amm="";
+					String nome_op="";
+					String cognome_op="";
+			
+					if(prev.getField("id_amministratore")!=null && !prev.getField("id_amministratore").equals("")){
+						PreviewQuery amm=new PreviewQuery(connPostgres);
+						amm.setPreview("select u.id_utente, u.nome as nome_amm, u.cognome as cognome_amm, u.email from " + Utente.NAME_TABLE + " u where u.id_utente=" + prev.getField("id_amministratore"));
+						nome_amm=amm.getField("nome_amm");
+						cognome_amm=amm.getField("cognome_amm");
+					}
+					if(prev.getField("id_operatore")!=null && !prev.getField("id_operatore").equals("")){
+						PreviewQuery op=new PreviewQuery(connPostgres);
+						op.setPreview("select u.id_utente, u.nome as nome_op, u.cognome as cognome_op, u.email from " + Utente.NAME_TABLE + " u where u.id_utente=" + prev.getField("id_operatore"));
+						nome_op=op.getField("nome_op");
+						cognome_op=op.getField("cognome_op");
+					}%>
+					
+					<tr>
+						<td style="padding:3px;"><%=prev.getField("id_quesito")%></td>
+						<td style="padding:3px;"><%=prev.getField("data_inserimento").substring(0, 16) %></td>
+						<td style="padding:3px;"><%=(prev.getField("rag_sociale_impresa").contains("Nome impresa non disponibile") ? "" : prev.getField("rag_sociale_impresa") + ": ") %><%=org.apache.commons.lang.StringEscapeUtils.unescapeHtml(prev.getField("oggetto"))%></td>
+						
+						<td style="padding:3px;">
+							<%	String dataChiusura="";
+								if(prev.getField("da_validare").equals("false")){
+								dataChiusura = prev.getField("data_chiusura_op");
+							}else{
+								dataChiusura = prev.getField("data_chiusura_admin");
+							}%>
+							<%=(dataChiusura.equals("") ? "In trattazione" : dataChiusura.substring(0, 16)) %>
+						</td>
+						<td style="padding:3px;">
+							<a href="risposta.htm?ID_q=<%=prev.getField("id_quesito")%>&<%=urlwrapper.toQueryString("back", false)%>" title="Visualizza risposta al quesito"><img src="/imgs/icone/foglio_anteprima.gif" />Visualizza la risposta</a> 
+						</td>
+					</tr>
+			<%	}%>
+		
+		<%	}else{ %>
+					<tr><td style="padding:3px;" colspan="5">Nessun quesito formulato</td></tr>
+		<%	} %>
+				</table>
+		
+		<%	if(operatore_nl!=null){%>
+				<br/>
+				<hr/>
+				<h4><span class="glyphicon glyphicon-pencil" aria-hidden="true" style="margin-right:10px;"></span><a href="<%=backwrapper %>" title="Inserisci un nuovo quesito">Inserisci un nuovo quesito</a></h4>
+		<%	} %>		
+
+			</div>
+			<!--- FINE CENTRO PAGINA--->
+			
+			<!-- BARRA LATERALE DESTRA -->
+			<%@include file="../struct_template/_componenti_destra.htm" %>
+			<!--FINE BARRA LATERALE DESTRA-->
+		</div>
+	</main>
+<%@include file="/common/struct_template/feedback.htm" %>
+<%@include file="/common/struct_template/footer.htm" %>
+<%@include file="/common/struct_template/footer_script.htm" %>
+
+  </body>
+</html>
+
+<%	}else{
+		response.sendRedirect("/");
+	}%>

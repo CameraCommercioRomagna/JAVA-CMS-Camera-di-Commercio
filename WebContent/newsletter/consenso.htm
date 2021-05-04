@@ -1,0 +1,165 @@
+<%@include file="/common/include/begin.jsp" %>
+<%@include file="include/_load_pagina.jsp" %>
+
+<%@ page import="java.io.*" %> 
+<%@ page import="java.sql.*" %> 
+
+<%	StrutturaCamerale struttura=pagina.getStrutturaCamerale();
+
+	QueryPager pagerCrm = new QueryPager(connCRM);
+	QueryPager pagerPl = new QueryPager(connCRM);	
+	SQLTransactionManager manager = new SQLTransactionManager(this, connCRM);
+	
+	QueryPager pager = new QueryPager(connPostgres);
+	pager.set("select * from " + TematicaNl.NAME_TABLE + " order by nome");
+	
+	String email = request.getParameter("email")==null ? "" : request.getParameter("email").trim().toLowerCase();
+	String id_bean = request.getParameter("id")==null ? "" : request.getParameter("id").trim();	
+	String[] id_tematica = {};	
+		if (request.getParameterValues("tematica") != null) id_tematica=request.getParameterValues("tematica");
+	String prospectListId="";
+	String send=request.getParameter("send"); //Conferma consenso
+		if (send == null) send="0";
+	int nObj=0;	
+	int presente=0; 	
+	int utente_portale=0; 
+	PreviewQuery prev = new PreviewQuery(connPostgres);
+	SQLTransactionManager sqlMan = new SQLTransactionManager(this, connPostgres);	
+	
+	if (backwrapper == null)
+		backwrapper = new CdCURLWrapper(connPostgres, new URL(currentServer + "/newsletter/"));%>
+	
+<!doctype html>
+<head>
+	<%@include file="/common/struct_template/head.htm" %>
+</head>
+
+<body class="body-public">
+	<%@include file="/common/struct_template/header.htm" %>
+	<%@include file="struct_template/_barra_navigazione.htm" %>
+
+<main class="main-content">
+		<div class="row">
+			
+			<%@include file="/common/struct_template/menu_sx.htm" %>
+			
+			<!----CENTRO PAGINA---->
+			<div class="col-md-6 order-first order-md-2">
+			
+				<h2><span class="glyphicon glyphicon-bullhorn" aria-hidden="true" style="margin-right:10px;"></span> Consenso alla ricezione di newsletter informative della XXX</h2>
+				
+<%	//Controllo se ci sono bean con E-mail= email data e id=id dato
+	//pagerCrm.set("SELECT abr.bean_id as id_acl, trim(a.email_address) as email_address,abr.bean_module as bean_module FROM sugarcrm.email_addresses a, sugarcrm.email_addr_bean_rel abr where a.id=abr.email_address_id AND a.email_address is not null AND a.deleted=0 AND abr.deleted=0 AND abr.bean_module in ('Contacts','Accounts','Leads') AND lower(trim(a.email_address))='"+ email+"' AND a.id='"+ id_bean+"'");
+	pagerCrm.set("SELECT abr.bean_id as id_acl, trim(a.email_address) as email_address,abr.bean_module as bean_module FROM sugarcrm.email_addresses a, sugarcrm.email_addr_bean_rel abr where a.id=abr.email_address_id AND a.email_address is not null AND a.deleted=0 AND abr.deleted=0 AND abr.bean_module in ('Contacts','Accounts','Leads') AND lower(trim(a.email_address))='"+ email+"'");
+  	nObj = pagerCrm.getNumberRecords();
+	//out.println("N. Bean= "+nObj);  				
+	//Recupero tutti i bean con E-mail= email
+	pagerCrm.set("SELECT abr.bean_id as id_acl, trim(a.email_address) as email_address,abr.bean_module as bean_module FROM sugarcrm.email_addresses a, sugarcrm.email_addr_bean_rel abr where a.id=abr.email_address_id AND a.email_address is not null AND a.deleted=0 AND abr.deleted=0 AND abr.bean_module in ('Contacts','Accounts','Leads') AND lower(trim(a.email_address))='"+ email+"'");
+
+	if (send.equals("1")){ //--------- Consenso confermato
+		//out.println("Utente: " + email + "<br />");
+		for (Row<String> rs : pager){ // Per ogni prospect list (prospectListId) controllo i consensi dati da email 
+			prospectListId=rs.getField("id_plp");
+			boolean found = Arrays.asList( id_tematica ).contains( rs.getField("id_tematica") );
+			if (found) { // Consenso dato -> Rimuovere dalla suppression list
+				//out.println("The value "+ rs.getField("id_tematica") + " - " + rs.getField("nome") + " - " + rs.getField("id_plp") + " is found! <br />");
+
+				for (Row<String> r: pagerCrm){
+					pagerPl.set("SELECT * FROM sugarcrm.prospect_lists_prospects plp where prospect_list_id='" + prospectListId + "' AND related_id='" + r.getField("id_acl") + "' AND related_type='" + r.getField("bean_module")+ "' AND deleted=0");
+					presente=pagerPl.getNumberRecords();
+					if (presente == 0) {
+						manager.executeCommandQuery("insert into cise_log_cancellazioni(id, email,area,data,prospect_list_id, related_id, related_type,canceled,descr) values (UUID(),'" + email + "','" + rs.getField("id_tematica") + "',now(),'" + prospectListId + "','" + r.getField("id_acl") + "','" + r.getField("bean_module")+ "',0,'Update da Mail 1 - Non presente in suppression list')");
+					} else {
+						manager.executeCommandQuery("delete from prospect_lists_prospects WHERE prospect_list_id='" + prospectListId + "' AND related_id='"+ r.getField("id_acl") +"' AND related_type='" + r.getField("bean_module")+"'");
+						manager.executeCommandQuery("insert into cise_log_cancellazioni(id, email,area,data,prospect_list_id, related_id, related_type,canceled,descr) values (UUID(),'" + email + "','" + rs.getField("id_tematica") + "',now(),'" + prospectListId + "','" + r.getField("id_acl") + "','" + r.getField("bean_module")+ "',0,'Update da Mail 1 - Rimosso da suppression list')");
+					}
+					presente=0;
+				}
+			
+			} else { // Consenso non dato -> Aggiungere alla suppression list (prospectListId) tutti i bean con E-mail=email
+				//out.println("The value "+ rs.getField("id_tematica") + " - " + rs.getField("nome") + " - " + rs.getField("id_plp") + " is not found! <br />");
+
+				for (Row<String> r: pagerCrm){
+					pagerPl.set("SELECT * FROM sugarcrm.prospect_lists_prospects plp where prospect_list_id='" + prospectListId + "' AND related_id='" + r.getField("id_acl") + "' AND related_type='" + r.getField("bean_module")+ "' AND deleted=0");
+					presente=pagerPl.getNumberRecords();
+					if (presente == 0) {
+						manager.executeCommandQuery("insert into prospect_lists_prospects(id, prospect_list_id, related_id, related_type, date_modified, deleted) values (UUID(),'" + prospectListId + "','" + r.getField("id_acl") + "','" + r.getField("bean_module")+ "',now(), 0)");
+						manager.executeCommandQuery("insert into cise_log_cancellazioni(id, email,area,data,prospect_list_id, related_id, related_type,canceled,descr) values (UUID(),'" + email + "','" + rs.getField("id_tematica") + "',now(),'" + prospectListId + "','" + r.getField("id_acl") + "','" + r.getField("bean_module")+ "',1,'Update da Mail 1 - Inserito in suppression list')");
+					} else {
+						manager.executeCommandQuery("insert into cise_log_cancellazioni(id, email,area,data,prospect_list_id, related_id, related_type,canceled,descr) values (UUID(),'" + email + "','" + rs.getField("id_tematica") + "',now(),'" + prospectListId + "','" + r.getField("id_acl") + "','" + r.getField("bean_module")+ "',1,'Update da Mail 1 - Presente in suppression list')");
+					}
+					presente=0;
+				}
+
+			}// Fine else - Consenso non dato
+
+		} // Fine for - Per ogni prospect list%>
+		
+				<p>
+					Gentile utente <b> <%= email %></b>,
+					</br>Le comunichiamo che la sua richiesta di modifica è stata registrata correttamente. 
+				</p> 
+				
+<%	} else { //--------- Pagina raccolta consensi
+		prev.setPreview("SELECT id_utente FROM " + UtenteNl.NAME_TABLE + " WHERE email='"+email+"' AND privacy_mail");		
+		if (prev.getNumberRecords()>0) { //--------- Utente è iscritto al portale
+			response.sendRedirect("/newsletter/modifica.htm");
+		}
+		if (nObj==0) { //--------- Non ci sono bean nel CRM con email data%>	
+				<p>
+					Gentile utente <b> <%= email %></b>,
+					</br>non è stato possibile eseguire l'operazione richiesta. 
+					<br/><br/>La invitiamo a contattarci all'indirizzo: <a href="mailto:cancellazioni@xxx.it">cancellazioni@xxx.it</a> 
+				</p> 
+	<%	} else {//--------- Utente nel CRM -> pagina di consensi%>
+				<p>
+					Per essere sempre informato sulle novità  della XXX, del sistema camerale e dell'economia locale in generale.
+					<br />Per ricevere il nostro Notiziario quindicinale che ti aggiorna sui servizi e le opportunità  utili per la tua impresa, gli eventi e le scadenze.
+					<br /><b>L'iscrizione è gratuita.</b>
+				</p>
+		
+				<br />
+				<form  class="form-control-cciaa-sm" name="email_nl" method="post" action="consenso.htm">
+					<p>
+						<b>Autorizzo il trattamento dei miei dati personali ai sensi del Regolamento Europeo UE 2016/679, ai fini di trasmissione di newsletter, comunicazioni istituzionali e informazioni sulle attività  della XXX.</b><br /><b style="color:#970026">Se non ci autorizzi non riceverai le nostre comunicazioni</b>
+					</p>
+					<p>
+			<%	for (Row<String> rs : pager){%>
+					<input type="checkbox" name="tematica" value="<%=rs.getField("id_tematica")%>" checked="checked" /> <%=rs.getField("nome")%>
+					<br />
+			<%	}%>
+					</p>
+					
+					<br /><br />
+					<p><a class="blank" href="http://www.xxx.it/privacy.htm">Leggi l'informativa sulla Privacy</a></p>
+					
+					<br /><br />
+					<p style="text-align:center">
+						<input type="hidden" name="back" value="<%=backwrapper.getPercorsoWeb()%>">
+						<input type="hidden" name="send" value="1">
+						<input type="hidden" name="email" value="<%=email%>">
+						<input type="hidden" name="id" value="<%=id_bean%>">
+						<input style="width:150px;margin-right:3em;" type="submit" class="btn btn-primary" value="Conferma consenso">
+						<input style="width:150px;margin-right:3em;" type="button" class="btn btn-secondary" onclick="window.location.href='<%=backwrapper %>'" name="Annulla" value="Annulla"/>
+					</p>
+				</form>
+		
+	<%	}//--------- FINE else: Utente è nel CRM -> pagina di consensi
+
+	} //--------- Fine else Pagina raccolta consensi%> 
+	
+			</div>
+			<!--- FINE CENTRO PAGINA--->
+			
+			<!-- BARRA LATERALE DESTRA -->
+			<%@include file="struct_template/_componenti_destra.htm" %>
+			<!--FINE BARRA LATERALE DESTRA-->
+		</div>
+	</main>
+<%@include file="/common/struct_template/feedback.htm" %>
+<%@include file="/common/struct_template/footer.htm" %>
+<%@include file="/common/struct_template/footer_script.htm" %>
+
+  </body>
+</html>
+

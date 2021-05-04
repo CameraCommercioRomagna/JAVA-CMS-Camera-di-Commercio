@@ -1,0 +1,96 @@
+<%@include file="/common/include/begin.jsp" %>
+<%@include file="../include/_load_pagina.jsp" %>
+
+<%@page import="org.apache.commons.lang.StringEscapeUtils" %>
+<%@include file="/amministrazione/registro_imprese/contatta_cdc/_header_auth.jsp" %>
+
+<%	StrutturaCamerale struttura=pagina.getStrutturaCamerale();
+	
+	boolean accesso=false;
+	
+	if(operatore_nl==null){
+		if (operatore!=null && operatoreQuesiti){
+			accesso=true;
+		}
+	}else{
+		accesso=true;
+	}
+	
+	if (accesso){%>
+
+<%	Long id_quesito=null;
+	if(request.getParameter("ID_q")!=null){
+		id_quesito=Long.parseLong(request.getParameter("ID_q"));
+	}else{%>
+		<jsp:forward page="/contatta_camera"/>
+<%	}%>
+<%@include file="/amministrazione/registro_imprese/contatta_cdc/_quesito_dati_query.jsp" %>
+<%@include file="/amministrazione/registro_imprese/contatta_cdc/_quesito_risposte_query.jsp" %>
+
+<!doctype html>
+<head>
+	<%@include file="/common/struct_template/head.htm" %>
+</head>
+
+<body class="body-public">
+	<%@include file="/common/struct_template/header.htm" %>
+	<%@include file="../struct_template/_barra_navigazione.htm" %>
+
+	<main class="main-content">
+		<div class="row">
+			
+			<%@include file="/common/struct_template/menu_sx.htm" %>
+			
+			<!----CENTRO PAGINA---->
+			<div class="col-md-6 order-first order-md-2">
+			
+				<h1>Contatta il Registro Imprese</h1>
+				<h2>Quesito n.<%=id_quesito %></h2>
+				
+				<p>
+					Inserito il <%=quesitoPrev.getField("data_inserimento").substring(0,16) %><%=(quesitoPrev.getField("rag_sociale_impresa").contains("Nome impresa non disponibile") ? "" : " per conto di " + quesitoPrev.getField("rag_sociale_impresa") + ": ") %><br/>
+					<br/>
+					Oggetto: <b><%=StringEscapeUtils.unescapeHtml(quesitoPrev.getField("oggetto")) %></b><br/>
+					<%=StringEscapeUtils.unescapeHtml(quesitoPrev.getField("testo_quesito")) %><%=(quesitoPrev.getField("testo_quesito_1").equals("") ? "" : StringEscapeUtils.unescapeHtml(quesitoPrev.getField("testo_quesito_1"))) %><%=(quesitoPrev.getField("testo_quesito_2").equals("") ? "" : StringEscapeUtils.unescapeHtml(quesitoPrev.getField("testo_quesito_2"))) %><br/>
+		<%	if(!quesitoPrev.getField("allegato_f0").equals("")){%><br/><a href="<%=quesitoPrev.getField("allegato_f0")%>" title="Visualizza allegato" target="_blank">Visualizza allegato</a><br/><%	}%>
+				</p>
+				<hr/>
+		<%	if (risposte.getNumberRecords()>0){%>		
+			<%	for (int i=0; i<risposte.getNumberRecords(); i++){%>
+				<%	//***********OPERATORE
+					PreviewQuery pOperatore=new PreviewQuery(connPostgres);
+					pOperatore.setPreview("select u.id_utente, u.nome, u.cognome, u.email from " + Utente.NAME_TABLE + " u where u.id_utente=" + risposte.getField("id_operatore"));%>
+				<p>
+					Risposta del <%=risposte.getField("data_inserimento").substring(0, 16) %> da <%=pOperatore.getField("nome") + " " + pOperatore.getField("cognome") %><br/>
+					<i><%=StringEscapeUtils.unescapeHtml(risposte.getField("testo_risposta")) %><%=(risposte.getField("testo_risposta_1").equals("") ? "" : StringEscapeUtils.unescapeHtml(risposte.getField("testo_risposta_1"))) %></i><br/>
+				<% if(!risposte.getField("allegato_f0").equals("")){%><br/><a href="<%=risposte.getField("allegato_f0")%>" title="Visualizza allegato 1" target="_blank">Visualizza allegato 1</a><br/><% }%>
+				<% if(!risposte.getField("allegato_f1").equals("")){%><br/><a href="<%=risposte.getField("allegato_f1")%>" title="Visualizza allegato 2" target="_blank">Visualizza allegato 2</a><br/><% }%>
+				<% if(!risposte.getField("allegato_f2").equals("")){%><br/><a href="<%=risposte.getField("allegato_f2")%>" title="Visualizza allegato 3" target="_blank">Visualizza allegato 3</a><br/><% }%>
+				</p>
+				<hr/>
+			<%		risposte.nextRecord();
+				}%>
+		<%	}else{%>
+				<p>Risposta in fase di trattazione</p>
+				<br/>
+		<%	}%>
+				<p style="text-align:center;"><a href="<%=backwrapper %>">Torna all'elenco dei quesiti</a></p>
+
+			</div>
+			<!--- FINE CENTRO PAGINA--->
+			
+			<!-- BARRA LATERALE DESTRA -->
+			<%@include file="../struct_template/_componenti_destra.htm" %>
+			<!--FINE BARRA LATERALE DESTRA-->
+		</div>
+	</main>
+<%@include file="/common/struct_template/feedback.htm" %>
+<%@include file="/common/struct_template/footer.htm" %>
+<%@include file="/common/struct_template/footer_script.htm" %>
+
+  </body>
+</html>
+
+<%	}else{
+		response.sendRedirect("/");
+	}%>

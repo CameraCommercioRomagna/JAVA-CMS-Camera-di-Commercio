@@ -1,0 +1,210 @@
+<%@include file="/common/include/begin.jsp" %>
+<%@include file="include/_project_var.jsp" %>
+	
+<%	head_title += " - Registro imprese";%> 
+<%	meta_description += " Il Registro delle Imprese è un registro pubblico istituito in ogni provincia che nasce con la legge di riordino delle Camere di Commercio (L. 580/1993). In esso sono iscritti tutti gli atti ed i fatti riguardanti la vita dell'impresa previsti dalla legge (art. 2188 c.c.). Nel sito camerale possono essere rinvenute informazioni necessarie sia per la compilazione della prescritta modulistica sia per la richiesta di strumenti utili come firma digitale e posta elettronica certificata sia per ottenere vari servizi camerali come telemaco, cronotachigrafo, ecc â€¦";%>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="it" lang="it">
+
+<head>
+<%@include file="/common/struct_template/head.htm" %>
+<script type="text/javascript" src="/common/js/jquery.js"></script>
+<script type="text/javascript" src="/common/js/jquery.form.js"></script>
+<script type="text/javascript" src="/common/doc_template/_elenco002.js"></script>
+</head>
+
+<body>
+
+<%@include file="/common/struct_template/home_header.htm" %>
+<%@include file="/common/struct_template/home_init_contenuti.htm" %>
+
+	<div class="panel-body"><!--img src="cc_banner.png" alt="Contatta Camera" style="clear:both"/-->
+		<h1><span class="glyphicon glyphicon-stop blu1-colored" aria-hidden="true" style="margin-right:10px;"></span> <span class="gray-colored">Contatta Camera</span></h1>
+		<h2><span class="gray-colored">FAQ</span></h2>
+
+<%	// INIT - copia di documenti_xambiti.htm
+	String titoloPagina ="";
+	String labelCorrenti="";
+	String labelArchivio="";
+	
+	// ...per filtri query
+	//String areaser=(_area_servizio !=null ? _area_servizio.id_area_servizio.toString() : "");
+	//String areaint=(_area_interesse !=null ? _area_interesse.id_ainteresse.toString() : "");
+	String areaser="24";
+	String areaint="";
+	
+	String anno=(request.getParameter("anno")!=null ? request.getParameter("anno") : "");
+	String titolo_imposto=(request.getParameter("titolo")!=null ? request.getParameter("titolo") : "");
+	
+	List<TipoDocumento> tipi = new ArrayList<TipoDocumento>();
+	TipoDocumento tPrincipale = null;
+	/*String tipo="";
+	String tipo_codice_web="";
+	try{
+		tPrincipale = TipoDocumento.fromWebName(connNew, request.getParameter("doc"));
+		tipo = tPrincipale.id_tipo_documento.toString();
+		tipo_codice_web = tPrincipale.codice_web;
+		
+		tipi.add(tPrincipale);
+		tipi.addAll(tPrincipale.sottoTipi());
+	}catch(IllegalArgumentException e){}*/
+	
+	String tipo="103";
+	String tipo_codice_web="faq";
+	tPrincipale=TipoDocumento.fromWebName(connNew, tipo_codice_web);
+	tipi.add(tPrincipale);
+	tipi.addAll(tPrincipale.sottoTipi());
+	
+	String iconaDocumento="/imgs/" + tipo_codice_web + "_simbolo.jpg";
+	
+	// Variabili di configurazione pagina
+	if(!titolo_imposto.equals("")){
+		titoloPagina = titolo_imposto;
+		labelCorrenti = "Documenti pubblicati";
+	}else{
+		if(tipo.equals("")){
+			titoloPagina ="Documenti";
+			labelCorrenti = "Documenti pubblicati";
+		}else{
+			titoloPagina = tPrincipale.tipo;
+			labelCorrenti = tPrincipale.tipo + " pubblicati";
+		}
+	}
+	labelArchivio="Archivio";
+	
+	head_title += " - " + ambitiPagina.get(ambitiPagina.size()-1).getNome() + " - " + titoloPagina; 
+	meta_description += ", " + titoloPagina;
+	//out.println(titoloPagina + " - " + ambitiPagina.get(ambitiPagina.size()-1).getNome());
+	meta_keywords += ", documenti, calendario documenti, archivio documenti";
+	
+	if (tipi.size() > 0)
+		for (TipoDocumento t: tipi)
+			meta_keywords +=  ", " + t.tipo;
+		
+	// Request...
+	// ...per gestione pagina
+	boolean archivio=(request.getParameter("stato")!=null && request.getParameter("stato").equals("s"));
+	
+	String select="select distinct d.id_area_servizio, d.id_ainteresse";
+	String from=" from portalowner.v_documentiweb d";
+	String where=" where d.validato=1 and d.data_pubblicazione<=sysdate and " + (archivio ? "d.data_scadenza<=sysdate" : "d.data_scadenza>sysdate") + " and d.id not in (select d.id from portalowner.v_documentiweb d where d.id_tipo_documento=6 or d.id_tipo_documento=7 or d.id_tipo_documento=143 or d.id_tipo_documento=144 or d.id_tipo_documento=145 or d.id_tipo_documento=146)";
+
+	
+	if (tipi.size() > 0){
+		if (tipi.size() == 1)
+			where += (where.equals("") ? " where " : " and ") + "d.id_tipo_documento=" + tipo;
+		else{
+			String listaIDTipi="";
+			for (TipoDocumento t: tipi) 
+				listaIDTipi +=  (listaIDTipi.equals("") ? "" : ", ") + t.id_tipo_documento;
+			
+			where += (where.equals("") ? " where " : " and ") + "d.id_tipo_documento in (" + listaIDTipi + ")";
+		}
+	}
+	if (!areaser.equals("") && !inAreaCamera){
+		where += (where.equals("") ? " where " : " and ") + "d.id_area_servizio=" + areaser;
+	}else	//escludo cise
+		where += (where.equals("") ? " where " : " and ") + " (d.id_area_servizio=50 or d.id_area_servizio in (select id_area_servizio from portalowner.aree_servizio where id_area_padre=50))";
+	if (!areaint.equals("") && !inAreaCamera){
+		where += (where.equals("") ? " where " : " and ") + "d.id_ainteresse=" + areaint;
+	}
+	if (!anno.equals("")){
+		where += (where.equals("") ? " where " : " and ") + "to_char(d.data_pubblicazione, 'yyyy')='" + anno + "'";
+	}
+	
+	String query = select + from + where;
+	//out.print(query);
+	QueryPager pagerAmbiti=new QueryPager(connNew);
+	pagerAmbiti.set(query);
+	//out.print(pagerAmbiti);
+	
+	List<String> listAmbitiStr=new ArrayList<String>();
+	for (Row<String> ambito: pagerAmbiti){
+		String ambitoDoc=null;
+		if (!ambito.getField("id_ainteresse").equals("")){
+			ambitoDoc="AI-" + ambito.getField("id_ainteresse");
+		}else if (!ambito.getField("id_area_servizio").equals("")){
+			ambitoDoc="AS-" + ambito.getField("id_area_servizio");
+		}else
+			throw new IllegalStateException("Documento non catalogato in un ambito");
+			
+		listAmbitiStr.add(ambitoDoc);
+	}
+	
+	List<Ambito> listAmbiti=new ArrayList<Ambito>();
+	for (String aFound: listAmbitiStr){
+		Ambito ambito=null;
+		if (aFound.startsWith("AI-")){
+			AreaInteresse aiAmbitoDoc=new AreaInteresse();
+			aiAmbitoDoc.initialize(connNew);
+			aiAmbitoDoc.id_ainteresse=new Double(aFound.substring(3));
+			aiAmbitoDoc.load();
+			ambito=aiAmbitoDoc;
+		}else if (aFound.startsWith("AS-")){
+			AreaServizio asAmbitoDoc=new AreaServizio();
+			asAmbitoDoc.initialize(connNew);
+			asAmbitoDoc.id_area_servizio=new Double(aFound.substring(3));
+			asAmbitoDoc.load();
+			ambito=asAmbitoDoc;
+		}
+		listAmbiti.add(ambito);
+	}
+	//out.print(listAmbiti);
+
+	// FINE - copia di documenti_xambiti.htm%>	
+
+<% 	// INIT - copia di /common/doc_template/_elenco002.jsp
+	name_page = titoloPagina;
+	head_title +=(inAreaCamera==false? " - " + ambitiPagina.get(ambitiPagina.size()-1).getNome(): "") + " - " + titoloPagina ;
+	meta_description += " " + titoloPagina +  (inAreaCamera==false? " della sezione " + ambitiPagina.get(ambitiPagina.size()-1).getNome(): "");%>
+
+<%	Ambito ambitoCorrente=(_area_interesse==null ? (_area_servizio==null || inAreaCamera ? laCamera : _area_servizio) : _area_interesse);
+	String urlAjax="/common/doc_template/_elenco002_ajaxVisualDocumenti.htm";%>
+
+<%! String boxAmbito(TipoDocumento tipo, int livello, Ambito ambito, List<Ambito> listAmbiti, String urlAjax){
+		String htmlBox="";
+		String htmlBoxFigli="";
+		
+		for (Ambito ambitofiglio: ambito.figli()){
+			htmlBoxFigli += boxAmbito(tipo, livello+1, ambitofiglio, listAmbiti, urlAjax);
+		}
+		if (!htmlBoxFigli.equals("") || listAmbiti.contains(ambito)){
+			String qs="ambitoEsatto=y&amp;doc=" + tipo.codice_web + "&amp;sez=" + (ambito instanceof AreaInteresse ? ((AreaServizio)ambito.padre()).codice_web+"/"+((AreaInteresse)ambito).codice_web : ((AreaServizio)ambito).codice_web);
+			String idDiv="i" + livello + "-" + (ambito instanceof AreaInteresse ? ((AreaServizio)ambito.padre()).codice_web+"x"+((AreaInteresse)ambito).codice_web : ((AreaServizio)ambito).codice_web);
+			
+			String linkAmbito="/documenti_xambiti_acc.htm?" + qs;
+			String onclick="onclick=\"xopen('" + idDiv + "', '" + urlAjax + "', '" + qs + "');return false\"";
+			//String onclick="onclick=\"window.open('" + urlAjax + "?" + qs + "');return false\"";
+			if (livello > 1){
+				htmlBox += "<h" + (2+(livello-1)) + "><a href=\"" + linkAmbito + "\" title=\"Visualizza documenti associati a " + ambito.getNome() + "\" " + onclick + "><img id=\"img-" + idDiv + "\" src=\"/imgs/apri_tree.gif\" alt=\"Visualizza documenti\" />" + (ambito.getNome().equals("Home camera") ? "Contesto generale" : ambito.getNome()) + "</a></h" + (2+(livello-1)) + ">";
+			}
+			//htmlBox += "<div id=\"" + idDiv + "\" style=\"margin-left:22px;display:block\">";
+			htmlBox += "<div id=\"" + idDiv + "\" style=\"margin-left:" + (10*livello) + "px;" + (livello > 1 ? "display:none;" : "" ) + "\">";
+			htmlBox += htmlBoxFigli;
+			
+			htmlBox += "</div>";
+		}
+		return htmlBox;
+	}
+	// FINE - copia di /common/doc_template/_elenco002.jsp%>
+		<div>
+		<%=boxAmbito(tPrincipale, 1, ambitoCorrente, listAmbiti, urlAjax) %>
+		</div>
+	
+		<div class="supporto">	
+		<br/>
+		<br/>
+		<h3><span class="gray-colored">Non hai trovato la risposta alla tua domanda nella Sezione FAQ?</span></h3>
+		<p>
+			<b>STEP 2:</b> <a href="guide_e_manuali.htm">Clicca qui</a> per accedere alla sezione Guide e Manuali nella quale trovare approfondimenti per le più frequenti tipologie di pratiche
+		</p>
+		</div>
+	</div>
+
+<%@include file="/common/struct_template/fine_contenuti.htm" %>
+<%@include file="/common/struct_template/footer.htm" %>
+<%@include file="/common/js/script_google.js" %>
+
+</body>
+</html>

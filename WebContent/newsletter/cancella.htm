@@ -1,0 +1,55 @@
+<%@include file="/common/include/begin.jsp" %>
+<%@include file="include/_load_pagina.jsp" %>
+
+<%	StrutturaCamerale struttura=pagina.getStrutturaCamerale();
+	String fwd = request.getParameter("fwd")==null ? "" : request.getParameter("fwd").trim();%>
+	
+<!doctype html>
+<head>
+	<%@include file="/common/struct_template/head.htm" %>
+</head>
+
+<body class="body-public">
+	<%@include file="/common/struct_template/header.htm" %>
+	<%@include file="struct_template/_barra_navigazione.htm" %>
+
+	<main class="main-content">
+		<div class="row">
+			
+			<%@include file="/common/struct_template/menu_sx.htm" %>
+			
+			<!----CENTRO PAGINA---->
+			<div class="col-md-6 order-first order-md-2">
+	
+				<h2><span class="glyphicon glyphicon-bullhorn" aria-hidden="true" style="margin-right:10px;"></span> Cancellazione iscrizione al sito della XXX</h2>
+		<%	if (operatore_nl!=null){
+				List<TematicaNl> tematiche = TematicaNl.getTematiche(connPostgres);%>
+
+				<form id="mod" name="mod" style="margin-top:3rem;" method="post" action="canc_iscrizione.jsp" class="form-control-cciaa-sm">
+					<p>Si è sicuri di voler procedere con la cancellazione del tuo indirizzo email?</p>
+					<br/><br/>
+					<p>
+						<input style="width:150px;margin-right:3em;" type="submit" class="btn btn-primary" value="Procedi">
+						<button style="width:150px;margin-right:3em;" class="btn btn-secondary" onclick="window.location.href='https://www.xxx.it/newsletter'">Annulla</button>
+					</p>
+					<input type="hidden" name="id_utente" value="<%=operatore_nl.id_utente %>" />
+					<input type="hidden" name="fwd" value="<%=fwd%>" />
+				</form>
+		<%	}else{%>
+				<p>Non è possibile effettuare modifiche. Nessun utente loggato.</p>
+		<%	}%>		
+		
+			</div>
+			<!--- FINE CENTRO PAGINA--->
+			
+			<!-- BARRA LATERALE DESTRA -->
+			<%@include file="struct_template/_componenti_destra.htm" %>
+			<!--FINE BARRA LATERALE DESTRA-->
+		</div>
+	</main>
+<%@include file="/common/struct_template/feedback.htm" %>
+<%@include file="/common/struct_template/footer.htm" %>
+<%@include file="/common/struct_template/footer_script.htm" %>
+
+  </body>
+</html>

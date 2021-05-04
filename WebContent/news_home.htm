@@ -1,0 +1,82 @@
+<%@include file="/common/include/begin.jsp" %>
+<%@page buffer="512kb" autoFlush="false" %>
+<%	// Aggiornamento metatag pagina
+	meta_keywords += "";
+	meta_description = "";
+	Boolean inPrimoP=false;
+	if(request.getParameter("tipoNews")!=null && request.getParameter("tipoNews").equals("inPrimoPiano")) inPrimoP=true;
+
+%>
+
+<!doctype html>
+<html <%=tagHtmlAttributes%>>
+<head>
+	<%@include file="/common/struct_template/head.htm" %>
+</head>
+
+<body class="body-public">
+	<%@include file="/common/struct_template/header.htm" %>
+
+	<%	if(inPrimoP){
+			List<DocumentoWeb<?>> inPrimoPiano=DocumentFactory.loadAll(connPostgres, null, null, true, true, false, Visibilita.VISIBILE_HOME_PAGE);%>
+			<h1 style="margin:1rem 0 0 2rem;"><span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span> In primo piano</h1>
+			<div class="row" style="margin:1rem;">
+			<%	for(DocumentoWeb<?>  d : inPrimoPiano){%>
+					<%	if(!d.getTipo().instanceOf(TipoDocumento.EDIZIONE_EVENTO)&& TipoSistema.fromID(((AbstractDocumentoWeb)d).id_tipo_sistema).compareTo(TipoSistema.DOWNLOAD)!=0 && !d.getTipo().instanceOf(TipoDocumento.NOTIZIA_DAL_TERRITORIO)){%>
+						<%	if(d.getVisibilita()==Visibilita.VISIBILE_HOME_PAGE){%>
+								<div class="col-xl-3 col-lg-3 col-md-6" style="margin-bottom:2rem;">
+									<div class="card h-100" style="margin-left:0.5rem; padding:0; flex-grow:0!important; border:0; box-shadow: 5px 5px 10px 0 #071d49;">
+										<div class="card-img-top" style="text-align:center; ">
+											<div style="background-image:url(<%=d.getIcona()%>); background-size:cover; background-position:center top; height:230px;" ></div>
+										</div>
+										<div class="card-block" style="padding:1rem ">
+											<h2 style="font-size:1.2rem;"  class="card-title"><a href="<%=d.getLink()%>" class="color_blu"><%=d.getTitolo()%></a></h2>
+											<p class="card-text" style="font-size:0.9rem" >
+												<%=d.getAbstract()%>
+											</p>
+										</div>
+									</div>
+								</div>
+						<%	}%>
+					<%	}%>
+				
+			<%	}%>
+			</div>
+		<%}else{%>
+			<%List<DocumentoWeb<?>> laCameraSegnala=DocumentFactory.loadAll(connPostgres, TipoDocumento.NOTIZIA_DAL_TERRITORIO, null, true, true, false, Visibilita.VISIBILE_HOME_PAGE);%>
+			<%	if(laCameraSegnala.size()>0){%>
+					<h1 style="margin:1rem 0 0 2rem;"><span class="glyphicon glyphicon-tag" aria-hidden="true"></span>La Camera segnala</h1>
+					<div class="row" style="margin:1rem;">
+						<div class="container-fluid" style="background-color:#bcb9b9; padding-bottom:1rem; padding-top:1rem; border-top:3px #071d49 solid;">
+						
+								<div class="row">
+								<%	for(DocumentoWeb<?>  s : laCameraSegnala){%>
+										<div class="col-xl-3 col-lg-4 col-md-6" style="padding-bottom:1rem;">
+											<div class="card h-100" style="flex-grow:0!important; border:0; box-shadow: 1px 1px 3px 0 #071d49;">
+												<div class="card-block" style="padding:0.5rem">
+													<%if(s.getIcona()!=null && !s.getIcona().equals("")){%>
+														<img src="<%=s.getIcona()%>" class="rounded-circle" style="width:70px; float:left; margin-right:1rem; margin-bottom:0.4rem; box-shadow: 5px 5px 10px 0 #071d49;" aria-hidden="true">
+													<%}%>
+													<h4 class="card-title" style="font-size:0.9rem; line-height:1rem; margin-bottom:0.3rem;"><a href="<%=s.getLink()%>" class="color_blu"> <%=s.getTitolo()%></a></h4>
+													<p class="card-text" style="font-size:0.8rem; line-height: 1.1rem;" >
+														<%=s.getAbstract()%>
+													</p>
+												</div>
+											</div>
+										</div>
+								<%	}%>
+								</div>
+						</div>
+					</div>
+			<%}%>
+		<%}%>
+
+<%@include file="/common/struct_template/feedback.htm" %>
+
+<%@include file="/common/struct_template/footer.htm" %>
+
+<%@include file="/common/struct_template/footer_script.htm" %>
+
+	
+  </body>
+</html>
