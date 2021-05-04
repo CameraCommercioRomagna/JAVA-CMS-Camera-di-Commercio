@@ -13,6 +13,7 @@ Dall'area riservata per gli utenti redattori è inoltre possibile generare codic
 <h2>Stato del progetto</h2>
 <p>Il prodotto è stabile ed è usato dalla Camera di Commercio della Romagna. Lo sviluppo di nuove funzionalità viene fatto su richiesta del committente.</p>
 <h2>Prerequisiti di sistema</h2>
+Di seguito vengono indicati i requisiti di sistema su cui è installato e configurato il portale web.
 <h3>INSTALLAZIONE SERVER WEB:</h3>
 <p>
   Sistema operativo:
