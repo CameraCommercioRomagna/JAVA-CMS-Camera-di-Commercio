@@ -13,5 +13,9 @@ Dall'area riservata per gli utenti redattori è inoltre possibile generare codic
 <h2>Stato del progetto</h2>
 <p>Il prodotto è stabile ed è usato dalla Camera di Commercio della Romagna. Lo sviluppo di nuove funzionalità viene fatto su richiesta del committente.</p>
 <h2>Copyright</h2>
-<p>Titolare del software è la <a href="http://www.romagna.camcom.it">Camera di Commercio della Romagna Forlì-Cesena Rimini</a></p>
+<p>Titolare del software è la <a href="https://www.romagna.camcom.it">Camera di Commercio della Romagna Forlì-Cesena Rimini</a></p>
+<h2>Mantainer</h2>
+<p>Il progetto è stato interamente realizzato da <a href="https://www.ciseonweb.it">CISE Centro per l'innovazione e lo sviluppo economico</a>, azienda speciale della Camera di Commercio di Forlì-Cesena Rimini</p>
+
+<p>Per segnalazioni di sicurezza scrivere a <a href="mailto:security@ciseonweb.it">security@ciseonweb.it</a></p>
 
