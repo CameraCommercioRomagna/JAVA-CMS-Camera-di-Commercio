@@ -16,8 +16,7 @@ Nella prima sezione sono riportate informazioni di carattere generale per la com
 La seconda sezione costituisce una guida "passo-passo" ad ausilio del redattore nell'inserimento dei contenuti.
 La terza parte è dedicata principalmente all'aspetto comunicativo e fornisce regole e indicazioni utili per generare pagine meglio fruibili per l'utenza.
 L'ultima parte è dedicata ad una serie di approfondimenti sugli argomenti accennati nelle parti precedenti.
-            
-        <h1>Descrizione del sito</h1>
+             <h1>Descrizione del sito</h1>
 In questa parte ti descriviamo il progetto generale del sito e i concetti fondamentali che lo regolano perchè tu possa comprendere il progetto e le logiche da adottare nell'uso del sito.
             <h2> Impostazione generale</h2>
 Il sito è stato progettato tenendo in considerazione le indicazioni contenute nel documento 
