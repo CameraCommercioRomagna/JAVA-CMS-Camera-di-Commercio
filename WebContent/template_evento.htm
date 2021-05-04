@@ -1,0 +1,106 @@
+<%@include file="/common/include/begin.jsp" %>
+<%@include file="/common/include/_load_pagina.jsp" %>
+
+<%@include file="/common/componenti/collettori/_agenda-import.jsp"%>
+<%@include file="/common/componenti/collettori/_tab_anni-import.jsp"%>
+
+<%	StrutturaCamerale struttura=pagina.getStrutturaCamerale();
+	List<DocumentoWeb<?>> serviziOnline=new ArrayList<DocumentoWeb<?>>();
+	List<Paragrafo> paragrafi=new ArrayList<Paragrafo>();
+	serviziOnline=pagina_padre.getServiziOnline();
+	EdizioneInterna edizione=(EdizioneInterna)pagina;
+	List<Organizzatore> organizzatori=edizione.getOrganizzatori(TipoCollaborazione.ORGANIZZATORE);
+	List<PuntoProgramma> programma=edizione.getProgramma();
+	List<AttoEvento> atti=edizione.getAtti();
+	List<DocumentoWeb<?>> file_utili=pagina.getFileUtili();
+	List<DocumentoWeb<?>> file_allegati=pagina.getFigli(TipoDocumento.FILE_ALLEGATO);
+	List<DocumentoWeb<?>> link_utili=pagina.getLinkUtili();
+	List<Immagine> immagini=pagina.getImmagini();
+	List<DocumentoWeb<?>> video=pagina.getFigli(TipoDocumento.VIDEO);
+	
+	
+	TipoDocumento tipo = null;
+	Boolean visualAbstract=null;
+	TipoDocumento tipoBlocco=null;
+	Boolean eventoSmall=false;
+	Boolean paginaIscrizione=false;
+	%>
+	
+
+			
+	<!----CENTRO PAGINA---->
+	<div class="col-md-9 order-first order-md-4">
+		<h1><%=pagina.getTitolo()%></h1>
+	<%	if(!search_engine && tipiDoc_senza_condivisione_social.indexOf(pagina.getTipo())<0){%>
+		<%@include file="/common/componenti/documento/social.htm" %>
+	<%	}%>			
+		<div class="container" style="max-width: 1340px;">
+			<%@include file="/common/componenti/documento/info_evento.htm" %>
+			
+			<%@include file="/common/componenti/documento/descrizione_evento.htm" %>
+				
+			<%@include file="/common/componenti/documento/pagamento_evento.htm" %>
+					
+			<%@include file="/common/componenti/documento/programma_evento.htm" %>
+						
+			<%@include file="/common/componenti/documento/documentazione_evento.htm" %>	
+			
+			<%@include file="/common/componenti/documento/organizzatori_evento.htm" %>	
+				
+			<%@include file="/common/componenti/documento/maps_evento.htm" %>			
+		</div>
+	
+	</div>
+	<div class="col-md-9 order-4 order-md-4 offset-md-3" style="margin-top:0.8rem;">
+			
+			<%	if(struttura!=null){%>
+				<div class="container" style="max-width: 1340px;">
+					<div class="programma-header">
+						<h3><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> A chi rivolgersi</h3>
+					</div>
+						<h3 style="font-size:1.2rem; margin-top:1rem;"><%=struttura.getTitolo()%></h3>
+							<%	List<Paragrafo> paragrafi_struttura=struttura.getParagrafi();%>
+							<%	for (Paragrafo ps: paragrafi_struttura){%>
+									<div style="font-size:0.9rem">
+								<%	if (ps.titolo!=null && !ps.titolo.equals("")){%>
+										<b><%=ps.titolo %></b><br/>
+								<%	}%>
+								<%	if (ps.img_path!=null){%>
+									<%	if(ps.img_url!=null){%>
+											<a href="<%=ps.img_url%>">
+									<%	}%>
+										<img class="float-left img-fluid img-thumbnail" style="max-width:60%; margin:0.3rem 0.5rem 0.5rem 0" src="<%=ps.img_path %>" alt="Immagine di <%=ps.titolo %>"  />
+									<%	if(ps.img_url!=null){%>
+											</a>
+									<%	}%>
+								<%	}%>
+								<%	if (ps.testo!=null){%>
+										<%=ps.testo %>
+								<%	}%>
+									</div>
+							<%	}%>
+				</div>
+
+			<%	}%>
+			<%	if(serviziOnline.size()>0){
+					List<DocumentoWeb<?>> lista=serviziOnline;%>
+					<%@include file="/common/componenti/collettori/_list_standard.jsp"%>
+					<br/>
+			<%	}%>
+			<%	if(link_utili.size()>0){
+					List<DocumentoWeb<?>> lista=link_utili;%>
+					<%@include file="/common/componenti/collettori/_list_standard.jsp"%>
+			<%	}%>
+			
+			<%	/* CATE: Se occorre eliminare la customer non eliminare direttamente il seguente include ma gestirlo da dentro al file */%>
+			<%@include file="/common/struct_template/alert_box_menu_destra.htm" %>
+			<%@include file="/common/struct_template/customer_box_menu_destra.htm" %>
+			
+			</div>
+		
+			
+				
+
+			
+			
+			

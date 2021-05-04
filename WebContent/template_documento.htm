@@ -1,0 +1,318 @@
+<%@include file="/common/include/begin.jsp" %>
+<%@include file="/common/include/_load_pagina.jsp" %>
+
+<%@include file="/common/componenti/collettori/_agenda-import.jsp"%>
+<%@include file="/common/componenti/collettori/_tab_anni-import.jsp"%>
+
+<%	StrutturaCamerale struttura=pagina.getStrutturaCamerale();
+	
+	boolean visualizzaIndiceParagrafi=false;
+	List<Paragrafo> paragrafi=new ArrayList<Paragrafo>();
+	List<Competenza> competenze=new ArrayList<Competenza>();
+	List<DocumentoWeb<?>> normativa=new ArrayList<DocumentoWeb<?>>();
+	List<DocumentoWeb<?>> modulistica=new ArrayList<DocumentoWeb<?>>();
+	List<DocumentoWeb<?>> serviziOnline=new ArrayList<DocumentoWeb<?>>();
+	List<DocumentoWeb<?>> comunicazioni=new ArrayList<DocumentoWeb<?>>();
+	List<Edizione> edizioni=new ArrayList<Edizione>();
+	List<Edizione> edizioniPassate=new ArrayList<Edizione>();
+	List<Download> volumi=new ArrayList<Download>();
+	List<DocumentoWeb<?>> file_utili=pagina.getFileUtili();
+	List<DocumentoWeb<?>> file_allegati=pagina.getFigli(TipoDocumento.FILE_ALLEGATO);
+	List<DocumentoWeb<?>> link_utili=new ArrayList<DocumentoWeb<?>>();
+	List<Immagine> immagini=pagina.getImmagini();
+	List<DocumentoWeb<?>> video=pagina.getFigli(TipoDocumento.VIDEO);
+
+	if (pagina instanceof Documento){
+		Documento documento=(Documento)pagina;
+		paragrafi=documento.getParagrafi();
+		visualizzaIndiceParagrafi = documento.visualizza_indice;
+	}
+	
+	if (pagina instanceof AreaTematica){
+		AreaTematica areaTematica=(AreaTematica)pagina;
+		competenze=areaTematica.getCompetenze();
+		serviziOnline=areaTematica.getServiziOnline();
+		comunicazioni=areaTematica.getNotizie();
+	}
+	if (pagina instanceof Competenza){
+		Competenza competenza=(Competenza)pagina;
+		normativa=competenza.getNormativa();
+		serviziOnline=competenza.getServiziOnline();
+		link_utili=competenza.getLinkUtili();
+		comunicazioni=competenza.getNotizie();
+	}
+	if (pagina instanceof Attivita){
+		Attivita attivita=(Attivita)pagina;
+		normativa=attivita.getNormativa();
+		modulistica=attivita.getModulistica();
+		serviziOnline=attivita.getServiziOnline();
+		link_utili=attivita.getLinkUtili();
+		comunicazioni=attivita.getNotizie();
+		edizioni=attivita.getEdizioni(true, true, false);
+		edizioniPassate=attivita.getEdizioni(true, true, true);
+	}
+	if (pagina instanceof EdizioneInterna){
+		serviziOnline=pagina_padre.getServiziOnline();
+		link_utili=pagina.getLinkUtili();
+	}
+	if (pagina instanceof Pubblicazione){
+		Pubblicazione pubblicazione=(Pubblicazione)pagina;
+		volumi=pubblicazione.volumi();
+	}
+	/**/
+	List<DocumentoWeb<?>> sezioniContenuto=new ArrayList<DocumentoWeb<?>>();
+	if (pagina.getTipo() == TipoDocumento.AMMINISTRAZIONE_TRASPARENTE || pagina.getTipo() == TipoDocumento.SEZIONE_AMMINISTRAZIONE_TRASPARENTE)
+		sezioniContenuto = pagina.getFigli(TipoDocumento.DOCUMENTO_AMMINISTRAZIONE_TRASPARENTE, null, true/*validati*/, true/*pubblicati*/, null, Visibilita.VISIBILE_DOVE_COLLOCATO, TipoOrdinamentoDocumenti.MANUALE);
+	
+	else if (pagina.getTipo() == TipoDocumento.GRUPPO_GIUNTE_CAMERALI){
+		sezioniContenuto = pagina.getFigli(TipoDocumento.GIUNTA_CAMERALE, null, true, true, null, Visibilita.VISIBILE_DOVE_COLLOCATO, TipoOrdinamentoDocumenti.MANUALE);
+		//sezioniContenuto.addAll(pagina.getFigli(TipoDocumento.DOCUMENTO_RISERVATO_REVISORI, null, true, true, false, Visibilita.VISIBILE_DOVE_COLLOCATO, TipoOrdinamentoDocumenti.MANUALE));
+	}else if (pagina.getTipo() == TipoDocumento.GRUPPO_CONSIGLI_CAMERALI){
+		sezioniContenuto = pagina.getFigli(TipoDocumento.CONSIGLIO_CAMERALE, null, true, true, null, Visibilita.VISIBILE_DOVE_COLLOCATO, TipoOrdinamentoDocumenti.MANUALE);
+		//sezioniContenuto.addAll(pagina.getFigli(TipoDocumento.DOCUMENTO_RISERVATO_REVISORI, null, true, truepubblicati, false, Visibilita.VISIBILE_DOVE_COLLOCATO, TipoOrdinamentoDocumenti.MANUALE));
+	}
+	
+	else if (pagina.getTipo() == TipoDocumento.GIUNTA_CAMERALE){
+		sezioniContenuto = pagina.getFigli(TipoDocumento.DOCUMENTO_RISERVATO_GIUNTA, null, true, true, false, Visibilita.VISIBILE_DOVE_COLLOCATO, TipoOrdinamentoDocumenti.MANUALE);
+		sezioniContenuto.addAll(pagina.getFigli(TipoDocumento.DOCUMENTO_RISERVATO_REVISORI, null, true, true, false, Visibilita.VISIBILE_DOVE_COLLOCATO, TipoOrdinamentoDocumenti.MANUALE));
+	}else if (pagina.getTipo() == TipoDocumento.CONSIGLIO_CAMERALE){
+		sezioniContenuto = pagina.getFigli(TipoDocumento.DOCUMENTO_RISERVATO_CONSIGLIO, null, true, true, false, Visibilita.VISIBILE_DOVE_COLLOCATO, TipoOrdinamentoDocumenti.MANUALE);
+		sezioniContenuto.addAll(pagina.getFigli(TipoDocumento.DOCUMENTO_RISERVATO_REVISORI, null, true, true, false, Visibilita.VISIBILE_DOVE_COLLOCATO, TipoOrdinamentoDocumenti.MANUALE));
+	}
+	/**/%>
+	
+	<%
+		TipoDocumento tipo = null;
+		
+		Boolean visualAbstract=null;
+		TipoDocumento tipoBlocco=null;
+		Boolean eventoSmall=false;
+		Boolean paginaIscrizione=false;
+	%>
+
+<%	Boolean hasMoreEvent=false;
+	Boolean hasOneEvent=false;
+	EdizioneInterna edizione=new EdizioneInterna();
+	List<Organizzatore> organizzatori=new ArrayList<Organizzatore>();
+	List<PuntoProgramma> programma=new ArrayList<PuntoProgramma>();
+	List<AttoEvento> atti=new ArrayList<AttoEvento>();
+	List<DocumentoWeb<?>> file_utili_ed=new ArrayList<DocumentoWeb<?>>();
+	List<DocumentoWeb<?>> file_allegati_ed=new ArrayList<DocumentoWeb<?>>();
+	List<Immagine> immagini_ed=new ArrayList<Immagine>();
+	List<DocumentoWeb<?>> video_ed=new ArrayList<DocumentoWeb<?>>();
+
+	if(edizioniPassate.size()>0 || edizioni.size()>=2) {
+		hasMoreEvent=true;
+	}else if(edizioni.size()>0 && edizioni.size()<2){
+		edizione=(EdizioneInterna)edizioni.get(0);
+		eventoSmall=true;
+		organizzatori=edizione.getOrganizzatori(TipoCollaborazione.ORGANIZZATORE);
+		programma=edizione.getProgramma();
+		atti=edizione.getAtti();
+		hasOneEvent=true;
+	}%>
+
+<div class="col-md-6 order-first order-md-2">
+	<h1><%=pagina.getTitolo()%></h1>
+	<%	if(!search_engine && tipiDoc_senza_condivisione_social.indexOf(pagina.getTipo())<0){%>
+			<%@include file="/common/componenti/documento/social.htm" %>
+	<%	}%>	
+
+<!-- Immagine iniziale-->
+
+<%	if(pagina.getImmagine()!=null){
+		try{
+			if (paragrafi.get(0).img_path == null)
+				throw new RuntimeException("Se non c'è immagine nel primo paragrafo => visualizza quella del documento");
+			}catch(Exception eImg){%>
+						<p style="text-align:center;"><img style="max-width:50%;" src="<%=pagina.getImmagine()%>" alt="Icona"/></p>
+		<%	}
+	}%>
+	<%if(hasOneEvent){%>
+		<div style="background-color:#d8e7ed; padding:1rem; border-radius:20px;">
+			<h3> <span class="glyphicon glyphicon-calendar" aria-hidden="true"></span> In programma</h3>
+			<p style="font-size:1rem;">
+				 <%=edizione.periodoENote()%> - <%=edizione.getTitolo()%> <%if(edizione.getLuogo()!=null){%> - <%=edizione.getLuogo().getNomeeIndirizzo()%><br/><%}%>
+				 <a href="#dettagliEvento">Visualizza i dettagli</a>
+			</p>
+		</div>
+
+	
+	<%}%>
+	<!-- Paragrafi-->
+	<%	if(paragrafi.size()>0){%>
+	<%		if (visualizzaIndiceParagrafi){%>
+				<div style="margin-top:1rem;margin-bottom:1rem;">
+					<ul class="list-group list-group-flush">
+					<%	for (Paragrafo p: paragrafi){
+							if (p.titolo != null){%>
+								<li class="list-group-item"><a href="#<%=p.id_paragrafo %>"><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span> <%=p.titolo %></a></li>
+						<%	}
+						}%>
+					</ul>
+				</div>
+				<hr style="margin-top:1rem;margin-bottom:2rem;" />
+		<%	}%>
+				
+				<%	for (Paragrafo p: paragrafi){%>
+					<div class="corpoPagina paragrafi<%=(p.img_url!=null && !p.img_url.equals("") ? "_img" : "")%>" style="margin-top:1rem; display:block; overflow: hidden;">
+					<%	if ((p.titolo!=null)&&(!p.titolo.equals(""))){%>
+							<span id="<%=p.id_paragrafo %>"></span><h2><%=p.titolo %></h2>
+					<%	}%>
+					<%	if (p.img_path!=null){%>
+					<%		if(p.img_url!=null && !p.img_url.equals("")){%>
+								<a href="<%=p.img_url%>" aria-label="Link colegato all'Immagine di <%=p.titolo %>">
+									<img class="<%=(p.testo!=null ? "float-left" : "mx-auto")%> img-fluid img-thumbnail" style="<%=(p.testo!=null ? "max-width:60%; margin:0.3rem 0.5rem 0.5rem 0" : "max-width:80%;")%>;" src="<%=p.img_path %>" alt="Immagine di <%=p.titolo %>"  />
+								</a>
+					<%		}else{%>
+				
+								<img class="<%=(p.testo!=null ? "float-left" : "mx-auto")%> img-fluid img-thumbnail modal-hover-opacity" src="<%=p.img_path %>" style="cursor:pointer; <%=(p.testo!=null ? "max-width:60%; margin:0.3rem 0.5rem 0.5rem 0" : "max-width:80%;")%>" onclick="Modal(this, <%=p.id_paragrafo %>)"  onkeypress="Modal(this, <%=p.id_paragrafo %>)" alt="modal-hover-opacity">
+
+								<div id="modal<%=p.id_paragrafo %>" class="modal" onclick="this.style.display='none'" onkeypress="this.style.display='none'">
+									<span class="close">&times;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+									<div class="modal-content">
+										<img id="img<%=p.id_paragrafo %>" src="<%=p.img_path %>" style="max-width:100%" alt="Immagine di <%=p.titolo %>">
+									</div>
+								</div>
+						<%	}%>
+					<%	}%>
+					<%	if (p.testo!=null){%>
+							<%=p.testo %>
+					<%	}%>
+					</div>
+				<%	}%>
+					<br/>
+			<%	}%>
+			<%	if(hasMoreEvent){
+					tipoBlocco=TipoDocumento.EDIZIONE_EVENTO;
+					List<DocumentoWeb<?>> lista = new ArrayList<DocumentoWeb<?>>();
+					for (Edizione e: edizioni) lista.add(e);
+					for (Edizione e1: edizioniPassate) lista.add(e1);
+					%>
+					<%@include file="/common/componenti/collettori/_archivio.jsp"%>
+				<%}
+				if(hasOneEvent){
+					file_utili_ed=edizione.getFileUtili();
+					file_allegati_ed=edizione.getFigli(TipoDocumento.FILE_ALLEGATO);
+					immagini_ed=edizione.getImmagini();
+					video_ed=edizione.getFigli(TipoDocumento.VIDEO);	
+					if(file_utili_ed.size()>0) file_utili.addAll(file_utili_ed);
+					if(file_allegati_ed.size()>0) file_allegati.addAll(file_allegati_ed);
+					if(immagini_ed.size()>0) immagini.addAll(immagini_ed);
+					if(video_ed.size()>0) video.addAll(video_ed);%>
+					<span id="dettagliEvento"></span><h2 style="border-bottom:5px solid #071d49; padding:0.5rem;">Evento in programma</h2>
+					<h3><%=edizione.getTitolo()%></h3>
+					<%@include file="/common/componenti/documento/info_evento.htm" %>
+						<br/>
+					<%@include file="/common/componenti/documento/pagamento_evento.htm" %>
+					
+					<%@include file="/common/componenti/documento/programma_evento.htm" %>
+					<br/>
+					
+			
+					<%@include file="/common/componenti/documento/organizzatori_evento.htm" %>	
+					
+					<%@include file="/common/componenti/documento/maps_evento.htm" %>	
+							
+					<%	if(atti.size()>0){
+						List<DocumentoWeb<?>> lista=new ArrayList<DocumentoWeb<?>>(atti);%>
+						<%@include file="/common/componenti/collettori/_list_standard.jsp"%>
+					<%	}%>
+					
+					
+
+			<%	}%>
+		
+		<%	if(video.size()>0){%>					
+				<%@include file="/common/componenti/gallery/_video.jsp"%>
+		<%	}%>
+			
+		<%	if(immagini.size()>0){%>					
+				<%@include file="/common/componenti/gallery/_image.jsp"%>
+		<%	}%>
+			
+		<%	if(file_utili.size()>0) {
+				List<DocumentoWeb<?>> lista=file_utili;%>
+				<%@include file="/common/componenti/collettori/_list_standard.jsp"%>
+		<%	}%>
+		<%	if(file_allegati.size()>0) {
+				List<DocumentoWeb<?>> lista=file_allegati;%>
+				<%@include file="/common/componenti/collettori/_list_standard.jsp"%>
+		<%	}%>	
+		<%	if(volumi.size()>0) {
+				List<DocumentoWeb<?>> lista = new ArrayList<DocumentoWeb<?>>(volumi);
+				tipoBlocco=TipoDocumento.VOLUME;%>
+				<%@include file="/common/componenti/collettori/_archivio.jsp"%>
+		<%	}%>
+		<%	if(sezioniContenuto.size()>0){%>
+				<%	if (pagina.getTipo() == TipoDocumento.AMMINISTRAZIONE_TRASPARENTE || pagina.getTipo() == TipoDocumento.SEZIONE_AMMINISTRAZIONE_TRASPARENTE || pagina.getTipo()==TipoDocumento.SEZIONE_RISERVATA_AMMINISTRATORI || pagina.getTipo()==TipoDocumento.GRUPPO_CONSIGLI_CAMERALI ||pagina.getTipo()==TipoDocumento.GRUPPO_GIUNTE_CAMERALI){%>
+					<%	ModalitaVisualizzazioneTabAnni modOrganizza=ModalitaVisualizzazioneTabAnni.ARCHIVIO;
+						ModalitaVisualizzazioneDocumenti modElenco=ModalitaVisualizzazioneDocumenti.LISTA;
+						boolean visualTitolo=false;
+						boolean visualCompatta=false;
+						List<DocumentoWeb<?>> lista=sezioniContenuto;%>
+						<%@include file="/common/componenti/collettori/_tab_anni.jsp"%>
+				<%	}else{
+						List<DocumentoWeb<?>> lista = sezioniContenuto;
+						visualAbstract=true;%>
+						<%@include file="/common/componenti/collettori/_list_standard.jsp"%>
+				<%	}%>
+			<%	}%>
+			
+			
+			
+</div>
+<div class="col-md-3 order-2 order-md-2">
+			
+			<%	if(normativa.size()>0) {
+					List<DocumentoWeb<?>> lista=normativa;
+			%>
+					<%@include file="/common/componenti/collettori/_list_standard.jsp"%>
+			<%	}%>
+			<%	if(modulistica.size()>0){
+					List<DocumentoWeb<?>> lista=modulistica;
+					tipoBlocco=TipoDocumento.GUIDE_E_MODULI;%>
+					<%@include file="/common/componenti/collettori/_list_standard.jsp"%>
+			<%	}%>
+			<%	if(link_utili.size()>0){
+					List<DocumentoWeb<?>> lista=link_utili;%>
+					<%@include file="/common/componenti/collettori/_list_standard.jsp"%>
+			<%	}%>
+			<%	if(serviziOnline.size()>0){
+					List<DocumentoWeb<?>> lista=serviziOnline;%>
+					<%@include file="/common/componenti/collettori/_list_standard.jsp"%>
+			<%	}%>
+			<%	if(struttura!=null && pagina.id_documento_web.compareTo(7904l)!=0){%>
+					<div class="card " style="margin-top:1rem;">
+						<div class="card-title-block-right bg_footer bg_footer_text" style="padding:0.3rem"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> A chi rivolgersi</div>
+						<div class="card-body-block-right">
+							<h3 style="font-size:1.2rem;"><%=struttura.getTitolo()%></h3>
+							<%	List<Paragrafo> paragrafi_struttura=struttura.getParagrafi();%>
+							<%	for (Paragrafo ps: paragrafi_struttura){%>
+									<div style="font-size:0.9rem">
+								<%	if (ps.titolo!=null && !ps.titolo.equals("")){%>
+										<b><%=ps.titolo %></b><br/>
+								<%	}%>
+								<%	if (ps.img_path!=null){%>
+									<%	if(ps.img_url!=null){%>
+											<a href="<%=ps.img_url%>">
+									<%	}%>
+										<img class="float-left img-fluid img-thumbnail" style="max-width:60%; margin:0.3rem 0.5rem 0.5rem 0" src="<%=ps.img_path %>" alt="Immagine di <%=ps.titolo %>"  />
+									<%	if(ps.img_url!=null){%>
+											</a>
+									<%	}%>
+								<%	}%>
+								<%	if (ps.testo!=null){%>
+										<%=ps.testo %>
+								<%	}%>
+									</div>
+							<%	}%>
+						</div>
+					</div>
+			<%	}%>
+			
+			<%	/* CATE: Se occorre eliminare la customer non eliminare direttamente il seguente include ma gestirlo da dentro al file */%>
+			<%@include file="/common/struct_template/alert_box_menu_destra.htm" %>
+			<%@include file="/common/struct_template/customer_box_menu_destra.htm" %>
+			
+</div>
