@@ -10,3 +10,8 @@ Il CMS è stato realizzato in conformità alle Linee Guida di design per i servi
 Il CMS è anche corredato di servizi che consentono agli utenti di prenotare appuntamenti, o di chiedere informazioni specifiche per il Registro imprese in apposite form.
 Dall'area riservata per gli utenti redattori è inoltre possibile generare codice Html appositamente formattato per la generazione di mailing promozionali.
 </p>
+<h2>Stato del progetto</h2>
+<p>Il prodotto è stabile ed è usato dalla Camera di Commercio della Romagna. Lo sviluppo di nuove funzionalità viene fatto su richiesta del committente.</p>
+<h2>Copyright</h2>
+<p>Titolare del software è la <a href="http://www.romagna.camcom.it">Camera di Commercio della Romagna Forlì-Cesena Rimini</a></p>
+
