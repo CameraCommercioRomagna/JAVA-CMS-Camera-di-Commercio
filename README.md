@@ -12,6 +12,27 @@ Dall'area riservata per gli utenti redattori è inoltre possibile generare codic
 </p>
 <h2>Stato del progetto</h2>
 <p>Il prodotto è stabile ed è usato dalla Camera di Commercio della Romagna. Lo sviluppo di nuove funzionalità viene fatto su richiesta del committente.</p>
+<h2>Prerequisiti di sistema</h2>
+<h3>INSTALLAZIONE SERVER WEB:</h3>
+<p>
+  Sistema operativo:
+</p>
+<ul><li>Red Hat Enterprise Linux Server release 7.4</li></ul>
+<p>Server web:</p>
+<ul>
+  <li>Apache Http Server version 2.4.6</li>
+  <li>Apache Tomcat Version 9.0.17</li>
+  <li>Apache Tomcat Version 9.0.17</li>
+  <li>Apache Tomcat Connectors 1.2.46 (module mod_jk)</li></ul>
+ <p>Java:</p>
+ <ul><li> OpenJDK 1.8.0</li></ul>
+  <p>Motore di Ricerca:</p>
+  <ul>
+    <li>Apache Nutch 1.15</li>
+    <li>Apache Solr 7.5.0</li>
+  
+  </ul>
+</p>
 <h2>Copyright</h2>
 <p>Titolare del software è la <a href="https://www.romagna.camcom.it">Camera di Commercio della Romagna Forlì-Cesena Rimini</a></p>
 <h2>Mantainer</h2>
