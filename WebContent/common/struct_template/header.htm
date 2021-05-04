@@ -1,0 +1,36 @@
+
+<%	if(!search_engine || isHomePage){%>
+	<!--Link all'ancora che consente di saltare la lettura di tutti i menu dai lettori di browser -->
+	<div class="nascosto">
+		<a href="#contenuto" aria-labelledby="contenuto" title="Vai direttamente al contenuto della pagina">Vai direttamente al contenuto della pagina</a>
+	</div>
+	<header class="fixed-top header_bg" >
+		<div class="header-top" style="text-align:right;">
+			<a class="btn btn-success areaRis" href="/amministrazione/index.htm" style="margin:0" aria-label="area riservata">
+				<span style="display:inline;" class="glyphicon glyphicon-user" aria-hidden="true"></span> <span>Area riservata <%	if (operatore!=null){%><b><%=operatore.getIdentita() %></b><%}%></span>
+			</a>
+			<%	if (operatore!=null){%>
+						<a href="/servlet/LogoutServlet?pagefwd=/" class="btn btn-danger" style="margin:0"><span class="glyphicon glyphicon-off"></span></a>
+			<%	}%>
+				
+		</div>
+		<div class="header-navbar">
+			<div class="row" style="margin-left:0;">
+				<div class="col-lg-3 col-md-3 col-sm-3 col-3">
+					<a href="/" aria-label="home"><img src="/imgs/struct/romagna-marchio-bianco.png" alt="logo camera" class="img-fluid logo-camera"></a>
+				</div>
+				<div class="col-lg-9 col-md-9 col-sm-9 col-9" style="text-align:right;">
+					<span class="social-text">Seguici su: </span>
+					<form id="search-engine" class="form-inline ricerca-allineamento" style="margin-top:0.5rem; float:right; display: flex;" action="/ricerca/index.htm">
+						<label for="query" style="display:none">Cerca</label>
+						<input id="query" name="query" class="form-control ricerca-small" style="margin-right:0.2rem;" type="text" placeholder="Cerca" aria-label="Search" >
+						<button class="btn btn-success btn-small" type="submit">Cerca</button>
+					</form>
+				</div>
+				
+			</div>
+		</div>
+		<%@include file="/common/struct_template/menu.htm" %>
+	</header>
+	<span id="contenuto"></span>
+<%	}%>	

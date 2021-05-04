@@ -1,0 +1,39 @@
+<%	if(!search_engine || isHomePage){%>
+	<header class="fixed-top header_bg" >
+		<div class="header-top" style="text-align:right;">
+			<button class="btn btn-success" onclick="window.location.href='/amministrazione/index.htm'">
+				<span style="display:inline;" class="glyphicon glyphicon-user"></span> <span>Area riservata</span>
+			</button>
+				
+		</div>
+		<div class="header-navbar">
+			<div class="row" style="margin-left:0;">
+				<div class="col-lg-3 col-md-3 col-sm-4 col-12">
+					<a href="/"><img src="/imgs/struct/romagna-marchio-bianco.png" alt="logo camera" class="img-fluid logo-camera"></a>
+				</div>
+				<div class="col-lg-5 col-md-5 col-sm-5 col-8">
+					<form id="search-engine" class="form-inline ricerca-allineamento" style="margin-top:0.5rem;" action="/ricerca/index.htm">
+						<input id="query" name="query" class="form-control ricerca-small" style="margin-right:0.1rem;" type="text" placeholder="Cerca" aria-label="Search">
+						<button class="btn btn-success btn-small" type="submit">Cerca</button>
+					</form>
+				</div>
+				<div class="col-lg-4 col-md-4 col-sm-3 col-4">
+					<div class="social-block">
+						<span class="social-text">Seguici su: </span>
+							<a class="social-icon" href="https://www.facebook.com/pages/Camera-di-Commercio-Forl%C3%AC-Cesena/" title="Seguici su Facebook">
+								<i class="fab fa-facebook-f" aria-hidden="true"></i>
+							</a>
+							<a class="social-icon" href="">
+								<i class="fab fa-twitter" aria-hidden="true"></i>
+							</a>
+		 
+							<a class="social-icon" href="" title="Seguici su YouTube">
+								<i class="fab fa-youtube" aria-hidden="true"></i>
+							</a>
+					</div>
+				</div>
+			</div>
+		</div>
+		<%@include file="/common/struct_template/menu.htm" %>
+	</header>
+<%	}%>	

@@ -1,0 +1,5 @@
+<%	if(operatore_nl!=null){%>
+<p class="alert alert-primary">
+	<span class="glyphicon glyphicon-user gray-colored" aria-hidden="true" style="font-size:1.2em;margin-left:10px;margin-right:10px;"></span> Benvenuto/a <b><%=operatore_nl.cognome%> <%=operatore_nl.nome%></b> <span style="font-size:0.9rem;float:right;">[effettua il <a href="/newsletter/redirect.jsp?logout=1&<%=urlwrapper.toQueryString("back")%>">Logout</a> - <a href="/newsletter/modifica.htm?<%=urlwrapper.toQueryString("back") %>" class="blank" title="Modifica il tuo profilo">Modifica il tuo profilo</a>]</span>
+</p>
+<%	}%>

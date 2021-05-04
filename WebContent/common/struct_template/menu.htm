@@ -1,0 +1,33 @@
+	<% List<Bisogno> bisogni=Bisogno.loadAll(connPostgres);%>
+	
+	<nav class="navbar navbar-expand-lg navbar-light bg-light header_bg burger-button" aria-label="Menu sito XXX">
+		<button  class="navbar-toggler custom-toggler " type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation" >
+			<span class="navbar-toggler-icon custom-burger"></span>
+		</button>
+			<div class="collapse navbar-collapse" id="navbarsExampleDefault" style="font-size:1rem;">
+				<ul  id="menubarCdc" class="navbar-nav mr-auto row navbar-width" role="menubar" aria-label="Menu sito XXX">
+					<%for(Bisogno b:bisogni){%>
+						<li class="nav-item dropdown">
+							<a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" role="menuitem" aria-haspopup="true" aria-expanded="false"><%=b.nome%></a>
+							<div class="dropdown-menu dropdown-bg">
+								<div class="row div-menu  dropdown-bg">
+									<ul class="dropdown scrollable-menu" id="<%=b.nome.replace(" ","-")%>" role="menubar" aria-label="<%=b.nome%>">
+									<%--List<DocumentoWeb<?>> areeTematiche=b.getDocumenti();%>
+										<%for(DocumentoWeb<?> at:areeTematiche){%>
+											<li role="none"><a class="dropdown-item" href="<%=at.getLink()%>" aria-label="<%=at.getTitolo()%>" role="menuitem"><%=at.getTitolo()%></a></li>
+										<%}--%>
+									<%	List<Bisogno> bisogni_figli=b.getFigli();%>
+										<%for(Bisogno at:bisogni_figli){%>
+											<li role="none"><a class="dropdown-item" href="<%=at.url%>" title="<%=at.nome%>" aria-label="<%=at.nome%>" role="menuitem" tabindex="-1"><%=at.nome%></a></li>
+										<%}%>
+									</ul>
+								</div>
+							</div>
+						</li>
+					<%}%>
+				</ul>
+				
+			</div>
+			
+
+	</nav>

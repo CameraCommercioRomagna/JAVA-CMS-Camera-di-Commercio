@@ -1,0 +1,65 @@
+<%	List<DocumentoWeb<?>> menu_sx=new ArrayList<DocumentoWeb<?>>();
+	
+	boolean menuTrovato=false;
+	PaginaWeb<?> paginaMenu=pagina;
+	while (paginaMenu!=null && !menuTrovato){
+		if (paginaMenu instanceof AreaTematica){
+			menu_sx.addAll(((AreaTematica)paginaMenu).getCompetenze());
+			menuTrovato=true;
+		}
+		if (paginaMenu instanceof Competenza){
+			if(((Competenza)paginaMenu).getAttivita().size()>0){
+				menu_sx.addAll(((Competenza)paginaMenu).getAttivita());
+				menuTrovato=true;
+			}
+		}
+		if (paginaMenu instanceof GruppoAttivita){
+			if(((GruppoAttivita)paginaMenu).getSottoAttivita().size()>0){
+				menu_sx.addAll(((GruppoAttivita)paginaMenu).getSottoAttivita());
+				menuTrovato=true;
+			}
+		}
+		/* Ammnistrazione trasparente */
+		if (paginaMenu.getTipo() == TipoDocumento.AMMINISTRAZIONE_TRASPARENTE || paginaMenu.getTipo() == TipoDocumento.SEZIONE_AMMINISTRAZIONE_TRASPARENTE){
+			menu_sx.addAll(paginaMenu.getFigli(TipoDocumento.SEZIONE_AMMINISTRAZIONE_TRASPARENTE));
+			menuTrovato = menu_sx.size() > 0;
+		}
+		/* Documenti riservati consiglio e giunta */
+		if (operatore!=null && paginaMenu.getTipo() == TipoDocumento.SEZIONE_RISERVATA_AMMINISTRATORI){
+			if (TipoDocumento.GRUPPO_GIUNTE_CAMERALI.accessibile(operatore))
+				menu_sx.addAll(paginaMenu.getFigli(TipoDocumento.GRUPPO_GIUNTE_CAMERALI));
+			if (TipoDocumento.GRUPPO_CONSIGLI_CAMERALI.accessibile(operatore))
+				menu_sx.addAll(paginaMenu.getFigli(TipoDocumento.GRUPPO_CONSIGLI_CAMERALI));
+		
+			menuTrovato = menu_sx.size() > 0;
+		}
+		
+		// Se non trova il menù, allora prova a cercarlo nel padre
+		if (!menuTrovato)
+			paginaMenu=paginaMenu.getPadre();
+	}
+%>
+
+<div class="col-md-3 order-3 order-md-2" role="navigation">
+<!-- MENU di SX---->
+	<%	if(menu_sx.size()>0){%>
+		<aside>
+			<nav>
+				<ul class="list-group " id="menu_attivita" >
+						<li class="list-group-item list-menu-left bg_footer bg_footer_text" style="border:0; padding-top:0.3rem; padding-bottom:0.3rem;">In questa sezione</li>
+						<%for (DocumentoWeb<?> m: menu_sx){%>
+							<li class="list-group-item  list-menu-left" style="background-color: #f0f0f0 !important; ">
+								<%if(m.getId().compareTo(pagina.getId())==0){%>
+									<span style="color:#071d49!IMPORTANT;"><%=m.getTitolo()%></span>
+								<%}else{%>
+									<a class="menu_attivita" href="<%=m.getLink()%>"><%=m.getTitolo()%></a>
+								<%}%>
+							</li>
+						<%}%>
+				</ul>
+			</nav>
+		</aside>
+		<br/>
+	<%	}%>
+</div>
+<!----->

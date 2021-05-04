@@ -1,0 +1,12 @@
+<nav aria-label="breadcrumb">
+	<ol class="breadcrumb">
+		<li class="breadcrumb-item active" aria-current="page"><a href="/"><small><span class="glyphicon glyphicon-home"></span></small> Home</a></li>
+	<%	if (pagina!=null){
+			for (DocumentoWeb<?> a: ambitiPagina){
+				if((a.getId().compareTo(pagina.getId())!=0) &&(a.getId()!=0)){%>
+					<li class="breadcrumb-item active" ><a href="<%=a.getLink()%>"><%=a.getTitolo()%></a></li>
+			<%	}
+			}
+		}%>
+	</ol>
+</nav>
