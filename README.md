@@ -15,16 +15,38 @@ Dall'area riservata per gli utenti redattori è inoltre possibile generare codic
 <h2>Prerequisiti di sistema</h2>
 Di seguito vengono indicati i requisiti di sistema su cui è installato e configurato il portale web.
 <h3>INSTALLAZIONE SERVER WEB:</h3>
-<p>
+<h4>
   Sistema operativo:
-</p>
+</h4>
 <ul><li>Red Hat Enterprise Linux Server release 7.4</li></ul>
-<p>Server web:</p>
+<h4>Server web:</h4>
+<p>Prerequisiti:</p>
 <ul>
   <li>Apache Http Server version 2.4.6</li>
   <li>Apache Tomcat Version 9.0.17</li>
   <li>Apache Tomcat Version 9.0.17</li>
   <li>Apache Tomcat Connectors 1.2.46 (module mod_jk)</li></ul>
+<p>INSTALLAZIONE APACHE:<br/>
+    yum -y install httpd<br/>
+    yum -y install mod_ssl openssl<br/>
+    systemctl enable httpd</p>
+ <p>
+  INSTALLAZIONE TOMCAT:<br/>
+  wget http://it.apache.contactlab.it/tomcat/tomcat-9/v9.0.17/bin/apache-tomcat-9.0.17.tar.gz<br/>
+  tar -xzvf apache-tomcat-9.0.17.tar.gz
+  </p>
+  <p>
+    INSTALLAZIONE CONNETTORE:<br/>
+yum install httpd-devel apr apr-devel apr-util apr-util-devel gcc gcc-c++ make autoconf libtool<br/>
+wget http://it.apache.contactlab.it/tomcat/tomcat-connectors/jk/tomcat-connectors-1.2.46-src.tar.gz<br/>
+tar -xvzf tomcat-connectors-1.2.46-src.tar.gz<br/>
+./configure --with-apxs=/usr/bin/apxs --enable-api-compatibility<br/>
+make<br/>
+libtool --finish /usr/lib64/httpd/modules<br/>
+make install
+
+  </p>
+    
  <p>Java:</p>
  <ul><li> OpenJDK 1.8.0</li></ul>
   <p>Motore di Ricerca:</p>
