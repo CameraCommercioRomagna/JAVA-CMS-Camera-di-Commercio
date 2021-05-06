@@ -20,10 +20,8 @@ Di seguito vengono indicati i requisiti di sistema su cui è installato e config
 </h4>
 <ul><li>Red Hat Enterprise Linux Server release 7.4</li></ul>
 <h4>Server web:</h4>
-<p>Prerequisiti:</p>
 <ul>
   <li>Apache Http Server version 2.4.6</li>
-  <li>Apache Tomcat Version 9.0.17</li>
   <li>Apache Tomcat Version 9.0.17</li>
   <li>Apache Tomcat Connectors 1.2.46 (module mod_jk)</li></ul>
 <p>INSTALLAZIONE APACHE:<br/>
@@ -47,14 +45,25 @@ make install
 
   </p>
     
- <p>Java:</p>
+ <h4>Java:</h4>
  <ul><li> OpenJDK 1.8.0</li></ul>
-  <p>Motore di Ricerca:</p>
+ <p>
+  INSTALLAZIONE JAVA:<br/>
+yum -y install java-1.8.0-openjdk.x86_64 java-1.8.0-openjdk-devel.x86_64
+</p>
+  <h4>Motore di Ricerca:</h4>
   <ul>
     <li>Apache Nutch 1.15</li>
     <li>Apache Solr 7.5.0</li>
-  
   </ul>
+  <p>
+  INSTALLAZIONE MOTORE DI RICERCA:<br/>
+wget solr-7.5.0.tgz<br/>
+tar xzf solr-7.5.0.tgz solr-7.5.0/bin/install_solr_service.sh --strip-components=2<br/>
+bash ./install_solr_service.sh solr-7.5.0.tgz -i /opt/search<br/>
+wget apache-nutch-1.15-bin.tar.gz<br/>
+tar xzf apache-nutch-1.15-bin.tar.gz 
+</p>
 <h3>INSTALLAZIONE DMBS:</h3>
 <ul><li>PostgreSQL 11.2</li></ul>
 <h2>Copyright</h2>
